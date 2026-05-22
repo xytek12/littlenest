@@ -6,4 +6,9 @@ describe('confidence labels', () => {
     expect(toConfidenceLabel(0.58)).toBe('Medium');
     expect(toConfidenceLabel(0.83)).toBe('High');
   });
+
+  it('includes exact threshold scores in the higher label', () => {
+    expect(toConfidenceLabel(0.45)).toBe('Medium');
+    expect(toConfidenceLabel(0.75)).toBe('High');
+  });
 });
