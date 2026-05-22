@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { toConfidenceLabel } from '../src/utils/confidence';
 
 describe('confidence labels', () => {
