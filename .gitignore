@@ -1,2 +1,10 @@
 .superpowers/
 .worktrees/
+node_modules/
+apps/mobile/node_modules/
+apps/mobile/.expo/
+apps/mobile/dist/
+.env
+.env.*
+supabase/.env
+supabase/functions/.env
