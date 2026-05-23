@@ -465,15 +465,43 @@ Review result:
 
 - Screen wiring is ready for live search testing once the function runtime is available.
 
+### Task 11: Add Local Prototype Reminders
+
+Implemented and code-verified. Actual notification delivery still needs device-level permission flow in Expo Go.
+
+Commit:
+
+- `07a0004` feat: add local prototype reminders
+
+Files added or changed:
+
+- `apps/mobile/src/notifications/localReminders.ts`
+- `apps/mobile/src/screens/HomeScreen.tsx`
+
+What exists now:
+
+- Notification helper requests permission and schedules a time-interval reminder.
+- Home screen Sleep card now schedules a prototype nap reminder.
+- Reminder wiring is test-safe because notifications are loaded lazily and skipped under Jest.
+
+Verification:
+
+- `npm test` passed: 6 suites, 17 tests.
+- `npx tsc --noEmit` passed.
+
+Review result:
+
+- Reminder code is ready for manual Expo Go testing on a device.
+
 ## Next Task To Resume
 
 Current active point:
 
-- Start Task 11.
+- Start Task 12.
 
 Next task in `docs/superpowers/plans/2026-05-22-littlenest-ai-prototype.md`:
 
-- Add local prototype reminders.
+- Final verification pass.
 
 Before resuming:
 
