@@ -305,15 +305,55 @@ Review result:
   - Docker Desktop for local Supabase reset, or
   - a dedicated remote Supabase project/branch for safe migration validation
 
+### Task 7: Connect Supabase Auth And Repository Layer
+
+Implemented and app-shell verified. Live sign-in still needs real project env values before it can be exercised end to end.
+
+Commit:
+
+- `e3a281d` feat: connect Supabase auth for admin prototype
+
+Files added or changed:
+
+- `apps/mobile/.env.example`
+- `apps/mobile/src/services/supabase.ts`
+- `apps/mobile/src/services/trackingRepository.ts`
+- `apps/mobile/src/screens/LoginScreen.tsx`
+- `apps/mobile/src/screens/FamilySetupScreen.tsx`
+- `apps/mobile/src/navigation/RootNavigator.tsx`
+
+What exists now:
+
+- Expo env example documents the required public Supabase URL and publishable key.
+- Supabase client is configured with persisted auth storage for the mobile app.
+- Repository helpers exist for:
+  - admin email/password sign-in
+  - current session lookup
+  - inserting tracking logs
+- Login screen now has a real admin sign-in form with friendly prototype copy and env-aware error handling.
+- Family setup screen now presents friendly single/twins prototype options instead of a blank placeholder.
+- Root navigation now supports an auth gate when Supabase env vars are present, but still falls back to mock-mode tabs when they are not configured yet.
+
+Verification:
+
+- `npm test` passed: 6 suites, 17 tests.
+- `npx tsc --noEmit` passed.
+- `npx expo start --clear` reached Metro and `http://localhost:8081`.
+- Live Supabase sign-in was not exercised yet because the app does not have real project env values configured in this workspace.
+
+Review result:
+
+- Code is ready for later live auth testing once a dedicated project URL and publishable key are available.
+
 ## Next Task To Resume
 
 Current active point:
 
-- Start Task 7.
+- Start Task 8.
 
 Next task in `docs/superpowers/plans/2026-05-22-littlenest-ai-prototype.md`:
 
-- Connect Supabase auth and repository layer.
+- Add Supabase Edge Functions for AI routing.
 
 Before resuming:
 
