@@ -149,21 +149,90 @@ Code review result:
   - Move `surface` and `border` inline hex values into named theme tokens later.
   - Add deeper tests for the full boy+girl split accent object later.
 
+### Task 4: Navigation And Core UI Components
+
+Implemented and reviewed. Spec review passed. Code quality review found follow-up fixes before Task 5.
+
+Commit:
+
+- `a9cd5dc` Task 4: build mobile navigation skeleton
+
+Files added or changed:
+
+- `apps/mobile/App.tsx`
+- `apps/mobile/__tests__/app.test.tsx`
+- `apps/mobile/src/navigation/RootNavigator.tsx`
+- `apps/mobile/src/navigation/tabs.ts`
+- `apps/mobile/src/components/Screen.tsx`
+- `apps/mobile/src/components/ActionCard.tsx`
+- `apps/mobile/src/components/AiSuggestionCard.tsx`
+- `apps/mobile/src/components/ConfidenceBadge.tsx`
+- `apps/mobile/src/components/FoodTestProgress.tsx`
+- `apps/mobile/src/screens/SleepScreen.tsx`
+- `apps/mobile/src/screens/FoodScreen.tsx`
+- `apps/mobile/src/screens/HomeScreen.tsx`
+- `apps/mobile/src/screens/FeedScreen.tsx`
+- `apps/mobile/src/screens/AiScreen.tsx`
+- `apps/mobile/src/screens/LoginScreen.tsx`
+- `apps/mobile/src/screens/FamilySetupScreen.tsx`
+- `apps/mobile/src/screens/GrowthScreen.tsx`
+- `apps/mobile/src/screens/TwinsHomeScreen.tsx`
+
+What exists now:
+
+- Root app renders a bottom-tab navigator.
+- Five primary tabs exist: Sleep, Food, Home, Feed, AI.
+- Core reusable shell components exist for:
+  - screen wrapper
+  - action card
+  - AI suggestion card
+  - confidence badge
+  - food test progress
+- First-pass screen stubs exist for all planned screens needed by the navigator.
+
+Verification:
+
+- `npm test` passed: 5 suites, 15 tests.
+- `npx tsc --noEmit` passed.
+- Expo startup check reached Metro and `http://localhost:8081`.
+- A sandbox/environment warning appeared about React Native DevTools cache creation under `C:\Users\gal\AppData\Local\dotslash`, but it did not indicate an app code failure.
+
+Spec review result:
+
+- Ready: yes.
+- Extra `apps/mobile/__tests__/app.test.tsx` was accepted as in-scope verification, not scope creep.
+
+Code quality review result:
+
+- Not ready to carry forward unchanged.
+- Important fixes requested:
+  - Add `SafeAreaProvider` at the app root.
+  - Improve `Screen` so scrolling is opt-in or configurable, not forced for every screen.
+  - Replace fixed bottom padding `96` with safe-area/tab-bar aware spacing.
+  - Derive React Navigation theme from the existing app theme, not a separate stock theme path.
+  - Strengthen `apps/mobile/__tests__/app.test.tsx` so it verifies the shell more meaningfully.
+- Minor follow-ups later:
+  - Remove dead `label` data from `tabs.ts` if still unused.
+  - Reduce hardcoded secondary colors in components over time.
+
 ## Next Task To Resume
 
-Resume from Task 4 in `docs/superpowers/plans/2026-05-22-littlenest-ai-prototype.md`:
+Current active point:
 
-- Build navigation and core UI components.
+- Fix Task 4 code quality review issues.
+
+If the review passes, continue with Task 5 in `docs/superpowers/plans/2026-05-22-littlenest-ai-prototype.md`:
+
+- Build approved dashboard screens with mock data.
 
 Before resuming:
 
 1. Work from `C:\Users\gal\Documents\web desgin\.worktrees\littlenest-ai-prototype`.
 2. Confirm `git status --short --branch` is clean.
 3. Continue the subagent-driven workflow:
-   - Implement Task 4.
-   - Spec compliance review.
-   - Code quality review.
-   - Fix any review issues before Task 5.
+   - Apply Task 4 fixes from code review.
+   - Re-run Task 4 spec/code-quality review if needed.
+   - Then start Task 5.
 
 ## Do Not Forget
 
