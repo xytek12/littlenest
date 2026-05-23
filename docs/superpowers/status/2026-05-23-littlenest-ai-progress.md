@@ -870,3 +870,48 @@ Current device test instruction:
 
 - Scan the newest QR code from the visible Expo window.
 - Test login, family setup, bottom tab icons, Sleep start/end, Feed notes, Food recipe search cards, and AI comparison.
+
+## 2026-05-24 UI Refresh Lock
+
+The user completed a browser-based design review and approved the refreshed prototype direction, with one last recipe readability tweak also approved.
+
+Tracked design backup:
+
+- `docs/superpowers/specs/2026-05-24-littlenest-ui-refresh-design.md`
+
+Key locked product decisions:
+
+- Bottom nav changes from `Sleep / Food / Home / Feed / AI` to:
+  - `Recipes / Home / AI / Growth`
+- `Sleep`, `Feed`, and `Food Tasting` become Home entry points instead of permanent tabs.
+- Home AI stays in learning mode until 14 days of real tracking data exist.
+- Single-child color rule is strict:
+  - single boy never shows pink accents
+  - single girl never shows blue accents
+- Twins keep current split-color logic.
+- Header keeps only child info plus settings gear.
+- Settings adds `mL / oz` feed-unit switching.
+- Sleep needs:
+  - running timer
+  - total sleep duration on end
+  - exact times
+  - manual wake-count question on session end
+- Feed needs:
+  - bottom-sheet entry flow
+  - nursing vs bottle choice
+  - side-by-side left/right breast controls with separate start/stop
+  - bottle presets plus manual override
+- Recipes need:
+  - real food photos
+  - dish name below image
+  - readable benefit summary
+  - direct source link opening the original recipe website
+  - once-per-day recipe rotation
+- Food tasting needs a Supabase allergen reference table seeded from trusted health sources with grouped categories and detailed fish/nut items.
+- OpenAI must work in the final prototype and must never expose raw provider/quota error text in the UI.
+- App icon still needs to appear correctly in Expo Go / launcher surfaces during implementation.
+
+Execution readiness note:
+
+- The browser mockups live under ignored `.superpowers/brainstorm/...` files and are not the long-term backup.
+- The new spec file above is the source of truth for the next implementation pass.
