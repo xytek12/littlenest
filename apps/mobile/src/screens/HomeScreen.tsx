@@ -4,15 +4,23 @@ import { ActionCard } from '../components/ActionCard';
 import { AiSuggestionCard } from '../components/AiSuggestionCard';
 import { FoodTestProgress } from '../components/FoodTestProgress';
 import { Screen } from '../components/Screen';
-import { mockAiSuggestion, mockChild, mockFood } from '../data/mockSeed';
+import { mockAiSuggestion, mockFood } from '../data/mockSeed';
 import { schedulePrototypeReminder } from '../notifications/localReminders';
+import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
+import { getAccentTheme } from '../theme/theme';
 import { useAppTheme } from '../theme/useAppTheme';
 import { getAgeLabel } from '../utils/age';
 
 export function HomeScreen() {
   const theme = useAppTheme();
+  const { activeChild, editFamily, family, logs } = usePrototypeState();
   const [reminderMessage, setReminderMessage] = useState<string | null>(null);
+  const accent = getAccentTheme(
+    family.mode === 'twins'
+      ? { mode: 'twins', twinType: family.twinType ?? 'boy_girl' }
+      : { mode: 'single', sex: activeChild.sex },
+  );
 
   async function handleNapReminder() {
     const id = await schedulePrototypeReminder({
@@ -29,18 +37,18 @@ export function HomeScreen() {
       <View style={styles.header}>
         <View>
           <Text style={[styles.kicker, { color: '#6B7D91' }]}>Good morning</Text>
-          <Text style={[styles.title, { color: theme.text }]}>{mockChild.displayName}</Text>
+          <Text style={[styles.title, { color: theme.text }]}>{activeChild.displayName}</Text>
           <Text style={[styles.subtitle, { color: '#6B7D91' }]}>
-            {getAgeLabel(mockChild.dateOfBirth)}
+            {getAgeLabel(activeChild.dateOfBirth)}
           </Text>
         </View>
       </View>
 
       <AiSuggestionCard
         title={mockAiSuggestion.title}
-        explanation={mockAiSuggestion.explanation}
+        explanation={`Based on ${activeChild.displayName}'s current test profile and recent logs.`}
         confidence={mockAiSuggestion.confidence}
-        accent={colors.pink}
+        accent={accent.primary}
       />
 
       <ActionCard
@@ -51,6 +59,12 @@ export function HomeScreen() {
       />
       <ActionCard title="Feed" subtitle="Likely hungry near 11:40" accent={colors.sage} />
       <ActionCard
+        title="Family setup"
+        subtitle={family.mode === 'twins' ? 'Edit twins test profile.' : 'Edit child test profile.'}
+        accent={accent.secondary ?? accent.primary}
+        onPress={editFamily}
+      />
+      <ActionCard
         title="Food tasting"
         subtitle={`${mockFood.name} test progress`}
         accent={colors.pink}
@@ -59,6 +73,11 @@ export function HomeScreen() {
       </ActionCard>
 
       {reminderMessage ? <Text style={styles.reminderMessage}>{reminderMessage}</Text> : null}
+      {logs.slice(0, 3).map((log) => (
+        <Text key={log.id} style={styles.logLine}>
+          {log.title}: {log.note}
+        </Text>
+      ))}
     </Screen>
   );
 }
@@ -72,5 +91,10 @@ const styles = StyleSheet.create({
     color: '#36506B',
     marginTop: 4,
     lineHeight: 20,
+  },
+  logLine: {
+    color: '#6B7D91',
+    lineHeight: 20,
+    marginTop: 4,
   },
 });

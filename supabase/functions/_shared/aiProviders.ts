@@ -37,7 +37,11 @@ function normalizeSources(value: unknown): AiSource[] {
 }
 
 function parseJsonObject(text: string) {
-  const trimmed = text.trim();
+  const trimmed = text
+    .trim()
+    .replace(/^```(?:json)?/i, '')
+    .replace(/```$/i, '')
+    .trim();
 
   try {
     return JSON.parse(trimmed);
@@ -73,7 +77,13 @@ function parseAnswer(provider: 'gemini' | 'openai', text: string, raw: unknown, 
   return {
     provider,
     title: 'Suggestion',
-    body: text || 'No answer returned.',
+    body:
+      text
+        .replace(/^```(?:json)?/i, '')
+        .replace(/```$/i, '')
+        .replace(/\\n/g, '\n')
+        .replace(/\*\*/g, '')
+        .trim() || 'No answer returned.',
     confidenceLabel: 'Low',
     sources: fallbackSources,
     raw,

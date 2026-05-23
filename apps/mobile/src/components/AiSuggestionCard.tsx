@@ -24,8 +24,8 @@ export function AiSuggestionCard({ title, explanation, confidence, accent }: Pro
 }
 
 const styles = StyleSheet.create({
-  card: { borderWidth: 1, borderRadius: 22, padding: 16, marginBottom: 12 },
+  card: { borderWidth: 1, borderRadius: 16, padding: 16, marginBottom: 12 },
   eyebrow: { fontSize: 12, fontWeight: '800' },
   title: { fontSize: 20, fontWeight: '900', marginTop: 4 },
-  explanation: { color: '#6B7D91', marginVertical: 8 },
+  explanation: { color: '#6B7D91', marginVertical: 8, lineHeight: 21 },
 });

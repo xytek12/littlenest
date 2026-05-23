@@ -737,3 +737,120 @@ Current running server:
   - app name `LittleNest AI`
 
 Use this SDK 54 setup as the known-good Expo Go target unless the user later confirms a different Expo Go runtime on the device.
+
+## Prototype Bug-Fix Pass After Device Review
+
+The user tested the app on device and reported several real prototype blockers:
+
+- Food recipe suggestions rendered raw JSON / markdown fences instead of a clean parent-facing card.
+- AI screen showed `Edge Function returned a non-2xx status code`.
+- Family/child configuration was not reachable after login.
+- Bottom navigation looked broken because it used placeholder triangle icons.
+- Sleep start/end cards were static and did not actually do anything.
+- Feed cards were also static.
+- The app needed a broader review for missing first-prototype workflows.
+
+Server handling:
+
+- The running Expo server on ports `8081`/`8082` was stopped before debugging.
+- Expo SDK 54 remains the known-good device target.
+
+Mobile fixes completed locally:
+
+- Added `PrototypeStateProvider` with AsyncStorage persistence for:
+  - first-run family setup state
+  - selected child/twins profile
+  - local sleep/feed prototype logs
+  - active sleep session state
+- Changed the logged-in app flow so it shows `FamilySetupScreen` before tabs until a child/twins profile is configured.
+- Expanded `FamilySetupScreen` so the tester can choose:
+  - one baby
+  - twin boys
+  - twin girls
+  - boy+girl twins
+  - child names
+  - sex for one-baby mode
+  - date of birth
+- Added an edit path from Home back to family setup.
+- Reworked bottom tabs to use real Expo vector icons instead of placeholder triangles.
+- Added `@expo/vector-icons`, `expo-asset`, and `expo-font`.
+- Made Sleep actions functional:
+  - Start sleep saves an active sleep session.
+  - End sleep saves a wake-up log.
+  - Latest sleep notes render on the Sleep screen.
+- Made Feed actions functional:
+  - Bottle/nursing saves a feed log.
+  - Hunger note saves a feed log.
+  - Latest feed notes render on the Feed screen.
+- Updated Home to use the configured child profile instead of only static mock child data.
+- Added `src/ai/format.ts` to clean AI/recipe responses:
+  - extracts JSON from fenced markdown
+  - converts escaped `\n` into real line breaks
+  - removes markdown bold markers
+  - keeps readable source titles instead of giant raw URLs
+- Food screen now normalizes recipe-search results before rendering and opens source URLs when tapped.
+- AI screen now uses configured child/log context and normalizes provider answers before display.
+- Added regression test `__tests__/aiFormat.test.ts` for the raw JSON/markdown food-suggestion bug.
+- Added Jest mocks for AsyncStorage and vector icons so tests stay stable.
+
+Supabase Edge Function fixes completed and deployed:
+
+- `ai-router` version 8 deployed through the Supabase connector.
+- `recipe-search` version 8 deployed through the Supabase connector.
+- `ai-router` now uses `Promise.allSettled`, so one provider failing no longer forces the whole Edge Function to return non-2xx.
+- Provider failures now render as low-confidence provider cards for admin comparison instead of crashing the request.
+- Recipe prompt now asks Gemini for valid JSON only and no markdown fences.
+- Shared parser now strips code fences and cleans escaped newlines when the model does not return perfect JSON.
+
+Verification completed:
+
+- `npx tsc --noEmit` passes.
+- `npm test -- --watchAll=false` passes: 7 suites / 18 tests.
+- `npx expo config --type public` reports SDK `54.0.0`, app name `LittleNest AI`, and correct app config.
+- `npx expo install --check` passed once after the dependency changes and reported dependencies up to date.
+
+Blocked by account usage/approval limit:
+
+- A final `npx expo install --check` attempt was rejected by the approval reviewer because the account usage limit was reached.
+- Reopening a fresh visible Expo server also still needs to be done after the limit resets, because opening a visible terminal requires escalation in this environment.
+- Git push may also need to happen after the limit resets if network operations require escalation.
+
+Immediate next steps after usage resets:
+
+1. Commit/push if not already completed.
+2. Start a fresh visible Expo server:
+   - working directory: `apps/mobile`
+   - command: `npx expo start --lan --clear`
+3. Scan the new QR in Expo Go.
+4. Test in this order:
+   - login
+   - family setup appears
+   - configure child/twins
+   - bottom tabs show icons
+   - Sleep start/end records notes
+   - Feed records notes
+   - Food recipe search renders clean cards
+   - AI screen no longer crashes on one provider failure
+
+## Post-Compaction Resume Check
+
+Resumed at `2026-05-23 23:38:37 +03:00` after conversation compaction.
+
+Fresh verification completed:
+
+- `npm test -- --watchAll=false` passes: 7 suites / 18 tests.
+- `npx tsc --noEmit` passes.
+- `npx expo config --type public` reports:
+  - `name: LittleNest AI`
+  - `sdkVersion: 54.0.0`
+  - root plugins: `expo-asset`, `expo-font`
+- `npx expo install --check` passes with `Dependencies are up to date`.
+
+Server state before restart:
+
+- No process was listening on Expo ports `8081` or `8082`.
+
+Next steps:
+
+- Commit and push the verified bug-fix pass.
+- Reopen a fresh LAN Expo server for the iPhone test.

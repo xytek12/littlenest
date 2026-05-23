@@ -2,7 +2,21 @@ import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { callGemini, callOpenAi } from '../_shared/aiProviders.ts';
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts';
 import { buildBabyGuidancePrompt } from '../_shared/promptBuilder.ts';
-import type { AiRouterResponse } from '../_shared/responseSchema.ts';
+import type { AiRouterResponse, ProviderAnswer, ProviderName } from '../_shared/responseSchema.ts';
+
+function providerErrorAnswer(provider: ProviderName, error: unknown): ProviderAnswer {
+  return {
+    provider,
+    title: `${provider === 'gemini' ? 'Gemini' : 'OpenAI'} needs attention`,
+    body:
+      error instanceof Error
+        ? error.message
+        : 'The provider did not return a usable response.',
+    confidenceLabel: 'Low',
+    sources: [],
+    raw: null,
+  };
+}
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -18,12 +32,22 @@ Deno.serve(async (req) => {
     const prompt = buildBabyGuidancePrompt(input);
     const useSearch = input.promptType === 'recipe' || input.promptType === 'food_tasting';
 
-    const [gemini, openai] = await Promise.all([
+    const [geminiResult, openaiResult] = await Promise.allSettled([
       callGemini(prompt, useSearch),
       callOpenAi(prompt),
     ]);
 
-    const recommended = gemini.confidenceLabel === 'High' ? gemini : openai;
+    const gemini =
+      geminiResult.status === 'fulfilled'
+        ? geminiResult.value
+        : providerErrorAnswer('gemini', geminiResult.reason);
+    const openai =
+      openaiResult.status === 'fulfilled'
+        ? openaiResult.value
+        : providerErrorAnswer('openai', openaiResult.reason);
+
+    const recommended =
+      gemini.confidenceLabel === 'High' || openai.confidenceLabel === 'Low' ? gemini : openai;
     const body: AiRouterResponse = {
       recommended,
       comparison: [gemini, openai],

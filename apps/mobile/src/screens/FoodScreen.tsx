@@ -1,17 +1,20 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { searchRecipes } from '../ai/client';
+import { formatSourceTitle, normalizeProviderAnswer } from '../ai/format';
 import { ActionCard } from '../components/ActionCard';
 import { ConfidenceBadge } from '../components/ConfidenceBadge';
 import { FoodTestProgress } from '../components/FoodTestProgress';
 import { Screen } from '../components/Screen';
-import { mockChild, mockFamily, mockFood } from '../data/mockSeed';
+import { mockFood } from '../data/mockSeed';
+import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 import { getAgeInMonths } from '../utils/age';
 
 export function FoodScreen() {
   const theme = useAppTheme();
+  const { activeChild, family } = usePrototypeState();
   const [query, setQuery] = useState('first tastes and recipes');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -25,11 +28,11 @@ export function FoodScreen() {
 
     try {
       const nextResults = await searchRecipes({
-        language: mockFamily.language,
-        childAgeMonths: getAgeInMonths(mockChild.dateOfBirth),
+        language: family.language,
+        childAgeMonths: getAgeInMonths(activeChild.dateOfBirth),
         query,
       });
-      setResults(nextResults);
+      setResults(nextResults.map(normalizeProviderAnswer));
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Recipe search failed');
     } finally {
@@ -40,7 +43,9 @@ export function FoodScreen() {
   return (
     <Screen testID="screen-food" scroll>
       <Text style={[styles.title, { color: theme.text }]}>Food</Text>
-      <Text style={styles.subtitle}>4-24 months</Text>
+      <Text style={styles.subtitle}>
+        Ideas for {activeChild.displayName}, {getAgeInMonths(activeChild.dateOfBirth)} months old
+      </Text>
       <ActionCard
         title="Food tasting"
         subtitle="Mark 1/3, 2/3, or 3/3."
@@ -91,9 +96,11 @@ export function FoodScreen() {
           </View>
           <Text style={styles.resultBody}>{result.body}</Text>
           {result.sources.slice(0, 3).map((source) => (
-            <Text key={source.url} style={styles.sourceText}>
-              {source.title} - {source.url}
-            </Text>
+            <Pressable key={source.url} onPress={() => Linking.openURL(source.url)}>
+              <Text style={styles.sourceText}>
+                {source.title || formatSourceTitle(source.url)}
+              </Text>
+            </Pressable>
           ))}
         </View>
       ))}
@@ -162,7 +169,7 @@ const styles = StyleSheet.create({
   },
   resultBody: {
     color: '#5B6B7C',
-    lineHeight: 20,
+    lineHeight: 22,
     marginTop: 10,
     marginBottom: 10,
   },
@@ -171,5 +178,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     marginTop: 4,
+    fontWeight: '800',
   },
 });

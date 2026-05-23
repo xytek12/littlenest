@@ -20,7 +20,14 @@ Use trusted medical, health, parenting, and child nutrition sources first.
 General recipe sites are allowed only as inspiration and must be labeled as inspiration.
 Include source links.
 Question: ${query}
-Return JSON with keys: title, body, confidenceLabel, sources.
+Return only valid JSON. Do not use markdown fences.
+Use this shape exactly:
+{
+  "title": "short title",
+  "body": "short parent-friendly explanation with 3-5 recipe ideas",
+  "confidenceLabel": "Low" | "Medium" | "High",
+  "sources": [{ "title": "source name", "url": "https://..." }]
+}
 `;
     const answer = await callGemini(prompt, true);
     return jsonResponse({ results: [answer] });

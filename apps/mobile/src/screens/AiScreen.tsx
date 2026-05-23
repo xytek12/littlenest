@@ -5,8 +5,9 @@ import { AiSuggestionCard } from '../components/AiSuggestionCard';
 import { ConfidenceBadge } from '../components/ConfidenceBadge';
 import { Screen } from '../components/Screen';
 import { requestAiGuidance } from '../ai/client';
+import { formatSourceTitle, normalizeProviderAnswer } from '../ai/format';
 import type { ProviderAnswer } from '../ai/types';
-import { mockChild, mockFamily } from '../data/mockSeed';
+import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 import { getAgeInMonths } from '../utils/age';
@@ -15,13 +16,17 @@ const feedbackOptions = ['Good', 'Okay', 'Bad'] as const;
 
 export function AiScreen() {
   const theme = useAppTheme();
+  const { activeChild, family, logs } = usePrototypeState();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [safetyNote, setSafetyNote] = useState<string | null>(null);
   const [recommended, setRecommended] = useState<ProviderAnswer | null>(null);
   const [comparison, setComparison] = useState<ProviderAnswer[]>([]);
   const [feedbackByProvider, setFeedbackByProvider] = useState<Record<string, string>>({});
-  const childAgeMonths = useMemo(() => getAgeInMonths(mockChild.dateOfBirth), []);
+  const childAgeMonths = useMemo(
+    () => getAgeInMonths(activeChild.dateOfBirth),
+    [activeChild.dateOfBirth],
+  );
 
   async function handleCompare() {
     setLoading(true);
@@ -29,30 +34,23 @@ export function AiScreen() {
 
     try {
       const response = await requestAiGuidance({
-        language: mockFamily.language,
+        language: family.language,
         promptType: 'sleep',
         childAgeMonths,
-        childProfile: mockChild,
-        recentLogs: [
-          {
-            type: 'sleep',
-            endedAt: '2026-05-23T09:35:00.000Z',
-            note: 'Woke up calm after a short morning nap.',
-          },
-          {
-            type: 'feed',
-            startedAt: '2026-05-23T07:10:00.000Z',
-            note: 'Bottle finished well.',
-          },
-        ],
-        userQuestion: 'Which provider gives the best next suggestion for sleep or hunger timing?',
+        childProfile: activeChild,
+        recentLogs: logs.slice(0, 6),
+        userQuestion: `Which provider gives the best next suggestion for ${activeChild.displayName}'s sleep or hunger timing?`,
       });
 
-      setRecommended(response.recommended);
-      setComparison(response.comparison);
+      setRecommended(normalizeProviderAnswer(response.recommended));
+      setComparison(response.comparison.map(normalizeProviderAnswer));
       setSafetyNote(response.safetyNote);
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'AI request failed');
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'AI request failed. Please check the Supabase function logs.',
+      );
     } finally {
       setLoading(false);
     }
@@ -80,7 +78,7 @@ export function AiScreen() {
         onPress={handleCompare}
       >
         <Text style={styles.actionHint}>
-          Current test prompt: sleep window and likely next need for {mockChild.displayName}.
+          Current test prompt: sleep window and likely next need for {activeChild.displayName}.
         </Text>
       </ActionCard>
 
@@ -165,7 +163,7 @@ function ProviderCard({
         <View style={styles.sourcesBlock}>
           {answer.sources.slice(0, 3).map((source) => (
             <Text key={`${answer.provider}-${source.url}`} style={styles.sourceText}>
-              {source.title} - {source.url}
+              {source.title || formatSourceTitle(source.url)}
             </Text>
           ))}
         </View>
