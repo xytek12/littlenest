@@ -395,15 +395,53 @@ Review result:
 
 - Function code is ready for remote deployment or local serving once Docker or a dedicated project is available.
 
+### Task 9: Connect Mobile AI And Admin Comparison
+
+Implemented and code-verified. Live function invocation still depends on real Supabase env values and a deployed or locally served function target.
+
+Commit:
+
+- `f73f69c` feat: connect admin AI comparison
+
+Files added or changed:
+
+- `apps/mobile/src/ai/types.ts`
+- `apps/mobile/src/ai/client.ts`
+- `apps/mobile/src/screens/AiScreen.tsx`
+
+What exists now:
+
+- Mobile AI types describe request payloads, provider answers, and router responses.
+- Mobile AI client can invoke:
+  - `ai-router`
+  - `recipe-search`
+- AI screen now includes:
+  - a live `Compare Gemini + OpenAI` action
+  - a recommended answer card
+  - horizontally scrollable provider comparison cards
+  - provider confidence labels
+  - visible source URLs
+  - per-provider feedback buttons: Good / Okay / Bad
+- When Supabase env vars are missing, the screen now fails gracefully with a readable error instead of crashing the app.
+
+Verification:
+
+- `npm test` passed: 6 suites, 17 tests.
+- `npx tsc --noEmit` passed.
+
+Review result:
+
+- UI wiring is ready for live AI testing once the function runtime is available.
+
 ## Next Task To Resume
 
 Current active point:
 
-- Start Task 9.
+- Start Task 10.
 
 Next task in `docs/superpowers/plans/2026-05-22-littlenest-ai-prototype.md`:
 
-- Connect mobile AI and admin comparison.
+- Add food and recipe search flow.
 
 Before resuming:
 
