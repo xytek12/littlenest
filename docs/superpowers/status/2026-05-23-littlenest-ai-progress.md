@@ -151,11 +151,12 @@ Code review result:
 
 ### Task 4: Navigation And Core UI Components
 
-Implemented and reviewed. Spec review passed. Code quality review found follow-up fixes before Task 5.
+Completed and reviewed.
 
-Commit:
+Commits:
 
 - `a9cd5dc` Task 4: build mobile navigation skeleton
+- `8a9b5b4` Task 4: tighten mobile shell review fixes
 
 Files added or changed:
 
@@ -189,12 +190,17 @@ What exists now:
   - confidence badge
   - food test progress
 - First-pass screen stubs exist for all planned screens needed by the navigator.
+- App root now uses `SafeAreaProvider`.
+- Screen wrapper now supports optional scrolling instead of forcing `ScrollView` everywhere.
+- Screen bottom spacing now uses safe-area insets instead of a fixed magic number.
+- Navigation theme now derives from the app theme hook.
+- Navigation shell tests now verify a real tab transition.
 
 Verification:
 
-- `npm test` passed: 5 suites, 15 tests.
+- `npm test` passed: 6 suites, 17 tests.
 - `npx tsc --noEmit` passed.
-- Expo startup check reached Metro and `http://localhost:8081`.
+- Expo startup check reached Metro and `http://localhost:8081` during Task 4 verification.
 - A sandbox/environment warning appeared about React Native DevTools cache creation under `C:\Users\gal\AppData\Local\dotslash`, but it did not indicate an app code failure.
 
 Spec review result:
@@ -204,24 +210,18 @@ Spec review result:
 
 Code quality review result:
 
-- Not ready to carry forward unchanged.
-- Important fixes requested:
-  - Add `SafeAreaProvider` at the app root.
-  - Improve `Screen` so scrolling is opt-in or configurable, not forced for every screen.
-  - Replace fixed bottom padding `96` with safe-area/tab-bar aware spacing.
-  - Derive React Navigation theme from the existing app theme, not a separate stock theme path.
-  - Strengthen `apps/mobile/__tests__/app.test.tsx` so it verifies the shell more meaningfully.
-- Minor follow-ups later:
-  - Remove dead `label` data from `tabs.ts` if still unused.
-  - Reduce hardcoded secondary colors in components over time.
+- Important fixes were applied and verified.
+- `tabs.ts` no longer carries the unused `label` field.
+- Remaining minor follow-up:
+  - Reduce hardcoded secondary colors in components over time if dark-mode polish becomes noisy later.
 
 ## Next Task To Resume
 
 Current active point:
 
-- Fix Task 4 code quality review issues.
+- Start Task 5.
 
-If the review passes, continue with Task 5 in `docs/superpowers/plans/2026-05-22-littlenest-ai-prototype.md`:
+Next task in `docs/superpowers/plans/2026-05-22-littlenest-ai-prototype.md`:
 
 - Build approved dashboard screens with mock data.
 
@@ -230,9 +230,9 @@ Before resuming:
 1. Work from `C:\Users\gal\Documents\web desgin\.worktrees\littlenest-ai-prototype`.
 2. Confirm `git status --short --branch` is clean.
 3. Continue the subagent-driven workflow:
-   - Apply Task 4 fixes from code review.
-   - Re-run Task 4 spec/code-quality review if needed.
-   - Then start Task 5.
+   - Implement Task 5.
+   - Review Task 5 for spec compliance.
+   - Review Task 5 for code quality.
 
 ## Do Not Forget
 
