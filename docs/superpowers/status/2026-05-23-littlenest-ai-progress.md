@@ -569,6 +569,16 @@ Still needed for full live app testing:
   - optional `GEMINI_MODEL`
 - Create an admin test user in Supabase Auth so the login screen has a real account to use.
 
+Live env update:
+
+- Local mobile `.env.local` is now configured against the live Supabase API URL.
+- Publishable key was validated with a real `auth.getSession()` call and returned successfully with no active session.
+- `app.json` now uses `userInterfaceStyle: automatic` so the prototype can actually follow phone system light/dark mode as approved in the product spec.
+
+Current next step for live device testing:
+
+- Create one email/password user in Supabase Auth, then sign in through the app.
+
 ## Next Task To Resume
 
 Current active point:
