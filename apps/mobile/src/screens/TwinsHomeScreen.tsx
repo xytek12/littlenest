@@ -3,7 +3,7 @@ import { Screen } from '../components/Screen';
 
 export function TwinsHomeScreen() {
   return (
-    <Screen>
+    <Screen testID="screen-twins-home">
       <Text>Twins Home</Text>
     </Screen>
   );

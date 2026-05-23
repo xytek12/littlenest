@@ -3,7 +3,7 @@ import { Screen } from '../components/Screen';
 
 export function AiScreen() {
   return (
-    <Screen>
+    <Screen testID="screen-ai">
       <Text>AI</Text>
     </Screen>
   );

@@ -3,7 +3,7 @@ import { Screen } from '../components/Screen';
 
 export function SleepScreen() {
   return (
-    <Screen>
+    <Screen testID="screen-sleep">
       <Text>Sleep</Text>
     </Screen>
   );

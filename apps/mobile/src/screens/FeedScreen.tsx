@@ -3,7 +3,7 @@ import { Screen } from '../components/Screen';
 
 export function FeedScreen() {
   return (
-    <Screen>
+    <Screen testID="screen-feed">
       <Text>Feed</Text>
     </Screen>
   );

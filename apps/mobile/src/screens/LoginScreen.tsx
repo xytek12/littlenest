@@ -3,7 +3,7 @@ import { Screen } from '../components/Screen';
 
 export function LoginScreen() {
   return (
-    <Screen>
+    <Screen testID="screen-login">
       <Text>Login</Text>
     </Screen>
   );

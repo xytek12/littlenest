@@ -3,7 +3,7 @@ import { Screen } from '../components/Screen';
 
 export function FamilySetupScreen() {
   return (
-    <Screen>
+    <Screen testID="screen-family-setup">
       <Text>Family Setup</Text>
     </Screen>
   );

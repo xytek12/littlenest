@@ -1,15 +1,19 @@
-import { describe, expect, it } from '@jest/globals';
-import { render } from '@testing-library/react-native';
+import { describe, expect, it, jest } from '@jest/globals';
+import { fireEvent, render } from '@testing-library/react-native';
 import App from '../App';
 
-describe('app shell', () => {
-  it('renders the primary bottom tabs', () => {
-    const { getAllByText, getByText } = render(<App />);
+jest.mock('react-native-safe-area-context', () => require('react-native-safe-area-context/jest/mock').default);
 
-    expect(getByText('Sleep')).toBeTruthy();
-    expect(getByText('Food')).toBeTruthy();
-    expect(getAllByText('Home').length).toBeGreaterThan(0);
-    expect(getByText('Feed')).toBeTruthy();
-    expect(getByText('AI')).toBeTruthy();
+describe('app shell', () => {
+  it('starts on the home screen and switches tabs', () => {
+    const { getByRole, getByTestId, queryByTestId } = render(<App />);
+
+    expect(getByTestId('screen-home')).toBeTruthy();
+    expect(queryByTestId('screen-sleep')).toBeNull();
+
+    fireEvent.press(getByRole('button', { name: /Sleep, tab/i }));
+
+    expect(getByTestId('screen-sleep')).toBeTruthy();
+    expect(queryByTestId('screen-home')).toBeNull();
   });
 });

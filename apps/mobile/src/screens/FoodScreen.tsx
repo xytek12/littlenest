@@ -3,7 +3,7 @@ import { Screen } from '../components/Screen';
 
 export function FoodScreen() {
   return (
-    <Screen>
+    <Screen testID="screen-food">
       <Text>Food</Text>
     </Screen>
   );

@@ -3,7 +3,7 @@ import { Screen } from '../components/Screen';
 
 export function GrowthScreen() {
   return (
-    <Screen>
+    <Screen testID="screen-growth">
       <Text>Growth</Text>
     </Screen>
   );
