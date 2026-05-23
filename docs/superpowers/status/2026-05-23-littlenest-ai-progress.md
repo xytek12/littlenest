@@ -640,3 +640,41 @@ Next step for the user:
 - Use the fresh SDK 55 build in Expo Go.
 - Prefer LAN mode if the iPhone and computer are on the same Wi-Fi network.
 - If LAN still does not connect cleanly, the next debugging target is machine-local Expo networking/tunnel behavior, not the app's SDK compatibility.
+
+## Metro Asset Path Follow-Up
+
+After the SDK 55 fix, a new runtime error appeared in the visible Expo session:
+
+- `ENOENT: no such file or directory, scandir '...apps\\mobile\\assets\\images'`
+
+Root-cause note:
+
+- The current checked-in app config points at `./assets/icon.png` and friends, but Metro was still receiving at least one request that expected the older Expo-template directory `assets/images/...`.
+- This lined up with the stale-session symptoms on device: a generic Expo Go incompatibility screen plus an asset path that did not match the current `app.json`.
+
+Follow-up fixes completed:
+
+- Renamed the Expo app identity from the generic defaults to the approved prototype name:
+  - `name: LittleNest AI`
+  - `slug: littlenest-ai`
+- Added a compatibility asset directory at `apps/mobile/assets/images/` containing:
+  - `icon.png`
+  - `favicon.png`
+  - `splash-icon.png`
+- Cleared the local `.expo` project cache and relaunched Expo in LAN mode.
+
+Verification:
+
+- `npx expo config --type public` now reports:
+  - `name: LittleNest AI`
+  - `slug: littlenest-ai`
+  - `sdkVersion: 55.0.0`
+- Fresh LAN startup log now reaches:
+  - `Waiting on http://localhost:8081`
+  - `Logs for your project will appear below.`
+- The `assets/images` Metro crash no longer appears during startup after the compatibility folder and cache reset.
+
+Current user instruction:
+
+- Close the stale project inside Expo Go.
+- Scan only the newest QR code from the fresh LAN Expo window for `LittleNest AI`.
