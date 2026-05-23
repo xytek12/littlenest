@@ -433,15 +433,47 @@ Review result:
 
 - UI wiring is ready for live AI testing once the function runtime is available.
 
+### Task 10: Add Food And Recipe Search Flow
+
+Implemented and code-verified. Live search still depends on Supabase env values plus a running or deployed `recipe-search` function.
+
+Commit:
+
+- `8b71abe` feat: add recipe search prototype flow
+
+Files added or changed:
+
+- `apps/mobile/src/screens/FoodScreen.tsx`
+
+What exists now:
+
+- Food screen now includes:
+  - `4-24 months` age framing
+  - default search query `first tastes and recipes`
+  - `Search trusted recipe ideas` action
+  - readable error handling
+  - rendered result cards with confidence labels
+  - visible source URLs
+  - food test progress inline with the tasting card
+
+Verification:
+
+- `npm test` passed: 6 suites, 17 tests.
+- `npx tsc --noEmit` passed.
+
+Review result:
+
+- Screen wiring is ready for live search testing once the function runtime is available.
+
 ## Next Task To Resume
 
 Current active point:
 
-- Start Task 10.
+- Start Task 11.
 
 Next task in `docs/superpowers/plans/2026-05-22-littlenest-ai-prototype.md`:
 
-- Add food and recipe search flow.
+- Add local prototype reminders.
 
 Before resuming:
 
