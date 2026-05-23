@@ -215,15 +215,57 @@ Code quality review result:
 - Remaining minor follow-up:
   - Reduce hardcoded secondary colors in components over time if dark-mode polish becomes noisy later.
 
+### Task 5: Approved Dashboard Screens With Mock Data
+
+Completed and verified.
+
+Commit:
+
+- `33e6f1b` feat: build approved prototype dashboard screens
+
+Files added or changed:
+
+- `apps/mobile/src/data/mockSeed.ts`
+- `apps/mobile/src/screens/HomeScreen.tsx`
+- `apps/mobile/src/screens/TwinsHomeScreen.tsx`
+- `apps/mobile/src/screens/SleepScreen.tsx`
+- `apps/mobile/src/screens/FeedScreen.tsx`
+- `apps/mobile/src/screens/FoodScreen.tsx`
+- `apps/mobile/src/screens/AiScreen.tsx`
+- `apps/mobile/src/screens/GrowthScreen.tsx`
+
+What exists now:
+
+- Mock seed data exists for a demo family, child, AI suggestion, and food test item.
+- Home now uses the approved soft-list feel with:
+  - child greeting and age
+  - prominent AI suggestion card
+  - sleep, feed, and food tasting action cards
+  - inline food allergy progress dots
+- Sleep, Feed, Food, AI, and Growth screens now show meaningful first-pass action cards instead of title-only placeholders.
+- Twins dashboard now shows both children together with separate visual status cards and an AI comparison summary card.
+
+Verification:
+
+- `npm test` passed: 6 suites, 17 tests.
+- `npx tsc --noEmit` passed.
+- `npx expo start --clear` reached Metro and `http://localhost:8081`.
+- Expo emitted a local environment warning about React Native DevTools cache creation under `C:\Users\gal\AppData\Local\dotslash`, but Metro still started and waited for connections.
+
+Review result:
+
+- Spec-compliant for Task 5.
+- Ready to continue into Supabase project setup.
+
 ## Next Task To Resume
 
 Current active point:
 
-- Start Task 5.
+- Start Task 6.
 
 Next task in `docs/superpowers/plans/2026-05-22-littlenest-ai-prototype.md`:
 
-- Build approved dashboard screens with mock data.
+- Create Supabase project skeleton and database schema.
 
 Before resuming:
 
