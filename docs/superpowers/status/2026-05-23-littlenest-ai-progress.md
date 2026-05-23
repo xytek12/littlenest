@@ -678,3 +678,29 @@ Current user instruction:
 
 - Close the stale project inside Expo Go.
 - Scan only the newest QR code from the fresh LAN Expo window for `LittleNest AI`.
+
+## Expo Go SDK Recheck
+
+The user still saw the incompatibility screen after the SDK 55 to SDK 54 change. The phone URL was `exp://192.168.7.13:8081`, so the running LAN manifest was checked directly through that IP.
+
+Findings:
+
+- The SDK 54 server was genuinely serving `runtimeVersion: exposdk:54.0.0`.
+- The iPhone still rejected that runtime, which means SDK 54 does not match the user's currently installed App Store Expo Go.
+- The app was moved back to SDK 55 while keeping the app identity and `assets/images` compatibility fixes.
+
+Final verified SDK state:
+
+- `npx expo install --check` reports: `Dependencies are up to date`.
+- `npm test -- --watchAll=false` passes: 6 suites / 17 tests.
+- `npx tsc --noEmit` passes.
+- Fresh LAN server listens on `192.168.7.13:8081`.
+- Direct LAN manifest check at `http://192.168.7.13:8081` reports:
+  - `runtimeVersion: exposdk:55.0.0`
+  - `sdkVersion: 55.0.0`
+  - app name `LittleNest AI`
+
+Next user test:
+
+- Scan the newest LAN QR from the fresh visible Expo window.
+- If Expo Go still rejects SDK 55, the next path is not more app code changes; it is confirming the installed Expo Go build/version or using an EAS/dev-client route for the exact SDK available to the user's device.
