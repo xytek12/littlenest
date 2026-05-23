@@ -530,6 +530,45 @@ What remains outside the repo:
 - Validate auth, AI compare, recipe search, and reminders on device in Expo Go.
 - Add a git remote if you want this branch pushed anywhere.
 
+## Post-Plan Live Integration Update
+
+After the original repo plan was completed, live infrastructure work continued.
+
+Supabase project connected:
+
+- Project ref: `lolesbmajbrhbsmvxgos`
+- Dashboard: `https://supabase.com/dashboard/project/lolesbmajbrhbsmvxgos`
+- API URL: `https://lolesbmajbrhbsmvxgos.supabase.co`
+
+Live changes completed:
+
+- Applied migration `initial_littlenest_schema`
+- Added and applied follow-up migration `add_profile_trigger_and_missing_fk_indexes`
+- Created private schema trigger function to auto-create profile rows from new `auth.users`
+- Deployed Edge Functions:
+  - `ai-router`
+  - `recipe-search`
+
+Remote verification completed:
+
+- `list_migrations` shows both migrations applied.
+- `list_edge_functions` shows both functions active with `verify_jwt=true`.
+- Security advisors are clean.
+- Performance advisors only show unused-index informational notices, which is expected on an empty new project.
+
+Still needed for full live app testing:
+
+- Copy the publishable key from the Supabase project's Connect dialog or API Keys page.
+- Set mobile env values:
+  - `EXPO_PUBLIC_SUPABASE_URL=https://lolesbmajbrhbsmvxgos.supabase.co`
+  - `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<your sb_publishable_... key>`
+- Add Supabase project secrets:
+  - `GEMINI_API_KEY`
+  - `OPENAI_API_KEY`
+  - optional `OPENAI_MODEL`
+  - optional `GEMINI_MODEL`
+- Create an admin test user in Supabase Auth so the login screen has a real account to use.
+
 ## Next Task To Resume
 
 Current active point:
