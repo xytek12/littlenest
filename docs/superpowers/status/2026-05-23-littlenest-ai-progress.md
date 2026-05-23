@@ -605,3 +605,38 @@ Before resuming:
 - Do not expose Supabase service-role keys to the client.
 - Keep the UI friendly and colorful, not grey or clinical.
 - Keep side-by-side Gemini/OpenAI comparison admin-only.
+
+## Expo Go Compatibility Update
+
+Root cause found for the iPhone failure:
+
+- The mobile app was still on Expo SDK 56.
+- Expo's official SDK 56 release notes state that SDK 56 was released on 2026-05-21 and that Expo Go for SDK 56 is not yet available on the iOS App Store.
+- This exactly matched the phone screenshot: "Project is incompatible with this version of Expo Go" and "requires a newer version of Expo Go."
+
+Fix completed:
+
+- Removed the broken `apps/mobile/node_modules` tree using the Windows long-path prefix because normal PowerShell recursive delete failed on nested React Native paths.
+- Downgraded the mobile app from Expo SDK 56 to Expo SDK 55 for physical-device Expo Go testing.
+- Reinstalled dependencies and let `npx expo install --fix` align Expo-managed packages.
+- Current key mobile versions:
+  - `expo@55.0.26`
+  - `expo-notifications@55.0.23`
+  - `expo-status-bar@55.0.6`
+  - `react-native@0.83.6`
+  - `typescript@5.9.3`
+- `npx expo install --check` now reports: `Dependencies are up to date`.
+- `npm test -- --watchAll=false` passes: 6 suites / 17 tests.
+- `npx tsc --noEmit` passes.
+
+Current Expo runtime notes:
+
+- `npx expo start --tunnel --clear` no longer fails for SDK mismatch, but tunnel mode is still unreliable on this machine and ends with `ngrok tunnel took too long to connect`.
+- `npx expo start --lan --clear` does start Metro successfully and shows `Waiting on http://localhost:8081`.
+- Expo logs also show a non-fatal local Windows permission warning while trying to auto-fetch the latest React Native DevTools through `dotslash` under `C:\Users\gal\AppData\Local\dotslash`. Expo reports it is falling back after that warning.
+
+Next step for the user:
+
+- Use the fresh SDK 55 build in Expo Go.
+- Prefer LAN mode if the iPhone and computer are on the same Wi-Fi network.
+- If LAN still does not connect cleanly, the next debugging target is machine-local Expo networking/tunnel behavior, not the app's SDK compatibility.
