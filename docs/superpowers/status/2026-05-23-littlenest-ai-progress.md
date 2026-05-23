@@ -704,3 +704,36 @@ Next user test:
 
 - Scan the newest LAN QR from the fresh visible Expo window.
 - If Expo Go still rejects SDK 55, the next path is not more app code changes; it is confirming the installed Expo Go build/version or using an EAS/dev-client route for the exact SDK available to the user's device.
+
+## Final Expo Go Working Target
+
+The user confirmed that SDK 54 with React 19.1 worked on the physical iPhone. Per that device result, the app was downgraded back to SDK 54 and the server was restarted.
+
+Actions completed:
+
+- Stopped the existing Expo/Metro server on port `8081`.
+- Pinned the mobile app back to the working Expo Go target:
+  - `expo@54.0.34`
+  - `react@19.1.0`
+  - `react-native@0.81.5`
+  - `react-test-renderer@19.1.0`
+  - `jest-expo@54.0.17`
+  - `expo-device@8.0.10`
+  - `expo-notifications@0.32.17`
+  - `expo-status-bar@3.0.9`
+- Removed `node_modules` and `package-lock.json`, then ran a clean `npm install`.
+- `npx expo install --check` reports: `Dependencies are up to date`.
+- `npm test -- --watchAll=false` passes: 6 suites / 17 tests.
+- `npx tsc --noEmit` passes.
+- Cleared `.expo` and reopened a fresh visible LAN Expo server.
+
+Current running server:
+
+- Port: `8081`
+- LAN host: `192.168.7.13:8081`
+- Direct LAN manifest check reports:
+  - `runtimeVersion: exposdk:54.0.0`
+  - `sdkVersion: 54.0.0`
+  - app name `LittleNest AI`
+
+Use this SDK 54 setup as the known-good Expo Go target unless the user later confirms a different Expo Go runtime on the device.
