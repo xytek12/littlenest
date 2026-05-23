@@ -257,15 +257,63 @@ Review result:
 - Spec-compliant for Task 5.
 - Ready to continue into Supabase project setup.
 
+### Task 6: Supabase Project Skeleton And Database Schema
+
+Implemented and code-verified. Live schema application is still pending a dedicated Supabase target or a local Docker install.
+
+Commit:
+
+- `e9cc358` feat: add Supabase prototype schema
+
+Files added or changed:
+
+- `supabase/config.toml`
+- `supabase/.gitignore`
+- `supabase/migrations/20260523094237_initial_littlenest_schema.sql`
+- `apps/mobile/src/types/database.ts`
+
+What exists now:
+
+- Local Supabase project files were created with the current CLI.
+- Initial migration defines:
+  - enums for family mode, child sex, twin type, language, log types, AI provider, prompt type, and feedback rating
+  - tables for profiles, families, children, growth, tracking logs, food tests, AI requests, AI responses, AI feedback, and local reminder settings
+  - indexes for owner/child/request access patterns
+  - RLS policies for owner-scoped access
+- Mobile database types now describe the schema well enough for typed client calls.
+
+Important adjustments from the raw plan:
+
+- The original `unique (child_id, lower(food_name))` constraint was corrected to a unique expression index because Postgres does not allow that expression inside a table-level unique constraint.
+- Explicit `grant` statements were added because recent Supabase behavior no longer auto-exposes new public-schema tables to the Data API.
+- A profile insert policy was added so authenticated users can create their own profile rows later.
+
+Verification:
+
+- `npx supabase --help` passed.
+- `npx supabase migration --help` passed.
+- `npx supabase init` passed.
+- `npx supabase migration new initial_littlenest_schema` passed.
+- `npm test` passed: 6 suites, 17 tests.
+- `npx tsc --noEmit` passed.
+- `npx supabase db reset` could not run because Docker Desktop is not available in this environment, so the SQL has not yet been applied to a live local database.
+
+Review result:
+
+- Code is ready to build on.
+- SQL application still needs one of:
+  - Docker Desktop for local Supabase reset, or
+  - a dedicated remote Supabase project/branch for safe migration validation
+
 ## Next Task To Resume
 
 Current active point:
 
-- Start Task 6.
+- Start Task 7.
 
 Next task in `docs/superpowers/plans/2026-05-22-littlenest-ai-prototype.md`:
 
-- Create Supabase project skeleton and database schema.
+- Connect Supabase auth and repository layer.
 
 Before resuming:
 
