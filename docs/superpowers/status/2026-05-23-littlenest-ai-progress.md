@@ -854,3 +854,19 @@ Next steps:
 
 - Commit and push the verified bug-fix pass.
 - Reopen a fresh LAN Expo server for the iPhone test.
+
+Final resume outcome at `2026-05-23 23:41:49 +03:00`:
+
+- Committed bug-fix pass as `b6797b9` with message `fix: complete prototype device bug pass`.
+- Pushed branch `codex/littlenest-ai-prototype` to `origin`.
+- Reopened a fresh visible Expo LAN server from `apps/mobile`.
+- LAN server is listening on `192.168.7.13:8081`.
+- Direct LAN manifest check reports:
+  - `runtimeVersion: exposdk:54.0.0`
+  - `sdkVersion: 54.0.0`
+  - `name: LittleNest AI`
+
+Current device test instruction:
+
+- Scan the newest QR code from the visible Expo window.
+- Test login, family setup, bottom tab icons, Sleep start/end, Feed notes, Food recipe search cards, and AI comparison.
