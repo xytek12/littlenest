@@ -345,15 +345,65 @@ Review result:
 
 - Code is ready for later live auth testing once a dedicated project URL and publishable key are available.
 
+### Task 8: Add Supabase Edge Functions For AI Routing
+
+Implemented and code-verified. Local function serving still needs Docker or a remote project target.
+
+Commit:
+
+- `bcabd11` feat: add AI router edge functions
+
+Files added or changed:
+
+- `supabase/.env.example`
+- `supabase/functions/_shared/cors.ts`
+- `supabase/functions/_shared/responseSchema.ts`
+- `supabase/functions/_shared/promptBuilder.ts`
+- `supabase/functions/_shared/aiProviders.ts`
+- `supabase/functions/ai-router/index.ts`
+- `supabase/functions/recipe-search/index.ts`
+
+What exists now:
+
+- Shared Edge Function helpers exist for:
+  - CORS responses
+  - AI response types
+  - prompt building
+  - Gemini and OpenAI provider calls
+- `ai-router` now:
+  - builds a structured baby-guidance prompt
+  - calls Gemini and OpenAI in parallel
+  - returns a recommended answer plus side-by-side comparison
+  - returns a safety note
+- `recipe-search` now:
+  - uses Gemini with Google Search grounding
+  - asks for trusted child-feeding sources first
+  - returns source-backed recipe inspiration results
+
+Important adjustments from the raw plan:
+
+- OpenAI parsing is a little more defensive than the original snippet so the function can handle plain text JSON replies and fallback text more gracefully.
+- Gemini source extraction now reads grounding metadata so source links can be passed back into the app when search grounding is used.
+
+Verification:
+
+- `npm test` passed: 6 suites, 17 tests.
+- `npx tsc --noEmit` passed.
+- `npx supabase functions serve ai-router --env-file supabase/.env.example` could not run because Docker Desktop is not available in this environment.
+
+Review result:
+
+- Function code is ready for remote deployment or local serving once Docker or a dedicated project is available.
+
 ## Next Task To Resume
 
 Current active point:
 
-- Start Task 8.
+- Start Task 9.
 
 Next task in `docs/superpowers/plans/2026-05-22-littlenest-ai-prototype.md`:
 
-- Add Supabase Edge Functions for AI routing.
+- Connect mobile AI and admin comparison.
 
 Before resuming:
 
