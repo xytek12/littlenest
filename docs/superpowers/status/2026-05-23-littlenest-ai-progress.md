@@ -493,15 +493,52 @@ Review result:
 
 - Reminder code is ready for manual Expo Go testing on a device.
 
+### Task 12: Final Verification Pass
+
+Completed as far as the current machine and repo setup allow.
+
+Verification completed:
+
+- `npm test` passed: 6 suites, 17 tests.
+- `npx tsc --noEmit` passed.
+- `npx expo start --clear` reached Metro and `http://localhost:8081`.
+- `git status --short --branch` is clean on `codex/littlenest-ai-prototype`.
+
+Verification blockers and outcomes:
+
+- `npx supabase db reset` could not run because Docker Desktop is not installed or available.
+- `npx supabase functions serve ai-router --env-file supabase/.env.example` could not run for the same Docker reason.
+- `npx expo start --web --clear` could not run because `react-dom` and `react-native-web` are not installed, and this prototype was built for Expo Go rather than web preview.
+- Live Supabase auth and live AI comparison are still pending because there is no dedicated LittleNest Supabase project configured in the app env yet.
+- `git remote -v` returned no remotes, so there is currently nowhere to push this branch.
+
+Current branch state:
+
+- Branch: `codex/littlenest-ai-prototype`
+- Worktree status: clean
+
+What is fully saved:
+
+- Every completed task from 1 through 11 is committed.
+- This handoff file records the implementation state task by task.
+
+What remains outside the repo:
+
+- Create or assign a dedicated Supabase project for LittleNest AI.
+- Set `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
+- Add real provider secrets for Gemini and OpenAI in Supabase.
+- Validate auth, AI compare, recipe search, and reminders on device in Expo Go.
+- Add a git remote if you want this branch pushed anywhere.
+
 ## Next Task To Resume
 
 Current active point:
 
-- Start Task 12.
+- Implementation plan complete inside the repo.
 
 Next task in `docs/superpowers/plans/2026-05-22-littlenest-ai-prototype.md`:
 
-- Final verification pass.
+- External setup and live integration verification.
 
 Before resuming:
 
