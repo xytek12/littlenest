@@ -1,7 +1,8 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
-import { callGemini } from '../_shared/aiProviders.ts';
+import { fetchGeminiText } from '../_shared/aiProviders.ts';
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts';
 import { buildRecipeSearchPrompt } from '../_shared/recipePrompt.ts';
+import { parseRecipes } from '../_shared/recipeParser.ts';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -13,14 +14,33 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { language, childAgeMonths, query } = await req.json();
-    const prompt = buildRecipeSearchPrompt({ language, childAgeMonths, query });
-    const answer = await callGemini(prompt, true);
-    return jsonResponse({ results: [answer] });
+    const { language, childAgeMonths, refreshNonce, query } = await req.json();
+    const prompt = buildRecipeSearchPrompt({
+      language,
+      childAgeMonths,
+      refreshNonce,
+      query,
+    });
+
+    const { text } = await fetchGeminiText(prompt, true);
+    const recipes = parseRecipes(text, 6);
+
+    if (recipes.length === 0) {
+      return jsonResponse(
+        {
+          error: 'Could not parse recipe results',
+          recipes: [],
+        },
+        502,
+      );
+    }
+
+    return jsonResponse({ recipes });
   } catch (error) {
     return jsonResponse(
       {
         error: error instanceof Error ? error.message : 'Recipe search failed',
+        recipes: [],
       },
       500,
     );

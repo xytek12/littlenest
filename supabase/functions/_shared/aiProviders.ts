@@ -270,7 +270,10 @@ export async function callOpenAi(prompt: string): Promise<ProviderAnswer> {
   return parseAnswer('openai', text, json);
 }
 
-export async function callGemini(prompt: string, useSearch: boolean): Promise<ProviderAnswer> {
+export async function fetchGeminiText(
+  prompt: string,
+  useSearch: boolean,
+): Promise<{ text: string; sources: AiSource[]; raw: unknown }> {
   const apiKey = requireSecret('GEMINI_API_KEY');
   const model = Deno.env.get('GEMINI_MODEL') ?? 'gemini-2.5-flash';
 
@@ -300,5 +303,10 @@ export async function callGemini(prompt: string, useSearch: boolean): Promise<Pr
       .join('') ?? '';
   const sources = extractGeminiSources(json as Record<string, unknown>);
 
-  return parseAnswer('gemini', text, json, sources);
+  return { text, sources, raw: json };
+}
+
+export async function callGemini(prompt: string, useSearch: boolean): Promise<ProviderAnswer> {
+  const { text, sources, raw } = await fetchGeminiText(prompt, useSearch);
+  return parseAnswer('gemini', text, raw, sources);
 }

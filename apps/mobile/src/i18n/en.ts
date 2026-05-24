@@ -79,7 +79,7 @@ export const en = {
   recipes: {
     title: 'Recipe ideas',
     subtitle:
-      'Real food ideas with direct source links. Refresh swaps the daily set and keeps the links reliable.',
+      'AI-suggested recipes with direct source links, matched to your child. Refresh swaps the daily set.',
     searchLabel: 'Search trusted sources first',
     queryPlaceholder: 'real food recipe ideas',
     searching: 'Searching...',
@@ -88,6 +88,11 @@ export const en = {
     resultsHeader: 'Daily recipe picks',
     dailyLabel: "Today's idea",
     openSource: 'Open recipe source',
+    loading: 'Finding fresh recipes for your child...',
+    empty: 'No recipes to show yet. Try refreshing.',
+    error: 'Could not load recipes right now. Showing saved ideas instead.',
+    limitReached: 'Daily refresh limit reached. New ideas are ready again tomorrow.',
+    offlineNote: 'Showing saved recipe ideas (offline).',
   },
   ai: {
     title: 'AI',

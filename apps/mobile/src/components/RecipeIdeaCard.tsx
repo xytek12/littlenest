@@ -1,5 +1,6 @@
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors } from '../theme/colors';
+import type { ChildSex } from '../types/domain';
+import { getAccentTheme } from '../theme/theme';
 import { useAppTheme } from '../theme/useAppTheme';
 
 type Props = {
@@ -7,6 +8,7 @@ type Props = {
   summary: string;
   tag: string;
   imageUrl: string;
+  childSex: ChildSex;
   onPress: () => void;
   ctaLabel?: string;
   dailyLabel?: string;
@@ -17,11 +19,13 @@ export function RecipeIdeaCard({
   summary,
   tag,
   imageUrl,
+  childSex,
   onPress,
   ctaLabel = 'Open recipe source',
   dailyLabel = "Today's idea",
 }: Props) {
   const theme = useAppTheme();
+  const accent = getAccentTheme({ mode: 'single', sex: childSex });
 
   return (
     <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
@@ -33,8 +37,11 @@ export function RecipeIdeaCard({
         </View>
         <Text style={[styles.title, { color: theme.text }]}>{title}</Text>
         <Text style={styles.summary}>{summary}</Text>
-        <Pressable onPress={onPress} style={styles.button}>
-          <Text style={styles.buttonText}>{ctaLabel}</Text>
+        <Pressable
+          onPress={onPress}
+          style={[styles.button, { backgroundColor: accent.softPrimary }]}
+        >
+          <Text style={[styles.buttonText, { color: accent.primary }]}>{ctaLabel}</Text>
         </Pressable>
       </View>
     </View>
@@ -90,13 +97,11 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: 16,
-    backgroundColor: colors.pinkSoft,
     paddingVertical: 14,
     alignItems: 'center',
     marginTop: 14,
   },
   buttonText: {
-    color: colors.berry,
     fontWeight: '900',
     fontSize: 16,
   },
