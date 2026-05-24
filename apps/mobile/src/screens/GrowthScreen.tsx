@@ -11,6 +11,7 @@ export function GrowthScreen() {
     <Screen testID="screen-growth">
       <Text style={[styles.title, { color: theme.text }]}>Growth</Text>
       <ActionCard title="Weight" subtitle="Add a new weight entry." accent={colors.blue} />
+      <ActionCard title="Height" subtitle="Track height changes over time." accent={colors.blue} />
       <ActionCard
         title="Head circumference"
         subtitle="Track changes over time."

@@ -5,7 +5,12 @@ import { AiSuggestionCard } from '../components/AiSuggestionCard';
 import { ConfidenceBadge } from '../components/ConfidenceBadge';
 import { Screen } from '../components/Screen';
 import { requestAiGuidance } from '../ai/client';
-import { formatSourceTitle, normalizeProviderAnswer } from '../ai/format';
+import {
+  compactAiText,
+  formatAiRequestError,
+  formatSourceTitle,
+  normalizeProviderAnswer,
+} from '../ai/format';
 import type { ProviderAnswer } from '../ai/types';
 import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
@@ -46,11 +51,7 @@ export function AiScreen() {
       setComparison(response.comparison.map(normalizeProviderAnswer));
       setSafetyNote(response.safetyNote);
     } catch (error) {
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : 'AI request failed. Please check the Supabase function logs.',
-      );
+      setErrorMessage(formatAiRequestError(error));
     } finally {
       setLoading(false);
     }
@@ -87,7 +88,7 @@ export function AiScreen() {
       {recommended ? (
         <AiSuggestionCard
           title={recommended.title}
-          explanation={recommended.body}
+          explanation={compactAiText(recommended.body, 190)}
           confidence={recommended.confidenceLabel}
           accent={colors.berry}
         />
@@ -153,7 +154,7 @@ function ProviderCard({
     >
       <Text style={styles.providerName}>{answer.provider.toUpperCase()}</Text>
       <Text style={[styles.providerTitle, { color: text }]}>{answer.title}</Text>
-      <Text style={styles.providerBody}>{answer.body}</Text>
+      <Text style={styles.providerBody}>{compactAiText(answer.body, 260)}</Text>
       <View style={styles.confidenceRow}>
         <Text style={styles.confidenceLabel}>Confidence</Text>
         <ConfidenceBadge label={answer.confidenceLabel} />

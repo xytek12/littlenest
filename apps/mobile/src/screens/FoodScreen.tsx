@@ -1,16 +1,19 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { searchRecipes } from '../ai/client';
-import { formatSourceTitle, normalizeProviderAnswer } from '../ai/format';
-import { ActionCard } from '../components/ActionCard';
-import { ConfidenceBadge } from '../components/ConfidenceBadge';
-import { FoodTestProgress } from '../components/FoodTestProgress';
+import { normalizeProviderAnswer } from '../ai/format';
+import { RecipeIdeaCard } from '../components/RecipeIdeaCard';
 import { Screen } from '../components/Screen';
-import { mockFood } from '../data/mockSeed';
+import { getDailyRecipeIdeas } from '../data/recipeIdeas';
 import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 import { getAgeInMonths } from '../utils/age';
+
+function summarizeRecipeBody(body: string) {
+  const firstLine = body.split('\n').find((line) => line.trim().length > 0) ?? body;
+  return firstLine.length > 110 ? `${firstLine.slice(0, 107)}...` : firstLine;
+}
 
 export function FoodScreen() {
   const theme = useAppTheme();
@@ -18,9 +21,11 @@ export function FoodScreen() {
   const [query, setQuery] = useState('first tastes and recipes');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [results, setResults] = useState<
+  const [liveResults, setLiveResults] = useState<
     Awaited<ReturnType<typeof searchRecipes>>
   >([]);
+  const dailyIdeas = useMemo(() => getDailyRecipeIdeas(new Date()), []);
+  const months = getAgeInMonths(activeChild.dateOfBirth);
 
   async function handleSearch() {
     setErrorMessage(null);
@@ -29,10 +34,10 @@ export function FoodScreen() {
     try {
       const nextResults = await searchRecipes({
         language: family.language,
-        childAgeMonths: getAgeInMonths(activeChild.dateOfBirth),
+        childAgeMonths: months,
         query,
       });
-      setResults(nextResults.map(normalizeProviderAnswer));
+      setLiveResults(nextResults.map(normalizeProviderAnswer));
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Recipe search failed');
     } finally {
@@ -41,29 +46,14 @@ export function FoodScreen() {
   }
 
   return (
-    <Screen testID="screen-food" scroll>
-      <Text style={[styles.title, { color: theme.text }]}>Food</Text>
+    <Screen testID="screen-recipes" scroll>
+      <Text style={[styles.title, { color: theme.text }]}>Recipe ideas</Text>
       <Text style={styles.subtitle}>
-        Ideas for {activeChild.displayName}, {getAgeInMonths(activeChild.dateOfBirth)} months old
+        AI summarizes, then the parent taps straight into the source website. Daily ideas refresh automatically.
       </Text>
-      <ActionCard
-        title="Food tasting"
-        subtitle="Mark 1/3, 2/3, or 3/3."
-        accent={colors.pink}
-      >
-        <FoodTestProgress count={mockFood.testCount} accent={colors.pink} />
-      </ActionCard>
 
-      <View
-        style={[
-          styles.searchCard,
-          {
-            backgroundColor: theme.surface,
-            borderColor: theme.border,
-          },
-        ]}
-      >
-        <Text style={[styles.searchLabel, { color: theme.text }]}>Recipe search</Text>
+      <View style={[styles.searchCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+        <Text style={[styles.searchLabel, { color: theme.text }]}>Search trusted sources first</Text>
         <TextInput
           onChangeText={setQuery}
           placeholder="first tastes and recipes"
@@ -72,38 +62,46 @@ export function FoodScreen() {
           value={query}
         />
         <Pressable onPress={handleSearch} style={styles.button}>
-          <Text style={styles.buttonText}>
-            {loading ? 'Searching...' : 'Search trusted recipe ideas'}
-          </Text>
+          <Text style={styles.buttonText}>{loading ? 'Searching...' : 'Refresh recipe ideas'}</Text>
         </Pressable>
         {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
       </View>
 
-      {results.map((result) => (
-        <View
-          key={`${result.provider}-${result.title}`}
-          style={[
-            styles.resultCard,
-            {
-              backgroundColor: theme.surface,
-              borderColor: theme.border,
-            },
-          ]}
-        >
-          <View style={styles.resultHeader}>
-            <Text style={[styles.resultTitle, { color: theme.text }]}>{result.title}</Text>
-            <ConfidenceBadge label={result.confidenceLabel} />
-          </View>
-          <Text style={styles.resultBody}>{result.body}</Text>
-          {result.sources.slice(0, 3).map((source) => (
-            <Pressable key={source.url} onPress={() => Linking.openURL(source.url)}>
-              <Text style={styles.sourceText}>
-                {source.title || formatSourceTitle(source.url)}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
+      <Text style={styles.helperText}>
+        Ideas for {activeChild.displayName}, {months} months old.
+      </Text>
+
+      {dailyIdeas.map((idea) => (
+        <RecipeIdeaCard
+          key={idea.id}
+          imageUrl={idea.imageUrl}
+          summary={idea.summary}
+          tag={idea.tag}
+          title={idea.title}
+          onPress={() => Linking.openURL(idea.source.url)}
+        />
       ))}
+
+      {liveResults.length > 0 ? (
+        <>
+          <Text style={[styles.resultsHeader, { color: theme.text }]}>Fresh AI recipe finds</Text>
+          {liveResults.map((result, index) => {
+            const fallbackImage = dailyIdeas[index % dailyIdeas.length]?.imageUrl ?? dailyIdeas[0].imageUrl;
+            const primarySource = result.sources[0];
+
+            return (
+              <RecipeIdeaCard
+                key={`${result.provider}-${result.title}`}
+                imageUrl={fallbackImage}
+                summary={summarizeRecipeBody(result.body)}
+                tag={result.confidenceLabel}
+                title={result.title}
+                onPress={() => Linking.openURL(primarySource?.url ?? 'https://www.google.com')}
+              />
+            );
+          })}
+        </>
+      ) : null}
     </Screen>
   );
 }
@@ -112,8 +110,9 @@ const styles = StyleSheet.create({
   title: { fontSize: 28, fontWeight: '900' },
   subtitle: {
     color: '#6B7D91',
-    marginTop: 6,
+    marginTop: 8,
     marginBottom: 16,
+    lineHeight: 20,
   },
   searchCard: {
     borderWidth: 1,
@@ -150,34 +149,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginTop: 12,
   },
-  resultCard: {
-    borderWidth: 1,
-    borderRadius: 20,
-    padding: 16,
+  helperText: {
+    color: '#6B7D91',
     marginBottom: 12,
   },
-  resultHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
-    alignItems: 'flex-start',
-  },
-  resultTitle: {
-    flex: 1,
+  resultsHeader: {
     fontSize: 18,
     fontWeight: '900',
-  },
-  resultBody: {
-    color: '#5B6B7C',
-    lineHeight: 22,
-    marginTop: 10,
+    marginTop: 8,
     marginBottom: 10,
-  },
-  sourceText: {
-    color: '#4D78A6',
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 4,
-    fontWeight: '800',
   },
 });

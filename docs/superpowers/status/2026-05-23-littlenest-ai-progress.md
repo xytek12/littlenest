@@ -915,3 +915,38 @@ Execution readiness note:
 
 - The browser mockups live under ignored `.superpowers/brainstorm/...` files and are not the long-term backup.
 - The new spec file above is the source of truth for the next implementation pass.
+
+## 2026-05-24 Device Bug Fix Pass
+
+Latest implementation pass addressed the reported iPhone prototype issues:
+
+- Replaced the default React Navigation tab bar with a custom four-item emoji bar:
+  - `Recipes`, `Home`, `AI`, `Growth`
+  - no hidden placeholders
+  - no truncated `Rec...` / `Gro...` labels
+  - remains visible on hidden flows
+- Added explicit `Back to Home` controls to hidden flows:
+  - Sleep
+  - Feed
+  - Food tasting
+  - Settings
+- Added `Height` to Growth.
+- Added Hebrew rendering proof in Settings after choosing `HE`.
+- Compact AI text before rendering cards so sleep guidance does not flood the screen.
+- Improved AI suggestion card contrast/background for dark and light UI.
+- Wired Food Tasting to read `public.allergen_reference_items` through `fetchAllergenReferenceItems`, with local prototype fallback if Supabase is unavailable.
+- Replaced the inline feed composer with a modal bottom-sheet style composer while preserving:
+  - bottle presets/manual amount
+  - nursing left/right side controls
+  - saved latest feed notes
+
+OpenAI note:
+
+- Code already routes OpenAI through the Supabase `ai-router` Edge Function and hides raw provider/quota errors in the UI.
+- The observed OpenAI failure is still consistent with account billing/quota or Supabase `OPENAI_MODEL` secret setup, not a React Native UI bug.
+
+Fresh verification completed before commit:
+
+- `npm test -- --watchAll=false` passes: 11 suites / 33 tests.
+- `npx tsc --noEmit` passes.
+- `npx expo install --check` passes after network escalation: `Dependencies are up to date`.

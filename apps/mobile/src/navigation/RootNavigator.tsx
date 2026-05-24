@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState, type ComponentType } from 'react';
-import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   DarkTheme,
@@ -9,80 +8,58 @@ import {
 } from '@react-navigation/native';
 import type { Session } from '@supabase/supabase-js';
 import { Text } from 'react-native';
+import { BottomEmojiTabBar } from '../components/BottomEmojiTabBar';
 import { Screen } from '../components/Screen';
 import { AiScreen } from '../screens/AiScreen';
 import { FeedScreen } from '../screens/FeedScreen';
 import { FoodScreen } from '../screens/FoodScreen';
+import { FoodTastingScreen } from '../screens/FoodTastingScreen';
 import { FamilySetupScreen } from '../screens/FamilySetupScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { LoginScreen } from '../screens/LoginScreen';
 import { SleepScreen } from '../screens/SleepScreen';
+import { SettingsScreen } from '../screens/SettingsScreen';
+import { GrowthScreen } from '../screens/GrowthScreen';
 import { getCurrentSession } from '../services/trackingRepository';
 import { hasSupabaseEnv, supabase } from '../services/supabase';
 import { PrototypeStateProvider, usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
-import { tabs } from './tabs';
 
 export type RootTabParamList = {
-  Sleep: undefined;
-  Food: undefined;
+  Recipes: undefined;
   Home: undefined;
-  Feed: undefined;
   AI: undefined;
+  Growth: undefined;
+  SleepFlow: undefined;
+  FeedFlow: undefined;
+  FoodTastingFlow: undefined;
+  Settings: undefined;
 };
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
 const screenComponents = {
-  Sleep: SleepScreen,
-  Food: FoodScreen,
+  Recipes: FoodScreen,
   Home: HomeScreen,
-  Feed: FeedScreen,
   AI: AiScreen,
+  Growth: GrowthScreen,
+  SleepFlow: SleepScreen,
+  FeedFlow: FeedScreen,
+  FoodTastingFlow: FoodTastingScreen,
+  Settings: SettingsScreen,
 } satisfies Record<keyof RootTabParamList, ComponentType>;
 
-const tabIconByRoute = {
-  Sleep: 'moon-outline',
-  Food: 'nutrition-outline',
-  Home: 'home-outline',
-  Feed: 'restaurant-outline',
-  AI: 'sparkles-outline',
-} satisfies Record<keyof RootTabParamList, keyof typeof Ionicons.glyphMap>;
-
 function TabsNavigator() {
-  const appTheme = useAppTheme();
-
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      screenOptions={({ route }) => ({
+      tabBar={(props) => <BottomEmojiTabBar {...props} />}
+      screenOptions={() => ({
         headerShown: false,
-        tabBarActiveTintColor: colors.blue,
-        tabBarInactiveTintColor: '#8B99AA',
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '800',
-          marginTop: 2,
-        },
-        tabBarStyle: {
-          height: 76,
-          paddingTop: 8,
-          paddingBottom: 10,
-          borderTopWidth: 1,
-          borderTopColor: appTheme.border,
-          backgroundColor: appTheme.isDark ? '#0D1218' : colors.white,
-        },
-        tabBarIcon: ({ color, focused }) => (
-          <Ionicons
-            name={tabIconByRoute[route.name]}
-            color={color}
-            size={focused ? 25 : 23}
-          />
-        ),
       })}
     >
-      {tabs.map((tab) => (
+      {(Object.keys(screenComponents) as (keyof RootTabParamList)[]).map((tab) => (
         <Tab.Screen key={tab} name={tab} component={screenComponents[tab]} />
       ))}
     </Tab.Navigator>

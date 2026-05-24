@@ -481,6 +481,63 @@ export type Database = {
           },
         ];
       };
+      allergen_reference_items: {
+        Row: {
+          id: string;
+          section:
+            | 'eggs'
+            | 'dairy'
+            | 'wheat'
+            | 'soy'
+            | 'sesame'
+            | 'nuts'
+            | 'fish'
+            | 'shellfish';
+          item_slug: string;
+          display_name: string;
+          display_order: number;
+          source_label: string;
+          source_url: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          section:
+            | 'eggs'
+            | 'dairy'
+            | 'wheat'
+            | 'soy'
+            | 'sesame'
+            | 'nuts'
+            | 'fish'
+            | 'shellfish';
+          item_slug: string;
+          display_name: string;
+          display_order?: number;
+          source_label: string;
+          source_url: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          section?:
+            | 'eggs'
+            | 'dairy'
+            | 'wheat'
+            | 'soy'
+            | 'sesame'
+            | 'nuts'
+            | 'fish'
+            | 'shellfish';
+          item_slug?: string;
+          display_name?: string;
+          display_order?: number;
+          source_label?: string;
+          source_url?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

@@ -4,6 +4,7 @@ import { ActionCard } from '../components/ActionCard';
 import { Screen } from '../components/Screen';
 import { usePrototypeState, type ConfigureFamilyInput } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
+import { getAccentTheme } from '../theme/theme';
 import { useAppTheme } from '../theme/useAppTheme';
 import type { ChildSex, FamilyMode, TwinType } from '../types/domain';
 
@@ -45,6 +46,7 @@ export function FamilySetupScreen() {
 
   const selectedFamily = familyOptions.find((option) => option.id === selectedOption);
   const isTwins = selectedOption !== 'single';
+  const singleAccent = getAccentTheme({ mode: 'single', sex: childSex });
 
   function getFamilyInput(): ConfigureFamilyInput {
     let mode: FamilyMode = 'single';
@@ -127,12 +129,12 @@ export function FamilySetupScreen() {
                   style={[
                     styles.segment,
                     {
-                      borderColor: selected ? colors.blue : theme.border,
-                      backgroundColor: selected ? colors.blueSoft : 'transparent',
+                      borderColor: selected ? singleAccent.primary : theme.border,
+                      backgroundColor: selected ? singleAccent.softPrimary : 'transparent',
                     },
                   ]}
                 >
-                  <Text style={[styles.segmentText, { color: selected ? '#284D71' : theme.text }]}>
+                  <Text style={[styles.segmentText, { color: selected ? singleAccent.primary : theme.text }]}>
                     {sex === 'girl' ? 'Girl' : 'Boy'}
                   </Text>
                 </Pressable>
@@ -158,7 +160,15 @@ export function FamilySetupScreen() {
         />
         <Pressable
           onPress={() => configureFamily(getFamilyInput())}
-          style={[styles.continueButton, { backgroundColor: selectedFamily?.accent ?? colors.blue }]}
+          style={[
+            styles.continueButton,
+            {
+              backgroundColor:
+                selectedOption === 'single'
+                  ? singleAccent.primary
+                  : selectedFamily?.accent ?? colors.blue,
+            },
+          ]}
         >
           <Text style={styles.continueText}>Start testing LittleNest</Text>
         </Pressable>

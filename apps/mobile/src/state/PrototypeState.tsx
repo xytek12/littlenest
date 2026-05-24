@@ -1,37 +1,103 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { PropsWithChildren } from 'react';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import type { ChildProfile, ChildSex, FamilyMode, TwinType } from '../types/domain';
+import type { AppLanguage, ChildProfile, ChildSex, FamilyMode, TwinType } from '../types/domain';
 
-const STORAGE_KEY = 'littlenest.prototype.state.v1';
+const STORAGE_KEY = 'littlenest.prototype.state.v2';
+
+export type FeedUnit = 'mL' | 'oz';
+export type NursingSide = 'left' | 'right';
 
 export type PrototypeFamilyConfig = {
   configured: boolean;
   mode: FamilyMode;
   twinType?: TwinType;
-  language: 'en' | 'he' | 'ru';
+  language: AppLanguage;
   children: ChildProfile[];
+};
+
+export type PrototypeSettings = {
+  feedUnit: FeedUnit;
 };
 
 export type PrototypeLog = {
   id: string;
-  type: 'sleep' | 'feed';
+  type: 'sleep' | 'feed' | 'system';
   title: string;
   timestamp: string;
   note: string;
 };
 
+export type PrototypeSleepSession = {
+  id: string;
+  childId: string;
+  startedAt: string;
+  endedAt: string;
+  durationMinutes: number;
+  wakeCount: number;
+  note?: string;
+};
+
+export type PrototypeBottleFeedEntry = {
+  id: string;
+  childId: string;
+  kind: 'bottle';
+  timestamp: string;
+  amount: number;
+  unit: FeedUnit;
+  note?: string;
+};
+
+export type PrototypeNursingFeedEntry = {
+  id: string;
+  childId: string;
+  kind: 'nursing';
+  timestamp: string;
+  leftMinutes: number;
+  rightMinutes: number;
+  totalMinutes: number;
+  note?: string;
+};
+
+export type PrototypeFeedEntry = PrototypeBottleFeedEntry | PrototypeNursingFeedEntry;
+
+export type ActiveNursingSession = {
+  leftStartedAt: string | null;
+  rightStartedAt: string | null;
+  leftMinutes: number;
+  rightMinutes: number;
+};
+
+type EndSleepInput = {
+  wakeCount: number;
+  note?: string;
+};
+
+type RecordBottleFeedInput = {
+  amount: number;
+  note?: string;
+};
+
 type PrototypeStateValue = {
   loading: boolean;
   family: PrototypeFamilyConfig;
+  settings: PrototypeSettings;
   activeChild: ChildProfile;
   activeSleepStartedAt: string | null;
+  activeNursingSession: ActiveNursingSession;
+  sleepSessions: PrototypeSleepSession[];
+  feedEntries: PrototypeFeedEntry[];
   logs: PrototypeLog[];
   configureFamily: (input: ConfigureFamilyInput) => void;
   editFamily: () => void;
+  updateLanguage: (language: AppLanguage) => void;
+  updateFeedUnit: (unit: FeedUnit) => void;
   startSleep: () => void;
-  endSleep: (note?: string) => void;
-  recordFeed: (note?: string) => void;
+  endSleep: (input: EndSleepInput) => void;
+  recordBottleFeed: (input: RecordBottleFeedInput) => void;
+  startNursing: (side: NursingSide) => void;
+  stopNursing: (side: NursingSide) => void;
+  finishNursingSession: (note?: string) => void;
 };
 
 export type ConfigureFamilyInput = {
@@ -57,6 +123,17 @@ const defaultFamily: PrototypeFamilyConfig = {
   mode: 'single',
   language: 'en',
   children: [defaultChild],
+};
+
+const defaultSettings: PrototypeSettings = {
+  feedUnit: 'mL',
+};
+
+const emptyNursingSession: ActiveNursingSession = {
+  leftStartedAt: null,
+  rightStartedAt: null,
+  leftMinutes: 0,
+  rightMinutes: 0,
 };
 
 const PrototypeStateContext = createContext<PrototypeStateValue | null>(null);
@@ -91,10 +168,45 @@ function createChildren(input: ConfigureFamilyInput): ChildProfile[] {
   ];
 }
 
+function diffMinutes(startedAt: string, endedAt: string) {
+  return Math.max(0, Math.round((Date.parse(endedAt) - Date.parse(startedAt)) / 60000));
+}
+
+function stopSide(
+  session: ActiveNursingSession,
+  side: NursingSide,
+  stoppedAt: string,
+): ActiveNursingSession {
+  const startedAt = side === 'left' ? session.leftStartedAt : session.rightStartedAt;
+
+  if (!startedAt) {
+    return session;
+  }
+
+  const minutes = diffMinutes(startedAt, stoppedAt);
+
+  return side === 'left'
+    ? {
+        ...session,
+        leftStartedAt: null,
+        leftMinutes: session.leftMinutes + minutes,
+      }
+    : {
+        ...session,
+        rightStartedAt: null,
+        rightMinutes: session.rightMinutes + minutes,
+      };
+}
+
 export function PrototypeStateProvider({ children }: PropsWithChildren) {
   const [loading, setLoading] = useState(process.env.NODE_ENV !== 'test');
   const [family, setFamily] = useState<PrototypeFamilyConfig>(defaultFamily);
+  const [settings, setSettings] = useState<PrototypeSettings>(defaultSettings);
   const [activeSleepStartedAt, setActiveSleepStartedAt] = useState<string | null>(null);
+  const [activeNursingSession, setActiveNursingSession] =
+    useState<ActiveNursingSession>(emptyNursingSession);
+  const [sleepSessions, setSleepSessions] = useState<PrototypeSleepSession[]>([]);
+  const [feedEntries, setFeedEntries] = useState<PrototypeFeedEntry[]>([]);
   const [logs, setLogs] = useState<PrototypeLog[]>([]);
 
   useEffect(() => {
@@ -110,13 +222,21 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
 
         const parsed = JSON.parse(stored) as {
           family?: PrototypeFamilyConfig;
+          settings?: PrototypeSettings;
           activeSleepStartedAt?: string | null;
+          activeNursingSession?: ActiveNursingSession;
+          sleepSessions?: PrototypeSleepSession[];
+          feedEntries?: PrototypeFeedEntry[];
           logs?: PrototypeLog[];
         };
 
         if (parsed.family?.children?.length) {
           setFamily(parsed.family);
+          setSettings(parsed.settings ?? defaultSettings);
           setActiveSleepStartedAt(parsed.activeSleepStartedAt ?? null);
+          setActiveNursingSession(parsed.activeNursingSession ?? emptyNursingSession);
+          setSleepSessions(parsed.sleepSessions ?? []);
+          setFeedEntries(parsed.feedEntries ?? []);
           setLogs(parsed.logs ?? []);
         }
       })
@@ -131,9 +251,26 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
 
     AsyncStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ family, activeSleepStartedAt, logs }),
+      JSON.stringify({
+        family,
+        settings,
+        activeSleepStartedAt,
+        activeNursingSession,
+        sleepSessions,
+        feedEntries,
+        logs,
+      }),
     ).catch(() => undefined);
-  }, [activeSleepStartedAt, family, loading, logs]);
+  }, [
+    activeNursingSession,
+    activeSleepStartedAt,
+    family,
+    feedEntries,
+    loading,
+    logs,
+    settings,
+    sleepSessions,
+  ]);
 
   const activeChild = family.children[0] ?? defaultChild;
 
@@ -141,8 +278,12 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
     () => ({
       loading,
       family,
+      settings,
       activeChild,
       activeSleepStartedAt,
+      activeNursingSession,
+      sleepSessions,
+      feedEntries,
       logs,
       configureFamily(input) {
         const children = createChildren(input);
@@ -156,7 +297,7 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
         setLogs([
           {
             id: makeId('setup'),
-            type: 'feed',
+            type: 'system',
             title: 'Family configured',
             timestamp: new Date().toISOString(),
             note:
@@ -169,7 +310,17 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
       editFamily() {
         setFamily((current) => ({ ...current, configured: false }));
       },
+      updateLanguage(language) {
+        setFamily((current) => ({ ...current, language }));
+      },
+      updateFeedUnit(unit) {
+        setSettings((current) => ({ ...current, feedUnit: unit }));
+      },
       startSleep() {
+        if (activeSleepStartedAt) {
+          return;
+        }
+
         const startedAt = new Date().toISOString();
         setActiveSleepStartedAt(startedAt);
         setLogs((current) => [
@@ -178,42 +329,127 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
             type: 'sleep',
             title: 'Sleep started',
             timestamp: startedAt,
-            note: `${activeChild.displayName} started a sleep session.`,
+            note: `${activeChild.displayName} started sleeping.`,
           },
           ...current,
         ]);
       },
-      endSleep(note = 'Woke up calmly') {
+      endSleep({ wakeCount, note }) {
+        if (!activeSleepStartedAt) {
+          return;
+        }
+
         const endedAt = new Date().toISOString();
+        const durationMinutes = diffMinutes(activeSleepStartedAt, endedAt);
+        const session: PrototypeSleepSession = {
+          id: makeId('sleep-session'),
+          childId: activeChild.id,
+          startedAt: activeSleepStartedAt,
+          endedAt,
+          durationMinutes,
+          wakeCount,
+          note,
+        };
+
         setActiveSleepStartedAt(null);
+        setSleepSessions((current) => [session, ...current]);
         setLogs((current) => [
           {
             id: makeId('sleep-end'),
             type: 'sleep',
             title: 'Sleep ended',
             timestamp: endedAt,
-            note: activeSleepStartedAt
-              ? `${activeChild.displayName} woke up. ${note}.`
-              : `No active sleep was running, but a wake-up note was saved. ${note}.`,
+            note: `${activeChild.displayName} slept ${durationMinutes} minutes and woke ${wakeCount} times.`,
           },
           ...current,
         ]);
       },
-      recordFeed(note = 'Bottle / nursing recorded') {
+      recordBottleFeed({ amount, note }) {
         const timestamp = new Date().toISOString();
+        const entry: PrototypeBottleFeedEntry = {
+          id: makeId('bottle-feed'),
+          childId: activeChild.id,
+          kind: 'bottle',
+          timestamp,
+          amount,
+          unit: settings.feedUnit,
+          note,
+        };
+
+        setFeedEntries((current) => [entry, ...current]);
         setLogs((current) => [
           {
-            id: makeId('feed'),
+            id: makeId('feed-log'),
             type: 'feed',
-            title: 'Feed recorded',
+            title: 'Bottle feed',
             timestamp,
-            note: `${activeChild.displayName}: ${note}.`,
+            note: `${activeChild.displayName} drank ${amount} ${settings.feedUnit}.`,
+          },
+          ...current,
+        ]);
+      },
+      startNursing(side) {
+        const startedAt = new Date().toISOString();
+        setActiveNursingSession((current) =>
+          side === 'left'
+            ? { ...current, leftStartedAt: startedAt }
+            : { ...current, rightStartedAt: startedAt },
+        );
+      },
+      stopNursing(side) {
+        const stoppedAt = new Date().toISOString();
+        setActiveNursingSession((current) => stopSide(current, side, stoppedAt));
+      },
+      finishNursingSession(note) {
+        const finishedAt = new Date().toISOString();
+        const finalSession = stopSide(
+          stopSide(activeNursingSession, 'left', finishedAt),
+          'right',
+          finishedAt,
+        );
+        const totalMinutes = finalSession.leftMinutes + finalSession.rightMinutes;
+
+        if (totalMinutes <= 0) {
+          setActiveNursingSession(emptyNursingSession);
+          return;
+        }
+
+        const entry: PrototypeNursingFeedEntry = {
+          id: makeId('nursing-feed'),
+          childId: activeChild.id,
+          kind: 'nursing',
+          timestamp: finishedAt,
+          leftMinutes: finalSession.leftMinutes,
+          rightMinutes: finalSession.rightMinutes,
+          totalMinutes,
+          note,
+        };
+
+        setFeedEntries((current) => [entry, ...current]);
+        setActiveNursingSession(emptyNursingSession);
+        setLogs((current) => [
+          {
+            id: makeId('nursing-log'),
+            type: 'feed',
+            title: 'Nursing session',
+            timestamp: finishedAt,
+            note: `${activeChild.displayName} nursed for ${totalMinutes} minutes total.`,
           },
           ...current,
         ]);
       },
     }),
-    [activeChild, activeSleepStartedAt, family, loading, logs],
+    [
+      activeChild,
+      activeNursingSession,
+      activeSleepStartedAt,
+      family,
+      feedEntries,
+      loading,
+      logs,
+      settings,
+      sleepSessions,
+    ],
   );
 
   return (

@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import type { StyleProp, ViewStyle } from 'react-native';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppTheme } from '../theme/useAppTheme';
 
@@ -24,19 +24,30 @@ export function Screen({ children, scroll = false, contentContainerStyle, testID
 
   return scroll ? (
     <SafeAreaView style={[styles.safe, { backgroundColor: theme.background }]} edges={['top', 'left', 'right']}>
-      <ScrollView
-        testID={testID}
-        contentContainerStyle={contentStyle}
-        style={[styles.fill, { backgroundColor: theme.background }]}
+      <KeyboardAvoidingView
+        style={styles.fill}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        {children}
-      </ScrollView>
+        <ScrollView
+          testID={testID}
+          contentContainerStyle={contentStyle}
+          keyboardShouldPersistTaps="handled"
+          style={[styles.fill, { backgroundColor: theme.background }]}
+        >
+          {children}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   ) : (
     <SafeAreaView style={[styles.safe, { backgroundColor: theme.background }]} edges={['top', 'left', 'right']}>
-      <View testID={testID} style={[styles.fill, contentStyle]}>
-        {children}
-      </View>
+      <KeyboardAvoidingView
+        style={styles.fill}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View testID={testID} style={[styles.fill, contentStyle]}>
+          {children}
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
