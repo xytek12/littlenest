@@ -5,8 +5,11 @@ import { FlowHeader } from '../components/FlowHeader';
 import { Screen } from '../components/Screen';
 import {
   allergenReferenceItems,
+  getLocalizedAllergenItem,
+  getLocalizedAllergenSection,
   type AllergenReferenceItem,
 } from '../data/allergenReference';
+import { getDictionary, isRtlLanguage } from '../i18n';
 import { fetchAllergenReferenceItems } from '../services/allergenRepository';
 import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
@@ -16,12 +19,15 @@ import { useAppTheme } from '../theme/useAppTheme';
 export function FoodTastingScreen() {
   const theme = useAppTheme();
   const { activeChild, allergenExposures, family, markAllergenExposure } = usePrototypeState();
+  const labels = getDictionary(family.language).foodTasting;
+  const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
   const [items, setItems] = useState<AllergenReferenceItem[]>(allergenReferenceItems);
   const accent = getAccentTheme(
     family.mode === 'twins'
       ? { mode: 'twins', twinType: family.twinType ?? 'boy_girl' }
       : { mode: 'single', sex: activeChild.sex },
   );
+
   useEffect(() => {
     let mounted = true;
 
@@ -53,31 +59,28 @@ export function FoodTastingScreen() {
 
   return (
     <Screen testID="screen-food-tasting" scroll>
-      <FlowHeader
-        title="Food tasting"
-        subtitle={`Track first tastes three times and see what still needs allergy testing for ${activeChild.displayName}.`}
-      />
+      <FlowHeader title={labels.title} subtitle={labels.subtitle(activeChild.displayName)} />
 
-      {groupedSections.map(([section, items]) => (
+      {groupedSections.map(([section, sectionItems]) => (
         <View
           key={section}
           style={[styles.sectionCard, { backgroundColor: theme.surface, borderColor: theme.border }]}
         >
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>{section}</Text>
-          {items.map((item) => {
+          <Text style={[styles.sectionTitle, rtlText, { color: theme.text }]}>
+            {getLocalizedAllergenSection(family.language, section as AllergenReferenceItem['section'])}
+          </Text>
+          {sectionItems.map((item) => {
             const count = allergenExposures[activeChild.id]?.[item.id] ?? item.testedCount;
+            const statusLabel =
+              count === 0 ? labels.notStarted : count >= 3 ? labels.complete : labels.progress(count);
 
             return (
               <View key={item.id} style={styles.itemRow}>
                 <View style={styles.itemText}>
-                  <Text style={[styles.itemName, { color: theme.text }]}>{item.name}</Text>
-                  <Text style={styles.itemHint}>
-                    {count === 0
-                      ? 'Still needs testing'
-                      : count >= 3
-                        ? 'All checks complete'
-                        : `${count}/3 allergy checks complete`}
+                  <Text style={[styles.itemName, rtlText, { color: theme.text }]}>
+                    {getLocalizedAllergenItem(family.language, item.id, item.name)}
                   </Text>
+                  <Text style={[styles.itemHint, rtlText]}>{statusLabel}</Text>
                 </View>
                 <FoodTestProgress
                   count={count}
@@ -91,17 +94,17 @@ export function FoodTastingScreen() {
         </View>
       ))}
 
-      <Text style={styles.footerNote}>Reference list loads from Supabase when the app is connected.</Text>
+      <Text style={[styles.footerNote, rtlText]}>{labels.footer}</Text>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   sectionCard: {
-    borderWidth: 1,
     borderRadius: 18,
-    padding: 16,
+    borderWidth: 1,
     marginBottom: 12,
+    padding: 16,
   },
   sectionTitle: {
     fontSize: 18,
@@ -110,16 +113,16 @@ const styles = StyleSheet.create({
   },
   itemRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     gap: 12,
+    justifyContent: 'space-between',
     marginBottom: 12,
   },
   itemText: {
     flex: 1,
   },
   itemName: {
-    fontWeight: '800',
     fontSize: 15,
+    fontWeight: '800',
   },
   itemHint: {
     color: '#6B7D91',
@@ -131,4 +134,5 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     lineHeight: 20,
   },
+  rtlText: { textAlign: 'right', writingDirection: 'rtl' },
 });

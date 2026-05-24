@@ -1,13 +1,19 @@
 import { useMemo, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { ActionCard } from '../components/ActionCard';
 import { FlowHeader } from '../components/FlowHeader';
+import { InlineHistoryCard, type InlineHistoryRow } from '../components/InlineHistoryCard';
 import { Screen } from '../components/Screen';
 import { getDictionary, isRtlLanguage } from '../i18n';
+import type { SleepStackParamList } from '../navigation/RootNavigator';
 import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 import { formatDurationSeconds } from '../utils/formatDuration';
+import { formatHistoryDate, formatHistoryTime } from '../utils/formatHistoryDate';
+import { entriesInLast24h } from '../utils/historyFilters';
 import { useTickEverySecond } from '../utils/useTickEverySecond';
 
 function formatTimestamp(value: string) {
@@ -22,27 +28,42 @@ function getRunningDuration(startedAt: string) {
   );
 }
 
-function isWithinLastThreeMonths(value: string) {
-  const ninetyDaysMs = 90 * 24 * 60 * 60 * 1000;
-  return Date.now() - Date.parse(value) <= ninetyDaysMs;
-}
-
 export function SleepScreen() {
   const theme = useAppTheme();
+  const navigation = useNavigation<NativeStackNavigationProp<SleepStackParamList>>();
   const { activeChild, activeSleepStartedAt, endSleep, family, sleepSessions, startSleep } =
     usePrototypeState();
   const labels = getDictionary(family.language).sleep;
   const commonLabels = getDictionary(family.language).common;
   const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
+  const isTwins = family.mode === 'twins';
   const [wakeCountDraft, setWakeCountDraft] = useState('0');
   const [showTimerSheet, setShowTimerSheet] = useState(false);
   const [showWakePrompt, setShowWakePrompt] = useState(false);
   const [timerPaused, setTimerPaused] = useState(false);
   const isSleepActive = activeSleepStartedAt != null && !timerPaused;
   useTickEverySecond(isSleepActive);
-  const recentSessions = useMemo(
-    () => sleepSessions.filter((session) => isWithinLastThreeMonths(session.startedAt)).slice(0, 12),
-    [sleepSessions],
+  const childById = useMemo(() => {
+    const map = new Map<string, (typeof family.children)[number]>();
+    family.children.forEach((child) => map.set(child.id, child));
+    return map;
+  }, [family.children]);
+  const inlineRows = useMemo<InlineHistoryRow[]>(
+    () =>
+      entriesInLast24h(sleepSessions, (session) => session.startedAt)
+        .slice(0, 5)
+        .map((session) => ({
+          key: session.id,
+          primary: labels.history.row(
+            formatHistoryDate(session.startedAt, family.language),
+            formatHistoryTime(session.startedAt, family.language),
+            formatDurationSeconds(session.durationSeconds, true),
+            session.wakeCount,
+          ),
+          secondary: isTwins ? childById.get(session.childId)?.displayName : undefined,
+          accentColor: colors.blue,
+        })),
+    [childById, family.language, isTwins, labels.history, sleepSessions],
   );
   const canEnd = Boolean(activeSleepStartedAt);
 
@@ -167,23 +188,11 @@ export function SleepScreen() {
         </View>
       </Modal>
 
-      <View style={[styles.statusCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-        <Text style={[styles.statusTitle, rtlText, { color: theme.text }]}>{labels.latest}</Text>
-        {recentSessions.length > 0 ? (
-          recentSessions.map((session) => (
-            <Text key={session.id} style={[styles.logText, rtlText]}>
-              {labels.logLine(
-                formatTimestamp(session.startedAt),
-                formatTimestamp(session.endedAt),
-                formatDurationSeconds(session.durationSeconds, true),
-                session.wakeCount,
-              )}
-            </Text>
-          ))
-        ) : (
-          <Text style={[styles.logText, rtlText]}>{commonLabels.noHistory}</Text>
-        )}
-      </View>
+      <InlineHistoryCard
+        rows={inlineRows}
+        onPress={() => navigation.navigate('SleepHistory')}
+        testID="sleep-inline-history"
+      />
     </Screen>
   );
 }
@@ -246,21 +255,6 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     color: '#0C2944',
     fontWeight: '900',
-  },
-  statusCard: {
-    borderRadius: 18,
-    borderWidth: 1,
-    padding: 16,
-  },
-  statusTitle: {
-    fontSize: 16,
-    fontWeight: '900',
-    marginBottom: 8,
-  },
-  logText: {
-    color: '#6B7D91',
-    lineHeight: 20,
-    marginTop: 4,
   },
   rtlText: { textAlign: 'right', writingDirection: 'rtl' },
 });

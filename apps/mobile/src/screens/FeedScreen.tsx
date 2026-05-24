@@ -1,24 +1,22 @@
 import { useMemo, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { ActionCard } from '../components/ActionCard';
 import { FlowHeader } from '../components/FlowHeader';
+import { InlineHistoryCard, type InlineHistoryRow } from '../components/InlineHistoryCard';
 import { Screen } from '../components/Screen';
 import { getDictionary, isRtlLanguage } from '../i18n';
+import type { FeedStackParamList } from '../navigation/RootNavigator';
 import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 import { formatDurationSeconds } from '../utils/formatDuration';
+import { formatHistoryDate, formatHistoryTime } from '../utils/formatHistoryDate';
+import { entriesInLast24h } from '../utils/historyFilters';
 import { useTickEverySecond } from '../utils/useTickEverySecond';
 
 const bottlePresets = [30, 60, 90, 120, 160, 180, 210, 220, 240, 310, 330];
-
-function formatTimestamp(value: string) {
-  return new Date(value).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
-}
 
 function getLiveSideSeconds(
   side: 'left' | 'right',
@@ -36,13 +34,9 @@ function getLiveSideSeconds(
   return accumulated + elapsedSinceStart;
 }
 
-function isWithinLastThreeMonths(value: string) {
-  const ninetyDaysMs = 90 * 24 * 60 * 60 * 1000;
-  return Date.now() - Date.parse(value) <= ninetyDaysMs;
-}
-
 export function FeedScreen() {
   const theme = useAppTheme();
+  const navigation = useNavigation<NativeStackNavigationProp<FeedStackParamList>>();
   const {
     activeChild,
     activeNursingSession,
@@ -55,8 +49,8 @@ export function FeedScreen() {
     stopNursing,
   } = usePrototypeState();
   const labels = getDictionary(family.language).feed;
-  const commonLabels = getDictionary(family.language).common;
   const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
+  const isTwins = family.mode === 'twins';
   const isNursingActive =
     activeNursingSession.leftStartedAt != null || activeNursingSession.rightStartedAt != null;
   useTickEverySecond(isNursingActive);
@@ -68,9 +62,33 @@ export function FeedScreen() {
     () => Number.parseInt(manualAmount, 10) || selectedAmount,
     [manualAmount, selectedAmount],
   );
-  const recentEntries = useMemo(
-    () => feedEntries.filter((entry) => isWithinLastThreeMonths(entry.timestamp)).slice(0, 12),
-    [feedEntries],
+  const childById = useMemo(() => {
+    const map = new Map<string, (typeof family.children)[number]>();
+    family.children.forEach((child) => map.set(child.id, child));
+    return map;
+  }, [family.children]);
+  const inlineRows = useMemo<InlineHistoryRow[]>(
+    () =>
+      entriesInLast24h(feedEntries, (entry) => entry.timestamp)
+        .slice(0, 5)
+        .map((entry) => {
+          const date = formatHistoryDate(entry.timestamp, family.language);
+          const time = formatHistoryTime(entry.timestamp, family.language);
+          const secondary = isTwins ? childById.get(entry.childId)?.displayName : undefined;
+          const accentColor = entry.kind === 'bottle' ? colors.pink : colors.sage;
+          const primary =
+            entry.kind === 'bottle'
+              ? labels.history.bottleRow(date, time, entry.amount, entry.unit)
+              : labels.history.nursingRow(
+                  date,
+                  time,
+                  formatDurationSeconds(entry.totalSeconds),
+                  formatDurationSeconds(entry.leftSeconds),
+                  formatDurationSeconds(entry.rightSeconds),
+                );
+          return { key: entry.id, primary, secondary, accentColor };
+        }),
+    [childById, family.language, feedEntries, isTwins, labels.history],
   );
 
   function handleSaveBottle() {
@@ -238,25 +256,11 @@ export function FeedScreen() {
         </View>
       </Modal>
 
-      <View style={[styles.statusCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-        <Text style={[styles.statusTitle, rtlText, { color: theme.text }]}>{labels.latest}</Text>
-        {recentEntries.length > 0 ? (
-          recentEntries.map((entry) => (
-            <Text key={entry.id} style={[styles.logText, rtlText]}>
-              {entry.kind === 'bottle'
-                ? labels.bottleHistory(formatTimestamp(entry.timestamp), entry.amount, entry.unit)
-                : labels.nursingHistory(
-                    formatTimestamp(entry.timestamp),
-                    formatDurationSeconds(entry.totalSeconds),
-                    formatDurationSeconds(entry.leftSeconds),
-                    formatDurationSeconds(entry.rightSeconds),
-                  )}
-            </Text>
-          ))
-        ) : (
-          <Text style={[styles.logText, rtlText]}>{commonLabels.noHistory}</Text>
-        )}
-      </View>
+      <InlineHistoryCard
+        rows={inlineRows}
+        onPress={() => navigation.navigate('FeedHistory')}
+        testID="feed-inline-history"
+      />
     </Screen>
   );
 }
@@ -384,22 +388,6 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     color: colors.berry,
     fontWeight: '900',
-  },
-  statusCard: {
-    borderRadius: 18,
-    borderWidth: 1,
-    marginBottom: 12,
-    padding: 16,
-  },
-  statusTitle: {
-    fontSize: 16,
-    fontWeight: '900',
-    marginBottom: 8,
-  },
-  logText: {
-    color: '#6B7D91',
-    lineHeight: 20,
-    marginTop: 4,
   },
   rtlText: { textAlign: 'right', writingDirection: 'rtl' },
 });

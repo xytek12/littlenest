@@ -1,12 +1,31 @@
 export const en = {
   tabs: { recipes: 'Recipes', home: 'Home', ai: 'AI', growth: 'Growth' },
   confidence: { low: 'Low', medium: 'Medium', high: 'High' },
-  actions: { logSleep: 'Log sleep', logFeed: 'Log feed', askAi: 'Ask AI', searchRecipes: 'Search recipes' },
+  actions: {
+    logSleep: 'Log sleep',
+    logFeed: 'Log feed',
+    askAi: 'Ask AI',
+    searchRecipes: 'Search recipes',
+  },
   safety: { doctor: 'Follow your doctor for medical concerns or unusual symptoms.' },
+  history: {
+    last24h: 'Last 24 hours',
+    viewAll: 'View all',
+    empty24h: 'No entries in the last 24 hours.',
+    emptyAll: 'No history yet.',
+  },
   common: {
     backHome: '← Home',
     backHomeLabel: 'Back to Home',
     cancel: 'Cancel',
+    close: 'Close',
+    save: 'Save',
+    day: 'Day',
+    month: 'Month',
+    year: 'Year',
+    history3Months: 'Last 3 months',
+    noHistory: 'No history recorded yet.',
+    selected: 'Selected',
   },
   home: {
     learningKicker: 'LittleNest is learning',
@@ -23,9 +42,6 @@ export const en = {
     feedSubtitle: 'Bottle or nursing with exact times and totals.',
     foodTastingTitle: 'Food tasting',
     foodTastingSubtitle: 'Track first tastes, allergy checks, and what still needs testing.',
-    familySetupTitle: 'Family setup',
-    familySetupSingle: 'Edit the child prototype profile.',
-    familySetupTwins: 'Edit the twins prototype profile.',
     openSettings: 'Open settings',
   },
   settings: {
@@ -38,16 +54,38 @@ export const en = {
     subscription: 'Subscription',
     subscriptionText: 'Monthly and annual family plans will appear here later.',
   },
+  familySetup: {
+    title: 'Family setup',
+    subtitle:
+      'Set the child profile first so sleep, feed, recipes, and AI use the right child.',
+    childDetails: 'Child details',
+    childName: 'Child name',
+    secondChildName: 'Second child name',
+    girl: 'Girl',
+    boy: 'Boy',
+    startTesting: 'Start testing LittleNest',
+    prototypeNote: 'Prototype note',
+    prototypeNoteText:
+      'This first build stays admin-only. Your setup is saved on this phone for prototype testing.',
+    singleTitle: 'One baby',
+    singleSubtitle: 'Choose boy or girl, then test the matching soft color.',
+    twinBoysTitle: 'Twin boys',
+    twinBoysSubtitle: 'Both children use light blue accents.',
+    twinGirlsTitle: 'Twin girls',
+    twinGirlsSubtitle: 'Both children use light pink accents.',
+    twinBoyGirlTitle: 'Twins, boy + girl',
+    twinBoyGirlSubtitle: 'Split the interface between light blue and light pink.',
+  },
   recipes: {
     title: 'Recipe ideas',
     subtitle:
-      'AI summarizes, then the parent taps straight into the source website. Daily ideas refresh automatically.',
+      'Real food ideas with direct source links. Refresh swaps the daily set and keeps the links reliable.',
     searchLabel: 'Search trusted sources first',
     queryPlaceholder: 'real food recipe ideas',
     searching: 'Searching...',
     refresh: 'Refresh recipe ideas',
     helper: (name: string, months: number) => `Ideas for ${name}, ${months} months old.`,
-    resultsHeader: 'Fresh AI recipe finds',
+    resultsHeader: 'Daily recipe picks',
     dailyLabel: "Today's idea",
     openSource: 'Open recipe source',
   },
@@ -58,7 +96,8 @@ export const en = {
     compareTitle: 'Compare Gemini + OpenAI',
     compareSubtitle: 'Run a live comparison for the latest prompt.',
     checking: 'Checking both providers...',
-    currentPrompt: (name: string) => `Current test prompt: sleep window and likely next need for ${name}.`,
+    currentPrompt: (name: string) =>
+      `Current test prompt: sleep window and likely next need for ${name}.`,
     sleepPrediction: 'Sleep prediction',
     sleepPredictionSubtitle: 'Compare Gemini and OpenAI in admin mode.',
     confidence: 'Confidence',
@@ -76,8 +115,18 @@ export const en = {
     headSubtitle: 'Track changes over time.',
     entryTitle: (label: string, unit: string) => `${label} (${unit})`,
     save: 'Save measurement',
-    latest: 'Latest growth notes',
+    latest: 'Growth history',
     empty: 'No growth measurement recorded yet.',
+    placeholder: '0',
+    history: {
+      title: 'Growth history',
+      weightRow: (date: string, time: string, value: string) =>
+        `${date}, ${time}  ·  Weight  ·  ${value}`,
+      heightRow: (date: string, time: string, value: string) =>
+        `${date}, ${time}  ·  Height  ·  ${value}`,
+      headRow: (date: string, time: string, value: string, child: string) =>
+        `${date}, ${time}  ·  Head  ·  ${value}  ·  ${child}`,
+    },
   },
   sleep: {
     title: 'Sleep',
@@ -96,9 +145,56 @@ export const en = {
     resume: 'Resume',
     wakePrompt: 'How many times did the child wake up?',
     save: 'Save sleep session',
-    latest: 'Latest sleep sessions',
+    latest: 'Sleep history',
     empty: 'No sleep session recorded yet.',
-    logLine: (start: string, end: string, duration: number, wakes: number) =>
-      `${start}-${end} | ${duration} min | wakes ${wakes}`,
+    logLine: (start: string, end: string, duration: string, wakes: number) =>
+      `${start}-${end} | ${duration} | wakes ${wakes}`,
+    history: {
+      title: 'Sleep history',
+      row: (date: string, time: string, duration: string, wakeCount: number) =>
+        `${date}, ${time}  ·  ${duration}  ·  ${wakeCount} wakes`,
+    },
+  },
+  feed: {
+    title: 'Feed',
+    subtitle: (name: string) => `Quick feed tracking for ${name}.`,
+    actionTitle: 'Bottle / nursing',
+    actionSubtitle: 'Choose the type, then record amount or side timing.',
+    sheetTitle: 'Choose feed type',
+    bottle: 'Bottle',
+    nursing: 'Nursing',
+    bottleAmount: (unit: string) => `Bottle amount (${unit})`,
+    customAmount: 'Custom amount',
+    saveBottle: 'Save bottle feed',
+    nursingSession: 'Nursing session',
+    leftBreast: 'Left breast',
+    rightBreast: 'Right breast',
+    savedDuration: (duration: string) => `${duration} saved`,
+    startLeft: 'Start left',
+    stopLeft: 'Stop left',
+    startRight: 'Start right',
+    stopRight: 'Stop right',
+    finishNursing: 'Finish nursing session',
+    latest: 'Feed history',
+    empty: 'No feed note recorded yet.',
+    bottleHistory: (time: string, amount: number, unit: string) => `${time} | bottle ${amount} ${unit}`,
+    nursingHistory: (time: string, total: string, left: string, right: string) =>
+      `${time} | nursing ${total} total (${left}/${right})`,
+    history: {
+      title: 'Feed history',
+      bottleRow: (date: string, time: string, amount: number, unit: string) =>
+        `${date}, ${time}  ·  Bottle  ·  ${amount} ${unit}`,
+      nursingRow: (date: string, time: string, total: string, left: string, right: string) =>
+        `${date}, ${time}  ·  Nursing  ·  ${total} (L ${left} / R ${right})`,
+    },
+  },
+  foodTasting: {
+    title: 'Food tasting',
+    subtitle: (name: string) =>
+      `Track first tastes three times and see what still needs allergy testing for ${name}.`,
+    notStarted: 'Still needs testing',
+    complete: 'All checks complete',
+    progress: (count: number) => `${count}/3 allergy checks complete`,
+    footer: 'Reference list loads from Supabase when the app is connected.',
   },
 };

@@ -1,17 +1,29 @@
-import type { ReactElement } from 'react';
+import type { ComponentType } from 'react';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { act, fireEvent, render } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { FeedScreen } from '../src/screens/FeedScreen';
+import { FeedHistoryScreen } from '../src/screens/FeedHistoryScreen';
 import { GrowthScreen } from '../src/screens/GrowthScreen';
+import { GrowthHistoryScreen } from '../src/screens/GrowthHistoryScreen';
 import { SleepScreen } from '../src/screens/SleepScreen';
+import { SleepHistoryScreen } from '../src/screens/SleepHistoryScreen';
 import { PrototypeStateProvider } from '../src/state/PrototypeState';
 
 jest.mock('../src/components/FlowHeader', () => ({
   FlowHeader: ({ title }: { title: string }) => title,
 }));
 
-function renderWithProviders(node: ReactElement) {
+const Stack = createNativeStackNavigator();
+
+function renderWithStack(
+  mainName: string,
+  MainComponent: ComponentType,
+  historyName: string,
+  HistoryComponent: ComponentType,
+) {
   return render(
     <SafeAreaProvider
       initialMetrics={{
@@ -19,9 +31,28 @@ function renderWithProviders(node: ReactElement) {
         insets: { top: 44, right: 0, bottom: 34, left: 0 },
       }}
     >
-      <PrototypeStateProvider>{node}</PrototypeStateProvider>
+      <PrototypeStateProvider>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name={mainName} component={MainComponent} />
+            <Stack.Screen name={historyName} component={HistoryComponent} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PrototypeStateProvider>
     </SafeAreaProvider>,
   );
+}
+
+function renderSleep() {
+  return renderWithStack('SleepMain', SleepScreen, 'SleepHistory', SleepHistoryScreen);
+}
+
+function renderGrowth() {
+  return renderWithStack('GrowthMain', GrowthScreen, 'GrowthHistory', GrowthHistoryScreen);
+}
+
+function renderFeed() {
+  return renderWithStack('FeedMain', FeedScreen, 'FeedHistory', FeedHistoryScreen);
 }
 
 describe('interaction flows', () => {
@@ -35,8 +66,8 @@ describe('interaction flows', () => {
   });
 
   it('asks for wake count before saving a finished sleep session', () => {
-    const { getByLabelText, getByText, getByPlaceholderText, queryByText } =
-      renderWithProviders(<SleepScreen />);
+    const { getByLabelText, getByText, getByPlaceholderText, queryAllByText, queryByText } =
+      renderSleep();
 
     fireEvent.press(getByText('Start sleep'));
     expect(getByText('Sleep timer')).toBeTruthy();
@@ -54,46 +85,52 @@ describe('interaction flows', () => {
     fireEvent.press(getByText('Save sleep session'));
 
     expect(queryByText(/How many times did the child wake up/i)).toBeNull();
-    expect(getByText(/01:35:27/i)).toBeTruthy();
-    expect(getByText(/wakes 2/i)).toBeTruthy();
+    // New inline history card format: "{date}, {time}  ·  {duration}  ·  {wakeCount} wakes".
+    // (Testing Library normalizes runs of whitespace to a single space.)
+    expect(queryAllByText(/01:35:27 · 2 wakes/).length).toBeGreaterThan(0);
   });
 
   it('records growth measurements with metric and imperial units', () => {
-    const { getByPlaceholderText, getByText } = renderWithProviders(<GrowthScreen />);
+    const { getByPlaceholderText, getByText, queryAllByText } = renderGrowth();
 
     fireEvent.press(getByText('Weight'));
     fireEvent.changeText(getByPlaceholderText('0'), '8.2');
     fireEvent.press(getByText('Save measurement'));
 
-    expect(getByText(/Weight 8.2 kg/i)).toBeTruthy();
+    // New inline history card format: "{date}, {time} · Weight · {value}".
+    // (Testing Library normalizes runs of whitespace to a single space.)
+    expect(queryAllByText(/Weight · 8.2 kg/).length).toBeGreaterThan(0);
 
     fireEvent.press(getByText('Imperial'));
     fireEvent.press(getByText('Height'));
     fireEvent.changeText(getByPlaceholderText('0'), '27.5');
     fireEvent.press(getByText('Save measurement'));
 
-    expect(getByText(/Height 27.5 in/i)).toBeTruthy();
+    expect(queryAllByText(/Height · 27.5 in/).length).toBeGreaterThan(0);
 
     fireEvent.press(getByText('Head circumference'));
     fireEvent.changeText(getByPlaceholderText('0'), '16.2');
     fireEvent.press(getByText('Save measurement'));
 
-    expect(getByText(/Head circumference 16.2 in/i)).toBeTruthy();
+    // Head row is tagged with the active child's name (single mode: "Maya").
+    expect(queryAllByText(/Head · 16.2 in · Maya/).length).toBeGreaterThan(0);
   });
 
   it('opens bottle mode with presets and saves the chosen amount', () => {
-    const { getByText } = renderWithProviders(<FeedScreen />);
+    const { getByText, queryAllByText } = renderFeed();
 
     fireEvent.press(getByText('Bottle / nursing'));
     fireEvent.press(getByText('Bottle'));
     fireEvent.press(getByText('120'));
     fireEvent.press(getByText('Save bottle feed'));
 
-    expect(getByText(/bottle 120 mL/i)).toBeTruthy();
+    // New inline history card format: "{date}, {time} · Bottle · {amount} {unit}".
+    // (Testing Library normalizes runs of whitespace to a single space.)
+    expect(queryAllByText(/Bottle · 120 mL/).length).toBeGreaterThan(0);
   });
 
   it('opens nursing mode with left and right controls', () => {
-    const { getByText } = renderWithProviders(<FeedScreen />);
+    const { getByText } = renderFeed();
 
     fireEvent.press(getByText('Bottle / nursing'));
     fireEvent.press(getByText('Nursing'));
@@ -103,7 +140,7 @@ describe('interaction flows', () => {
   });
 
   it('ticks the sleep timer display every second while a session is active', () => {
-    const { getByText, queryAllByText } = renderWithProviders(<SleepScreen />);
+    const { getByText, queryAllByText } = renderSleep();
 
     fireEvent.press(getByText('Start sleep'));
 
@@ -123,7 +160,7 @@ describe('interaction flows', () => {
   });
 
   it('ticks the nursing left side display every second while running', () => {
-    const { getByText, queryAllByText } = renderWithProviders(<FeedScreen />);
+    const { getByText, queryAllByText } = renderFeed();
 
     fireEvent.press(getByText('Bottle / nursing'));
     fireEvent.press(getByText('Nursing'));
@@ -143,7 +180,7 @@ describe('interaction flows', () => {
   });
 
   it('saves nursing history with seconds for each side and the total duration', () => {
-    const { getByText } = renderWithProviders(<FeedScreen />);
+    const { getByText, queryAllByText } = renderFeed();
 
     fireEvent.press(getByText('Bottle / nursing'));
     fireEvent.press(getByText('Nursing'));
@@ -157,7 +194,8 @@ describe('interaction flows', () => {
     fireEvent.press(getByText('Stop right'));
     fireEvent.press(getByText('Finish nursing session'));
 
-    expect(getByText(/12:50 total/i)).toBeTruthy();
-    expect(getByText(/07:35\/05:15/i)).toBeTruthy();
+    // New inline history card format: "Nursing · {total} (L {left} / R {right})".
+    // (Testing Library normalizes runs of whitespace to a single space.)
+    expect(queryAllByText(/Nursing · 12:50 \(L 07:35 \/ R 05:15\)/).length).toBeGreaterThan(0);
   });
 });

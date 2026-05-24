@@ -1,50 +1,118 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { ActionCard } from '../components/ActionCard';
+import { FlowHeader } from '../components/FlowHeader';
 import { Screen } from '../components/Screen';
+import { getDictionary, isRtlLanguage } from '../i18n';
 import { usePrototypeState, type ConfigureFamilyInput } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
 import { getAccentTheme } from '../theme/theme';
 import { useAppTheme } from '../theme/useAppTheme';
 import type { ChildSex, FamilyMode, TwinType } from '../types/domain';
 
-const familyOptions = [
-  {
-    id: 'single',
-    title: 'One baby',
-    subtitle: 'Choose boy or girl, then test the matching soft color.',
-    accent: colors.blue,
-  },
-  {
-    id: 'twins-boy-boy',
-    title: 'Twin boys',
-    subtitle: 'Both children use light blue accents.',
-    accent: colors.blue,
-  },
-  {
-    id: 'twins-girl-girl',
-    title: 'Twin girls',
-    subtitle: 'Both children use light pink accents.',
-    accent: colors.pink,
-  },
-  {
-    id: 'twins-boy-girl',
-    title: 'Twins, boy + girl',
-    subtitle: 'Split the interface between light blue and light pink.',
-    accent: colors.berry,
-  },
+const currentYear = new Date().getFullYear();
+
+function parseDateParts(value: string) {
+  const [year = '2025', month = '09', day = '22'] = value.split('-');
+  return { day, month, year };
+}
+
+function padDatePart(value: string, width = 2) {
+  return value.padStart(width, '0');
+}
+
+function clampNumber(value: string, min: number, max: number, fallback: number) {
+  const parsed = Number.parseInt(value, 10);
+
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.max(min, Math.min(max, parsed));
+}
+
+function buildDate(day: string, month: string, year: string) {
+  const safeYear = clampNumber(year, 2023, currentYear, 2025);
+  const safeMonth = clampNumber(month, 1, 12, 9);
+  const safeDay = clampNumber(day, 1, 31, 22);
+
+  return `${safeYear}-${padDatePart(String(safeMonth))}-${padDatePart(String(safeDay))}`;
+}
+
+const familyOptionIds = [
+  'single',
+  'twins-boy-boy',
+  'twins-girl-girl',
+  'twins-boy-girl',
 ] as const;
 
-export function FamilySetupScreen() {
-  const theme = useAppTheme();
-  const { configureFamily } = usePrototypeState();
-  const [selectedOption, setSelectedOption] = useState<string>('single');
-  const [childName, setChildName] = useState('Maya');
-  const [secondChildName, setSecondChildName] = useState('Noam');
-  const [dateOfBirth, setDateOfBirth] = useState('2025-09-22');
-  const [childSex, setChildSex] = useState<ChildSex>('girl');
+type Props = {
+  embeddedInTabs?: boolean;
+  onComplete?: () => void;
+};
 
-  const selectedFamily = familyOptions.find((option) => option.id === selectedOption);
+export function FamilySetupScreen({ embeddedInTabs = false, onComplete }: Props) {
+  const theme = useAppTheme();
+  const { configureFamily, family } = usePrototypeState();
+  const dictionary = getDictionary(family.language);
+  const labels = dictionary.familySetup;
+  const commonLabels = dictionary.common;
+  const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
+  const firstChild = family.children[0];
+  const secondChild = family.children[1];
+  const initialDate = parseDateParts(firstChild?.dateOfBirth ?? '2025-09-22');
+  const [selectedOption, setSelectedOption] = useState<(typeof familyOptionIds)[number]>(() => {
+    if (family.mode !== 'twins') {
+      return 'single';
+    }
+
+    if (family.twinType === 'boy_boy') {
+      return 'twins-boy-boy';
+    }
+
+    if (family.twinType === 'girl_girl') {
+      return 'twins-girl-girl';
+    }
+
+    return 'twins-boy-girl';
+  });
+  const [childName, setChildName] = useState(firstChild?.displayName ?? 'Maya');
+  const [secondChildName, setSecondChildName] = useState(secondChild?.displayName ?? 'Noam');
+  const [day, setDay] = useState(initialDate.day);
+  const [month, setMonth] = useState(initialDate.month);
+  const [year, setYear] = useState(initialDate.year);
+  const [childSex, setChildSex] = useState<ChildSex>(firstChild?.sex ?? 'girl');
+
+  const selectedFamilyOption = useMemo(() => {
+    switch (selectedOption) {
+      case 'single':
+        return {
+          title: labels.singleTitle,
+          subtitle: labels.singleSubtitle,
+          accent: colors.blue,
+        };
+      case 'twins-boy-boy':
+        return {
+          title: labels.twinBoysTitle,
+          subtitle: labels.twinBoysSubtitle,
+          accent: colors.blue,
+        };
+      case 'twins-girl-girl':
+        return {
+          title: labels.twinGirlsTitle,
+          subtitle: labels.twinGirlsSubtitle,
+          accent: colors.pink,
+        };
+      case 'twins-boy-girl':
+      default:
+        return {
+          title: labels.twinBoyGirlTitle,
+          subtitle: labels.twinBoyGirlSubtitle,
+          accent: colors.berry,
+        };
+    }
+  }, [labels, selectedOption]);
+
   const isTwins = selectedOption !== 'single';
   const singleAccent = getAccentTheme({ mode: 'single', sex: childSex });
 
@@ -82,42 +150,67 @@ export function FamilySetupScreen() {
       childSex: firstSex,
       secondChildName: isTwins ? secondChildName : undefined,
       secondChildSex: secondSex,
-      dateOfBirth,
+      dateOfBirth: buildDate(day, month, year),
     };
+  }
+
+  function handleCompleteSetup() {
+    configureFamily(getFamilyInput());
+
+    onComplete?.();
   }
 
   return (
     <Screen testID="screen-family-setup" scroll>
-      <Text style={[styles.title, { color: theme.text }]}>Family setup</Text>
-      <Text style={styles.subtitle}>
-        Set the child profile first so sleep, food, feed, and AI screens use your test child.
-      </Text>
+      {embeddedInTabs ? (
+        <FlowHeader title={labels.title} subtitle={labels.subtitle} />
+      ) : (
+        <>
+          <Text style={[styles.title, rtlText, { color: theme.text }]}>{labels.title}</Text>
+          <Text style={[styles.subtitle, rtlText]}>{labels.subtitle}</Text>
+        </>
+      )}
 
-      {familyOptions.map((option) => {
-        const selected = selectedOption === option.id;
+      {familyOptionIds.map((optionId) => {
+        const option =
+          optionId === 'single'
+            ? { title: labels.singleTitle, subtitle: labels.singleSubtitle, accent: colors.blue }
+            : optionId === 'twins-boy-boy'
+              ? { title: labels.twinBoysTitle, subtitle: labels.twinBoysSubtitle, accent: colors.blue }
+              : optionId === 'twins-girl-girl'
+                ? { title: labels.twinGirlsTitle, subtitle: labels.twinGirlsSubtitle, accent: colors.pink }
+                : {
+                    title: labels.twinBoyGirlTitle,
+                    subtitle: labels.twinBoyGirlSubtitle,
+                    accent: colors.berry,
+                  };
 
         return (
           <ActionCard
-            key={option.id}
+            key={optionId}
             title={option.title}
             subtitle={option.subtitle}
             accent={option.accent}
-            onPress={() => setSelectedOption(option.id)}
+            onPress={() => setSelectedOption(optionId)}
           >
-            {selected ? <Text style={styles.selected}>Selected for this prototype</Text> : null}
+            {selectedOption === optionId ? (
+              <Text style={[styles.selected, rtlText]}>{commonLabels.selected}</Text>
+            ) : null}
           </ActionCard>
         );
       })}
 
       <View style={[styles.formCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-        <Text style={[styles.summaryTitle, { color: theme.text }]}>Child details</Text>
+        <Text style={[styles.summaryTitle, rtlText, { color: theme.text }]}>{labels.childDetails}</Text>
+        <Text style={[styles.fieldLabel, rtlText, { color: theme.text }]}>{labels.childName}</Text>
         <TextInput
           onChangeText={setChildName}
-          placeholder="Child name"
+          placeholder={labels.childName}
           placeholderTextColor="#8B99AA"
-          style={[styles.input, { color: theme.text, borderColor: theme.border }]}
+          style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
           value={childName}
         />
+
         {selectedOption === 'single' ? (
           <View style={styles.segmentRow}>
             {(['girl', 'boy'] as const).map((sex) => {
@@ -135,56 +228,80 @@ export function FamilySetupScreen() {
                   ]}
                 >
                   <Text style={[styles.segmentText, { color: selected ? singleAccent.primary : theme.text }]}>
-                    {sex === 'girl' ? 'Girl' : 'Boy'}
+                    {sex === 'girl' ? labels.girl : labels.boy}
                   </Text>
                 </Pressable>
               );
             })}
           </View>
         ) : null}
+
         {isTwins ? (
-          <TextInput
-            onChangeText={setSecondChildName}
-            placeholder="Second child name"
-            placeholderTextColor="#8B99AA"
-            style={[styles.input, { color: theme.text, borderColor: theme.border }]}
-            value={secondChildName}
-          />
+          <>
+            <Text style={[styles.fieldLabel, rtlText, { color: theme.text }]}>{labels.secondChildName}</Text>
+            <TextInput
+              onChangeText={setSecondChildName}
+              placeholder={labels.secondChildName}
+              placeholderTextColor="#8B99AA"
+              style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
+              value={secondChildName}
+            />
+          </>
         ) : null}
-        <TextInput
-          onChangeText={setDateOfBirth}
-          placeholder="YYYY-MM-DD"
-          placeholderTextColor="#8B99AA"
-          style={[styles.input, { color: theme.text, borderColor: theme.border }]}
-          value={dateOfBirth}
-        />
+
+        <View style={styles.dateRow}>
+          <View style={styles.dateField}>
+            <Text style={[styles.fieldLabel, rtlText, { color: theme.text }]}>{commonLabels.day}</Text>
+            <TextInput
+              keyboardType="number-pad"
+              onChangeText={setDay}
+              placeholder="22"
+              placeholderTextColor="#8B99AA"
+              style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
+              value={day}
+            />
+          </View>
+          <View style={styles.dateField}>
+            <Text style={[styles.fieldLabel, rtlText, { color: theme.text }]}>{commonLabels.month}</Text>
+            <TextInput
+              keyboardType="number-pad"
+              onChangeText={setMonth}
+              placeholder="09"
+              placeholderTextColor="#8B99AA"
+              style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
+              value={month}
+            />
+          </View>
+          <View style={styles.dateField}>
+            <Text style={[styles.fieldLabel, rtlText, { color: theme.text }]}>{commonLabels.year}</Text>
+            <TextInput
+              keyboardType="number-pad"
+              onChangeText={setYear}
+              placeholder="2025"
+              placeholderTextColor="#8B99AA"
+              style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
+              value={year}
+            />
+          </View>
+        </View>
+
         <Pressable
-          onPress={() => configureFamily(getFamilyInput())}
+          onPress={handleCompleteSetup}
           style={[
             styles.continueButton,
             {
               backgroundColor:
-                selectedOption === 'single'
-                  ? singleAccent.primary
-                  : selectedFamily?.accent ?? colors.blue,
+                selectedOption === 'single' ? singleAccent.primary : selectedFamilyOption.accent,
             },
           ]}
         >
-          <Text style={styles.continueText}>Start testing LittleNest</Text>
+          <Text style={styles.continueText}>{labels.startTesting}</Text>
         </Pressable>
       </View>
 
-      <View
-        style={[
-          styles.summaryCard,
-          { backgroundColor: theme.surface, borderColor: theme.border },
-        ]}
-      >
-        <Text style={[styles.summaryTitle, { color: theme.text }]}>Prototype note</Text>
-        <Text style={styles.summaryText}>
-          This first build stays admin-only. Your setup is saved on this phone for prototype
-          testing.
-        </Text>
+      <View style={[styles.summaryCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+        <Text style={[styles.summaryTitle, rtlText, { color: theme.text }]}>{labels.prototypeNote}</Text>
+        <Text style={[styles.summaryText, rtlText]}>{labels.prototypeNoteText}</Text>
       </View>
     </Screen>
   );
@@ -197,9 +314,9 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     color: '#6B7D91',
-    marginTop: 8,
-    marginBottom: 16,
     lineHeight: 20,
+    marginBottom: 16,
+    marginTop: 8,
   },
   selected: {
     color: colors.berry,
@@ -207,59 +324,75 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   formCard: {
-    borderWidth: 1,
     borderRadius: 18,
-    padding: 16,
-    marginTop: 2,
+    borderWidth: 1,
+    gap: 10,
     marginBottom: 10,
-    gap: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  segmentRow: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  segment: {
-    flex: 1,
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  segmentText: {
-    fontWeight: '900',
-  },
-  continueButton: {
-    borderRadius: 14,
-    alignItems: 'center',
-    paddingVertical: 14,
     marginTop: 2,
-  },
-  continueText: {
-    color: '#072235',
-    fontWeight: '900',
-    fontSize: 16,
-  },
-  summaryCard: {
-    borderWidth: 1,
-    borderRadius: 18,
     padding: 16,
-    marginTop: 8,
   },
   summaryTitle: {
     fontSize: 16,
     fontWeight: '800',
     marginBottom: 6,
   },
+  fieldLabel: {
+    fontSize: 14,
+    fontWeight: '800',
+  },
+  input: {
+    borderRadius: 14,
+    borderWidth: 1,
+    fontSize: 16,
+    fontWeight: '700',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  segmentRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  segment: {
+    alignItems: 'center',
+    borderRadius: 14,
+    borderWidth: 1,
+    flex: 1,
+    paddingVertical: 12,
+  },
+  segmentText: {
+    fontWeight: '900',
+  },
+  dateRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  dateField: {
+    flex: 1,
+    gap: 6,
+  },
+  continueButton: {
+    alignItems: 'center',
+    borderRadius: 14,
+    marginTop: 2,
+    paddingVertical: 14,
+  },
+  continueText: {
+    color: '#072235',
+    fontSize: 16,
+    fontWeight: '900',
+  },
+  summaryCard: {
+    borderRadius: 18,
+    borderWidth: 1,
+    marginTop: 8,
+    padding: 16,
+  },
   summaryText: {
     color: '#6B7D91',
     lineHeight: 20,
+  },
+  rtlText: {
+    textAlign: 'right',
+    writingDirection: 'rtl',
   },
 });

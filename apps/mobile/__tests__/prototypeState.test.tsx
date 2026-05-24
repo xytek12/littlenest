@@ -13,6 +13,8 @@ function Probe() {
   return (
     <View>
       <Text testID="feed-unit">{state.settings.feedUnit}</Text>
+      <Text testID="family-language">{state.family.language}</Text>
+      <Text testID="family-configured">{String(state.family.configured)}</Text>
       <Text testID="sleep-count">{String(state.sleepSessions.length)}</Text>
       <Text testID="latest-sleep-duration">
         {state.sleepSessions[0]?.durationMinutes ?? 'none'}
@@ -40,6 +42,24 @@ function Probe() {
 
       <Pressable onPress={() => state.updateFeedUnit('oz')}>
         <Text>set-oz</Text>
+      </Pressable>
+      <Pressable onPress={() => state.updateLanguage('he')}>
+        <Text>set-he</Text>
+      </Pressable>
+      <Pressable
+        onPress={() =>
+          state.configureFamily({
+            mode: 'single',
+            childName: 'Aner',
+            childSex: 'boy',
+            dateOfBirth: '2024-05-10',
+          })
+        }
+      >
+        <Text>configure-family</Text>
+      </Pressable>
+      <Pressable onPress={() => state.editFamily()}>
+        <Text>edit-family</Text>
       </Pressable>
       <Pressable onPress={state.startSleep}>
         <Text>start-sleep</Text>
@@ -101,6 +121,21 @@ describe('PrototypeStateProvider', () => {
     fireEvent.press(getByText('set-oz'));
 
     expect(getByTestId('feed-unit').props.children).toBe('oz');
+  });
+
+  it('preserves the chosen app language when configuring and editing the family', () => {
+    const { getByText, getByTestId } = renderProbe();
+
+    fireEvent.press(getByText('set-he'));
+    fireEvent.press(getByText('configure-family'));
+
+    expect(getByTestId('family-language').props.children).toBe('he');
+    expect(getByTestId('family-configured').props.children).toBe('true');
+
+    fireEvent.press(getByText('edit-family'));
+
+    expect(getByTestId('family-language').props.children).toBe('he');
+    expect(getByTestId('family-configured').props.children).toBe('false');
   });
 
   it('stores a completed sleep session with duration and wake count', () => {

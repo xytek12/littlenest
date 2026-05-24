@@ -3,7 +3,7 @@ import type { PropsWithChildren } from 'react';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { AppLanguage, ChildProfile, ChildSex, FamilyMode, TwinType } from '../types/domain';
 
-const STORAGE_KEY = 'littlenest.prototype.state.v2';
+const STORAGE_KEY = 'littlenest.prototype.state.v3';
 
 export type FeedUnit = 'mL' | 'oz';
 export type NursingSide = 'left' | 'right';
@@ -33,6 +33,7 @@ export type PrototypeSleepSession = {
   childId: string;
   startedAt: string;
   endedAt: string;
+  durationSeconds: number;
   durationMinutes: number;
   wakeCount: number;
   note?: string;
@@ -53,6 +54,9 @@ export type PrototypeNursingFeedEntry = {
   childId: string;
   kind: 'nursing';
   timestamp: string;
+  leftSeconds: number;
+  rightSeconds: number;
+  totalSeconds: number;
   leftMinutes: number;
   rightMinutes: number;
   totalMinutes: number;
@@ -64,11 +68,24 @@ export type PrototypeFeedEntry = PrototypeBottleFeedEntry | PrototypeNursingFeed
 export type ActiveNursingSession = {
   leftStartedAt: string | null;
   rightStartedAt: string | null;
-  leftMinutes: number;
-  rightMinutes: number;
+  leftSeconds: number;
+  rightSeconds: number;
 };
 
 export type PrototypeAllergenExposures = Record<string, Record<string, number>>;
+
+export type PrototypeGrowthKind = 'weight' | 'height' | 'head';
+export type PrototypeGrowthUnitSystem = 'metric' | 'imperial';
+
+export type PrototypeGrowthEntry = {
+  id: string;
+  childId: string;
+  kind: PrototypeGrowthKind;
+  value: number;
+  unit: string;
+  unitSystem: PrototypeGrowthUnitSystem;
+  recordedAt: string;
+};
 
 type EndSleepInput = {
   wakeCount: number;
@@ -80,6 +97,13 @@ type RecordBottleFeedInput = {
   note?: string;
 };
 
+type SaveGrowthEntryInput = {
+  kind: PrototypeGrowthKind;
+  value: number;
+  unit: string;
+  unitSystem: PrototypeGrowthUnitSystem;
+};
+
 type PrototypeStateValue = {
   loading: boolean;
   family: PrototypeFamilyConfig;
@@ -89,6 +113,7 @@ type PrototypeStateValue = {
   activeNursingSession: ActiveNursingSession;
   sleepSessions: PrototypeSleepSession[];
   feedEntries: PrototypeFeedEntry[];
+  growthEntries: PrototypeGrowthEntry[];
   allergenExposures: PrototypeAllergenExposures;
   logs: PrototypeLog[];
   configureFamily: (input: ConfigureFamilyInput) => void;
@@ -101,6 +126,7 @@ type PrototypeStateValue = {
   startNursing: (side: NursingSide) => void;
   stopNursing: (side: NursingSide) => void;
   finishNursingSession: (note?: string) => void;
+  saveGrowthEntry: (input: SaveGrowthEntryInput) => void;
   markAllergenExposure: (allergenId: string, checks: number) => void;
 };
 
@@ -136,8 +162,8 @@ const defaultSettings: PrototypeSettings = {
 const emptyNursingSession: ActiveNursingSession = {
   leftStartedAt: null,
   rightStartedAt: null,
-  leftMinutes: 0,
-  rightMinutes: 0,
+  leftSeconds: 0,
+  rightSeconds: 0,
 };
 
 const PrototypeStateContext = createContext<PrototypeStateValue | null>(null);
@@ -172,8 +198,12 @@ function createChildren(input: ConfigureFamilyInput): ChildProfile[] {
   ];
 }
 
+function diffSeconds(startedAt: string, endedAt: string) {
+  return Math.max(0, Math.round((Date.parse(endedAt) - Date.parse(startedAt)) / 1000));
+}
+
 function diffMinutes(startedAt: string, endedAt: string) {
-  return Math.max(0, Math.round((Date.parse(endedAt) - Date.parse(startedAt)) / 60000));
+  return Math.floor(diffSeconds(startedAt, endedAt) / 60);
 }
 
 function clampAllergenChecks(checks: number) {
@@ -191,18 +221,18 @@ function stopSide(
     return session;
   }
 
-  const minutes = diffMinutes(startedAt, stoppedAt);
+  const seconds = diffSeconds(startedAt, stoppedAt);
 
   return side === 'left'
     ? {
         ...session,
         leftStartedAt: null,
-        leftMinutes: session.leftMinutes + minutes,
+        leftSeconds: session.leftSeconds + seconds,
       }
     : {
         ...session,
         rightStartedAt: null,
-        rightMinutes: session.rightMinutes + minutes,
+        rightSeconds: session.rightSeconds + seconds,
       };
 }
 
@@ -215,6 +245,7 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
     useState<ActiveNursingSession>(emptyNursingSession);
   const [sleepSessions, setSleepSessions] = useState<PrototypeSleepSession[]>([]);
   const [feedEntries, setFeedEntries] = useState<PrototypeFeedEntry[]>([]);
+  const [growthEntries, setGrowthEntries] = useState<PrototypeGrowthEntry[]>([]);
   const [allergenExposures, setAllergenExposures] = useState<PrototypeAllergenExposures>({});
   const [logs, setLogs] = useState<PrototypeLog[]>([]);
 
@@ -236,6 +267,7 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
           activeNursingSession?: ActiveNursingSession;
           sleepSessions?: PrototypeSleepSession[];
           feedEntries?: PrototypeFeedEntry[];
+          growthEntries?: PrototypeGrowthEntry[];
           allergenExposures?: PrototypeAllergenExposures;
           logs?: PrototypeLog[];
         };
@@ -247,6 +279,7 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
           setActiveNursingSession(parsed.activeNursingSession ?? emptyNursingSession);
           setSleepSessions(parsed.sleepSessions ?? []);
           setFeedEntries(parsed.feedEntries ?? []);
+          setGrowthEntries(parsed.growthEntries ?? []);
           setAllergenExposures(parsed.allergenExposures ?? {});
           setLogs(parsed.logs ?? []);
         }
@@ -269,6 +302,7 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
         activeNursingSession,
         sleepSessions,
         feedEntries,
+        growthEntries,
         allergenExposures,
         logs,
       }),
@@ -279,6 +313,7 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
     activeSleepStartedAt,
     family,
     feedEntries,
+    growthEntries,
     loading,
     logs,
     settings,
@@ -297,17 +332,25 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
       activeNursingSession,
       sleepSessions,
       feedEntries,
+      growthEntries,
       allergenExposures,
       logs,
       configureFamily(input) {
         const children = createChildren(input);
+        const nextLanguage = family.language;
         setFamily({
           configured: true,
           mode: input.mode,
           twinType: input.twinType,
-          language: 'en',
+          language: nextLanguage,
           children,
         });
+        setActiveSleepStartedAt(null);
+        setActiveNursingSession(emptyNursingSession);
+        setSleepSessions([]);
+        setFeedEntries([]);
+        setGrowthEntries([]);
+        setAllergenExposures({});
         setLogs([
           {
             id: makeId('setup'),
@@ -354,12 +397,14 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
         }
 
         const endedAt = new Date().toISOString();
+        const durationSeconds = diffSeconds(activeSleepStartedAt, endedAt);
         const durationMinutes = diffMinutes(activeSleepStartedAt, endedAt);
         const session: PrototypeSleepSession = {
           id: makeId('sleep-session'),
           childId: activeChild.id,
           startedAt: activeSleepStartedAt,
           endedAt,
+          durationSeconds,
           durationMinutes,
           wakeCount,
           note,
@@ -421,9 +466,10 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
           'right',
           finishedAt,
         );
-        const totalMinutes = finalSession.leftMinutes + finalSession.rightMinutes;
+        const totalSeconds = finalSession.leftSeconds + finalSession.rightSeconds;
+        const totalMinutes = Math.floor(totalSeconds / 60);
 
-        if (totalMinutes <= 0) {
+        if (totalSeconds <= 0) {
           setActiveNursingSession(emptyNursingSession);
           return;
         }
@@ -433,8 +479,11 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
           childId: activeChild.id,
           kind: 'nursing',
           timestamp: finishedAt,
-          leftMinutes: finalSession.leftMinutes,
-          rightMinutes: finalSession.rightMinutes,
+          leftSeconds: finalSession.leftSeconds,
+          rightSeconds: finalSession.rightSeconds,
+          totalSeconds,
+          leftMinutes: Math.floor(finalSession.leftSeconds / 60),
+          rightMinutes: Math.floor(finalSession.rightSeconds / 60),
           totalMinutes,
           note,
         };
@@ -448,6 +497,24 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
             title: 'Nursing session',
             timestamp: finishedAt,
             note: `${activeChild.displayName} nursed for ${totalMinutes} minutes total.`,
+          },
+          ...current,
+        ]);
+      },
+      saveGrowthEntry({ kind, value, unit, unitSystem }) {
+        if (!Number.isFinite(value)) {
+          return;
+        }
+
+        setGrowthEntries((current) => [
+          {
+            id: makeId('growth-entry'),
+            childId: activeChild.id,
+            kind,
+            value,
+            unit,
+            unitSystem,
+            recordedAt: new Date().toISOString(),
           },
           ...current,
         ]);
@@ -471,6 +538,7 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
       activeSleepStartedAt,
       family,
       feedEntries,
+      growthEntries,
       loading,
       logs,
       settings,

@@ -1,14 +1,18 @@
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { useNavigation } from '@react-navigation/native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { FlowHeader } from '../components/FlowHeader';
 import { Screen } from '../components/Screen';
 import { getDictionary, isRtlLanguage } from '../i18n';
+import type { RootTabParamList } from '../navigation/RootNavigator';
 import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 
 export function SettingsScreen() {
+  const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
   const theme = useAppTheme();
-  const { editFamily, family, settings, updateFeedUnit, updateLanguage } = usePrototypeState();
+  const { family, settings, updateFeedUnit, updateLanguage } = usePrototypeState();
   const labels = getDictionary(family.language).settings;
   const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
 
@@ -72,7 +76,7 @@ export function SettingsScreen() {
       </View>
 
       <Pressable
-        onPress={editFamily}
+        onPress={() => navigation.navigate('FamilySetupFlow')}
         style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}
       >
         <Text style={[styles.sectionTitle, rtlText, { color: theme.text }]}>{labels.familySetup}</Text>

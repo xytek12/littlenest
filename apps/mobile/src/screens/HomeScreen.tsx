@@ -31,7 +31,6 @@ export function HomeScreen() {
     activeChild,
     family,
     feedEntries,
-    logs,
     sleepSessions,
   } = usePrototypeState();
   const dictionary = getDictionary(family.language);
@@ -99,18 +98,6 @@ export function HomeScreen() {
         accent={accent.secondary ?? accent.primary}
         onPress={() => navigation.navigate('FoodTastingFlow')}
       />
-      <ActionCard
-        title={labels.familySetupTitle}
-        subtitle={family.mode === 'twins' ? labels.familySetupTwins : labels.familySetupSingle}
-        accent={accent.secondary ?? accent.primary}
-        onPress={() => navigation.navigate('Settings')}
-      />
-
-      {logs.slice(0, 3).map((log) => (
-        <Text key={log.id} style={styles.logLine}>
-          {log.title}: {log.note}
-        </Text>
-      ))}
     </Screen>
   );
 }
@@ -152,11 +139,6 @@ const styles = StyleSheet.create({
     color: '#6B7D91',
     lineHeight: 22,
     marginTop: 10,
-  },
-  logLine: {
-    color: '#6B7D91',
-    lineHeight: 20,
-    marginTop: 4,
   },
   rtlText: { textAlign: 'right', writingDirection: 'rtl' },
 });

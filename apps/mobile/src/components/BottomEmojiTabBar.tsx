@@ -1,11 +1,11 @@
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors } from '../theme/colors';
-import { useAppTheme } from '../theme/useAppTheme';
+import { getDictionary } from '../i18n';
 import type { RootTabParamList } from '../navigation/RootNavigator';
 import { visibleTabs } from '../navigation/tabs';
-import { getDictionary } from '../i18n';
 import { usePrototypeState } from '../state/PrototypeState';
+import { colors } from '../theme/colors';
+import { useAppTheme } from '../theme/useAppTheme';
 
 const tabMeta = {
   Recipes: { emoji: '🍽️', labelKey: 'recipes' },

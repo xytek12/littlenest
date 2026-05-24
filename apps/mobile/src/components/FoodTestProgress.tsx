@@ -1,5 +1,4 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { getFoodTestStatus } from '../utils/foodTests';
 
 type Props = {
   count: number;
@@ -11,7 +10,6 @@ type Props = {
 export function FoodTestProgress({ count, accent, itemName, onSelect }: Props) {
   return (
     <View>
-      <Text style={styles.label}>{getFoodTestStatus(count)}</Text>
       <View style={styles.row}>
         {[1, 2, 3].map((step) => (
           <Pressable
@@ -38,7 +36,6 @@ export function FoodTestProgress({ count, accent, itemName, onSelect }: Props) {
 }
 
 const styles = StyleSheet.create({
-  label: { color: '#6B7D91', marginBottom: 6 },
   row: { flexDirection: 'row', gap: 6 },
   stepButton: {
     minWidth: 34,

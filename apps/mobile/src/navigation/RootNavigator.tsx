@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState, type ComponentType } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
+  useNavigation,
   type Theme,
 } from '@react-navigation/native';
 import type { Session } from '@supabase/supabase-js';
@@ -12,14 +15,17 @@ import { BottomEmojiTabBar } from '../components/BottomEmojiTabBar';
 import { Screen } from '../components/Screen';
 import { AiScreen } from '../screens/AiScreen';
 import { FeedScreen } from '../screens/FeedScreen';
+import { FeedHistoryScreen } from '../screens/FeedHistoryScreen';
 import { FoodScreen } from '../screens/FoodScreen';
 import { FoodTastingScreen } from '../screens/FoodTastingScreen';
 import { FamilySetupScreen } from '../screens/FamilySetupScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { LoginScreen } from '../screens/LoginScreen';
 import { SleepScreen } from '../screens/SleepScreen';
+import { SleepHistoryScreen } from '../screens/SleepHistoryScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { GrowthScreen } from '../screens/GrowthScreen';
+import { GrowthHistoryScreen } from '../screens/GrowthHistoryScreen';
 import { getCurrentSession } from '../services/trackingRepository';
 import { hasSupabaseEnv, supabase } from '../services/supabase';
 import { PrototypeStateProvider, usePrototypeState } from '../state/PrototypeState';
@@ -34,19 +40,77 @@ export type RootTabParamList = {
   SleepFlow: undefined;
   FeedFlow: undefined;
   FoodTastingFlow: undefined;
+  FamilySetupFlow: undefined;
   Settings: undefined;
 };
 
+export type GrowthStackParamList = {
+  GrowthMain: undefined;
+  GrowthHistory: undefined;
+};
+
+export type SleepStackParamList = {
+  SleepMain: undefined;
+  SleepHistory: undefined;
+};
+
+export type FeedStackParamList = {
+  FeedMain: undefined;
+  FeedHistory: undefined;
+};
+
 const Tab = createBottomTabNavigator<RootTabParamList>();
+const GrowthStack = createNativeStackNavigator<GrowthStackParamList>();
+const SleepStack = createNativeStackNavigator<SleepStackParamList>();
+const FeedStack = createNativeStackNavigator<FeedStackParamList>();
+
+function GrowthStackNavigator() {
+  return (
+    <GrowthStack.Navigator screenOptions={{ headerShown: false }}>
+      <GrowthStack.Screen name="GrowthMain" component={GrowthScreen} />
+      <GrowthStack.Screen name="GrowthHistory" component={GrowthHistoryScreen} />
+    </GrowthStack.Navigator>
+  );
+}
+
+function SleepStackNavigator() {
+  return (
+    <SleepStack.Navigator screenOptions={{ headerShown: false }}>
+      <SleepStack.Screen name="SleepMain" component={SleepScreen} />
+      <SleepStack.Screen name="SleepHistory" component={SleepHistoryScreen} />
+    </SleepStack.Navigator>
+  );
+}
+
+function FeedStackNavigator() {
+  return (
+    <FeedStack.Navigator screenOptions={{ headerShown: false }}>
+      <FeedStack.Screen name="FeedMain" component={FeedScreen} />
+      <FeedStack.Screen name="FeedHistory" component={FeedHistoryScreen} />
+    </FeedStack.Navigator>
+  );
+}
+
+function FamilySetupFlowScreen() {
+  const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
+
+  return (
+    <FamilySetupScreen
+      embeddedInTabs
+      onComplete={() => navigation.navigate('Home')}
+    />
+  );
+}
 
 const screenComponents = {
   Recipes: FoodScreen,
   Home: HomeScreen,
   AI: AiScreen,
-  Growth: GrowthScreen,
-  SleepFlow: SleepScreen,
-  FeedFlow: FeedScreen,
+  Growth: GrowthStackNavigator,
+  SleepFlow: SleepStackNavigator,
+  FeedFlow: FeedStackNavigator,
   FoodTastingFlow: FoodTastingScreen,
+  FamilySetupFlow: FamilySetupFlowScreen,
   Settings: SettingsScreen,
 } satisfies Record<keyof RootTabParamList, ComponentType>;
 
@@ -122,31 +186,39 @@ function AppContent() {
 
   return (
     <NavigationContainer theme={theme}>
-      {hasSupabaseEnv() ? (
-        session === undefined ? (
-          <Screen testID="screen-auth-loading">
-            <Text style={{ color: appTheme.text, fontSize: 18, fontWeight: '800' }}>
-              Checking session...
-            </Text>
-          </Screen>
-        ) : session ? (
-          prototype.loading ? (
-            <Screen testID="screen-prototype-loading">
-              <Text style={{ color: appTheme.text, fontSize: 18, fontWeight: '800' }}>
-                Preparing prototype...
-              </Text>
-            </Screen>
-          ) : prototype.family.configured ? (
-            <TabsNavigator />
-          ) : (
-            <FamilySetupScreen />
-          )
-        ) : (
-          <LoginScreen />
-        )
-      ) : (
-        <TabsNavigator />
-      )}
+      {hasSupabaseEnv()
+        ? session === undefined
+          ? (
+              <Screen testID="screen-auth-loading">
+                <Text style={{ color: appTheme.text, fontSize: 18, fontWeight: '800' }}>
+                  Checking session...
+                </Text>
+              </Screen>
+            )
+          : session
+            ? prototype.loading
+              ? (
+                  <Screen testID="screen-prototype-loading">
+                    <Text style={{ color: appTheme.text, fontSize: 18, fontWeight: '800' }}>
+                      Preparing prototype...
+                    </Text>
+                  </Screen>
+                )
+              : prototype.family.configured
+                ? <TabsNavigator />
+                : <FamilySetupScreen />
+            : <LoginScreen />
+        : prototype.loading
+          ? (
+              <Screen testID="screen-prototype-loading">
+                <Text style={{ color: appTheme.text, fontSize: 18, fontWeight: '800' }}>
+                  Preparing prototype...
+                </Text>
+              </Screen>
+            )
+          : prototype.family.configured
+            ? <TabsNavigator />
+            : <FamilySetupScreen />}
     </NavigationContainer>
   );
 }
