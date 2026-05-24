@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { fireEvent, render } from '@testing-library/react-native';
+import { act, fireEvent, render } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { FeedScreen } from '../src/screens/FeedScreen';
 import { GrowthScreen } from '../src/screens/GrowthScreen';
@@ -50,10 +50,11 @@ describe('interaction flows', () => {
     expect(getByText(/How many times did the child wake up/i)).toBeTruthy();
 
     fireEvent.changeText(getByPlaceholderText('0'), '2');
-    jest.setSystemTime(new Date('2026-05-24T11:35:00.000Z'));
+    jest.setSystemTime(new Date('2026-05-24T11:35:27.000Z'));
     fireEvent.press(getByText('Save sleep session'));
 
     expect(queryByText(/How many times did the child wake up/i)).toBeNull();
+    expect(getByText(/01:35:27/i)).toBeTruthy();
     expect(getByText(/wakes 2/i)).toBeTruthy();
   });
 
@@ -99,5 +100,64 @@ describe('interaction flows', () => {
 
     expect(getByText('Start left')).toBeTruthy();
     expect(getByText('Start right')).toBeTruthy();
+  });
+
+  it('ticks the sleep timer display every second while a session is active', () => {
+    const { getByText, queryAllByText } = renderWithProviders(<SleepScreen />);
+
+    fireEvent.press(getByText('Start sleep'));
+
+    // advanceTimersByTime also advances the mocked system clock, so Date.now()
+    // moves forward by the same amount and getRunningDuration reports it.
+    act(() => {
+      jest.advanceTimersByTime(5000);
+    });
+
+    expect(queryAllByText(/00:00:05/).length).toBeGreaterThan(0);
+
+    act(() => {
+      jest.advanceTimersByTime(7000);
+    });
+
+    expect(queryAllByText(/00:00:12/).length).toBeGreaterThan(0);
+  });
+
+  it('ticks the nursing left side display every second while running', () => {
+    const { getByText, queryAllByText } = renderWithProviders(<FeedScreen />);
+
+    fireEvent.press(getByText('Bottle / nursing'));
+    fireEvent.press(getByText('Nursing'));
+    fireEvent.press(getByText('Start left'));
+
+    act(() => {
+      jest.advanceTimersByTime(5000);
+    });
+
+    expect(queryAllByText(/00:05 saved/).length).toBeGreaterThan(0);
+
+    act(() => {
+      jest.advanceTimersByTime(6000);
+    });
+
+    expect(queryAllByText(/00:11 saved/).length).toBeGreaterThan(0);
+  });
+
+  it('saves nursing history with seconds for each side and the total duration', () => {
+    const { getByText } = renderWithProviders(<FeedScreen />);
+
+    fireEvent.press(getByText('Bottle / nursing'));
+    fireEvent.press(getByText('Nursing'));
+
+    fireEvent.press(getByText('Start left'));
+    jest.setSystemTime(new Date('2026-05-24T10:07:35.000Z'));
+    fireEvent.press(getByText('Stop left'));
+
+    fireEvent.press(getByText('Start right'));
+    jest.setSystemTime(new Date('2026-05-24T10:12:50.000Z'));
+    fireEvent.press(getByText('Stop right'));
+    fireEvent.press(getByText('Finish nursing session'));
+
+    expect(getByText(/12:50 total/i)).toBeTruthy();
+    expect(getByText(/07:35\/05:15/i)).toBeTruthy();
   });
 });

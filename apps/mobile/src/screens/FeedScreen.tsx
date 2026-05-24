@@ -3,14 +3,42 @@ import { Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-nativ
 import { ActionCard } from '../components/ActionCard';
 import { FlowHeader } from '../components/FlowHeader';
 import { Screen } from '../components/Screen';
+import { getDictionary, isRtlLanguage } from '../i18n';
 import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
+import { formatDurationSeconds } from '../utils/formatDuration';
+import { useTickEverySecond } from '../utils/useTickEverySecond';
 
 const bottlePresets = [30, 60, 90, 120, 160, 180, 210, 220, 240, 310, 330];
 
 function formatTimestamp(value: string) {
-  return new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return new Date(value).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+}
+
+function getLiveSideSeconds(
+  side: 'left' | 'right',
+  session: {
+    leftSeconds: number;
+    rightSeconds: number;
+    leftStartedAt: string | null;
+    rightStartedAt: string | null;
+  },
+): number {
+  const accumulated = side === 'left' ? session.leftSeconds : session.rightSeconds;
+  const startedAt = side === 'left' ? session.leftStartedAt : session.rightStartedAt;
+  if (!startedAt) return accumulated;
+  const elapsedSinceStart = Math.max(0, (Date.now() - Date.parse(startedAt)) / 1000);
+  return accumulated + elapsedSinceStart;
+}
+
+function isWithinLastThreeMonths(value: string) {
+  const ninetyDaysMs = 90 * 24 * 60 * 60 * 1000;
+  return Date.now() - Date.parse(value) <= ninetyDaysMs;
 }
 
 export function FeedScreen() {
@@ -18,6 +46,7 @@ export function FeedScreen() {
   const {
     activeChild,
     activeNursingSession,
+    family,
     feedEntries,
     finishNursingSession,
     recordBottleFeed,
@@ -25,6 +54,12 @@ export function FeedScreen() {
     startNursing,
     stopNursing,
   } = usePrototypeState();
+  const labels = getDictionary(family.language).feed;
+  const commonLabels = getDictionary(family.language).common;
+  const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
+  const isNursingActive =
+    activeNursingSession.leftStartedAt != null || activeNursingSession.rightStartedAt != null;
+  useTickEverySecond(isNursingActive);
   const [showComposer, setShowComposer] = useState(false);
   const [mode, setMode] = useState<'bottle' | 'nursing'>('bottle');
   const [selectedAmount, setSelectedAmount] = useState(120);
@@ -32,6 +67,10 @@ export function FeedScreen() {
   const bottleAmount = useMemo(
     () => Number.parseInt(manualAmount, 10) || selectedAmount,
     [manualAmount, selectedAmount],
+  );
+  const recentEntries = useMemo(
+    () => feedEntries.filter((entry) => isWithinLastThreeMonths(entry.timestamp)).slice(0, 12),
+    [feedEntries],
   );
 
   function handleSaveBottle() {
@@ -47,11 +86,11 @@ export function FeedScreen() {
 
   return (
     <Screen testID="screen-feed" scroll>
-      <FlowHeader title="Feed" subtitle={`Quick feed tracking for ${activeChild.displayName}.`} />
+      <FlowHeader title={labels.title} subtitle={labels.subtitle(activeChild.displayName)} />
 
       <ActionCard
-        title="Bottle / nursing"
-        subtitle="Choose the type, then record amount or side timing."
+        title={labels.actionTitle}
+        subtitle={labels.actionSubtitle}
         accent={colors.sage}
         onPress={() => setShowComposer(true)}
       />
@@ -70,13 +109,13 @@ export function FeedScreen() {
           />
           <View style={[styles.sheetCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
             <View style={styles.sheetHeader}>
-              <Text style={[styles.sheetTitle, { color: theme.text }]}>Choose feed type</Text>
+              <Text style={[styles.sheetTitle, rtlText, { color: theme.text }]}>{labels.sheetTitle}</Text>
               <Pressable
                 accessibilityLabel="Close feed composer"
                 onPress={() => setShowComposer(false)}
                 style={[styles.closeButton, { borderColor: theme.border }]}
               >
-                <Text style={[styles.closeButtonText, { color: theme.text }]}>x</Text>
+                <Text style={[styles.closeButtonText, { color: theme.text }]}>×</Text>
               </Pressable>
             </View>
 
@@ -97,7 +136,7 @@ export function FeedScreen() {
                     ]}
                   >
                     <Text style={[styles.modeChipText, { color: selected ? '#284D71' : theme.text }]}>
-                      {nextMode === 'bottle' ? 'Bottle' : 'Nursing'}
+                      {nextMode === 'bottle' ? labels.bottle : labels.nursing}
                     </Text>
                   </Pressable>
                 );
@@ -106,8 +145,8 @@ export function FeedScreen() {
 
             {mode === 'bottle' ? (
               <View>
-                <Text style={[styles.sectionTitle, { color: theme.text }]}>
-                  Bottle amount ({settings.feedUnit})
+                <Text style={[styles.sectionTitle, rtlText, { color: theme.text }]}>
+                  {labels.bottleAmount(settings.feedUnit)}
                 </Text>
                 <View style={styles.presetWrap}>
                   {bottlePresets.map((preset) => {
@@ -138,38 +177,44 @@ export function FeedScreen() {
                 <TextInput
                   keyboardType="number-pad"
                   onChangeText={setManualAmount}
-                  placeholder="Custom amount"
+                  placeholder={labels.customAmount}
                   placeholderTextColor="#8B99AA"
-                  style={[styles.input, { color: theme.text, borderColor: theme.border }]}
+                  style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
                   value={manualAmount}
                 />
                 <Pressable onPress={handleSaveBottle} style={styles.primaryButton}>
-                  <Text style={styles.primaryButtonText}>Save bottle feed</Text>
+                  <Text style={styles.primaryButtonText}>{labels.saveBottle}</Text>
                 </Pressable>
               </View>
             ) : (
               <View>
-                <Text style={[styles.sectionTitle, { color: theme.text }]}>Nursing session</Text>
+                <Text style={[styles.sectionTitle, rtlText, { color: theme.text }]}>{labels.nursingSession}</Text>
                 <View style={styles.nursingGrid}>
                   <View style={[styles.sideCard, { borderColor: theme.border }]}>
-                    <Text style={[styles.sideTitle, { color: theme.text }]}>Left breast</Text>
-                    <Text style={styles.sideHint}>{activeNursingSession.leftMinutes} min saved</Text>
+                    <Text style={[styles.sideTitle, rtlText, { color: theme.text }]}>{labels.leftBreast}</Text>
+                    <Text style={[styles.sideHint, rtlText]}>
+                      {labels.savedDuration(
+                        formatDurationSeconds(getLiveSideSeconds('left', activeNursingSession)),
+                      )}
+                    </Text>
                     <Pressable
                       onPress={
-                        activeNursingSession.leftStartedAt
-                          ? () => stopNursing('left')
-                          : () => startNursing('left')
+                        activeNursingSession.leftStartedAt ? () => stopNursing('left') : () => startNursing('left')
                       }
                       style={styles.primaryButton}
                     >
                       <Text style={styles.primaryButtonText}>
-                        {activeNursingSession.leftStartedAt ? 'Stop left' : 'Start left'}
+                        {activeNursingSession.leftStartedAt ? labels.stopLeft : labels.startLeft}
                       </Text>
                     </Pressable>
                   </View>
                   <View style={[styles.sideCard, { borderColor: theme.border }]}>
-                    <Text style={[styles.sideTitle, { color: theme.text }]}>Right breast</Text>
-                    <Text style={styles.sideHint}>{activeNursingSession.rightMinutes} min saved</Text>
+                    <Text style={[styles.sideTitle, rtlText, { color: theme.text }]}>{labels.rightBreast}</Text>
+                    <Text style={[styles.sideHint, rtlText]}>
+                      {labels.savedDuration(
+                        formatDurationSeconds(getLiveSideSeconds('right', activeNursingSession)),
+                      )}
+                    </Text>
                     <Pressable
                       onPress={
                         activeNursingSession.rightStartedAt
@@ -179,13 +224,13 @@ export function FeedScreen() {
                       style={styles.primaryButton}
                     >
                       <Text style={styles.primaryButtonText}>
-                        {activeNursingSession.rightStartedAt ? 'Stop right' : 'Start right'}
+                        {activeNursingSession.rightStartedAt ? labels.stopRight : labels.startRight}
                       </Text>
                     </Pressable>
                   </View>
                 </View>
                 <Pressable onPress={handleFinishNursing} style={styles.secondaryButton}>
-                  <Text style={styles.secondaryButtonText}>Finish nursing session</Text>
+                  <Text style={styles.secondaryButtonText}>{labels.finishNursing}</Text>
                 </Pressable>
               </View>
             )}
@@ -194,17 +239,22 @@ export function FeedScreen() {
       </Modal>
 
       <View style={[styles.statusCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-        <Text style={[styles.statusTitle, { color: theme.text }]}>Latest feed notes</Text>
-        {feedEntries.length > 0 ? (
-          feedEntries.slice(0, 4).map((entry) => (
-            <Text key={entry.id} style={styles.logText}>
+        <Text style={[styles.statusTitle, rtlText, { color: theme.text }]}>{labels.latest}</Text>
+        {recentEntries.length > 0 ? (
+          recentEntries.map((entry) => (
+            <Text key={entry.id} style={[styles.logText, rtlText]}>
               {entry.kind === 'bottle'
-                ? `${formatTimestamp(entry.timestamp)} | bottle ${entry.amount} ${entry.unit}`
-                : `${formatTimestamp(entry.timestamp)} | nursing ${entry.totalMinutes} min total (${entry.leftMinutes}/${entry.rightMinutes})`}
+                ? labels.bottleHistory(formatTimestamp(entry.timestamp), entry.amount, entry.unit)
+                : labels.nursingHistory(
+                    formatTimestamp(entry.timestamp),
+                    formatDurationSeconds(entry.totalSeconds),
+                    formatDurationSeconds(entry.leftSeconds),
+                    formatDurationSeconds(entry.rightSeconds),
+                  )}
             </Text>
           ))
         ) : (
-          <Text style={styles.logText}>No feed note recorded yet.</Text>
+          <Text style={[styles.logText, rtlText]}>{commonLabels.noHistory}</Text>
         )}
       </View>
     </Screen>
@@ -246,7 +296,7 @@ const styles = StyleSheet.create({
     width: 34,
   },
   closeButtonText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '900',
     lineHeight: 22,
   },
@@ -351,4 +401,5 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginTop: 4,
   },
+  rtlText: { textAlign: 'right', writingDirection: 'rtl' },
 });

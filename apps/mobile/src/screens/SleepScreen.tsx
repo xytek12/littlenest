@@ -7,28 +7,30 @@ import { getDictionary, isRtlLanguage } from '../i18n';
 import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
+import { formatDurationSeconds } from '../utils/formatDuration';
+import { useTickEverySecond } from '../utils/useTickEverySecond';
 
 function formatTimestamp(value: string) {
   const date = new Date(value);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 
-function formatDuration(startedAt: string) {
-  const minutes = Math.max(0, Math.round((Date.now() - Date.parse(startedAt)) / 60000));
-  const hours = Math.floor(minutes / 60);
-  const remainder = minutes % 60;
+function getRunningDuration(startedAt: string) {
+  return formatDurationSeconds(
+    Math.max(0, Math.round((Date.now() - Date.parse(startedAt)) / 1000)),
+    true,
+  );
+}
 
-  if (hours === 0) {
-    return `${remainder} min`;
-  }
-
-  return `${hours}h ${remainder}m`;
+function isWithinLastThreeMonths(value: string) {
+  const ninetyDaysMs = 90 * 24 * 60 * 60 * 1000;
+  return Date.now() - Date.parse(value) <= ninetyDaysMs;
 }
 
 export function SleepScreen() {
   const theme = useAppTheme();
-  const { activeChild, activeSleepStartedAt, endSleep, sleepSessions, startSleep } = usePrototypeState();
-  const { family } = usePrototypeState();
+  const { activeChild, activeSleepStartedAt, endSleep, family, sleepSessions, startSleep } =
+    usePrototypeState();
   const labels = getDictionary(family.language).sleep;
   const commonLabels = getDictionary(family.language).common;
   const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
@@ -36,20 +38,13 @@ export function SleepScreen() {
   const [showTimerSheet, setShowTimerSheet] = useState(false);
   const [showWakePrompt, setShowWakePrompt] = useState(false);
   const [timerPaused, setTimerPaused] = useState(false);
-  const latestSession = sleepSessions[0];
-  const canEnd = Boolean(activeSleepStartedAt);
-  const recentSummary = useMemo(
-    () =>
-      latestSession
-        ? labels.logLine(
-            formatTimestamp(latestSession.startedAt),
-            formatTimestamp(latestSession.endedAt),
-            latestSession.durationMinutes,
-            latestSession.wakeCount,
-          )
-        : labels.empty,
-    [labels, latestSession],
+  const isSleepActive = activeSleepStartedAt != null && !timerPaused;
+  useTickEverySecond(isSleepActive);
+  const recentSessions = useMemo(
+    () => sleepSessions.filter((session) => isWithinLastThreeMonths(session.startedAt)).slice(0, 12),
+    [sleepSessions],
   );
+  const canEnd = Boolean(activeSleepStartedAt);
 
   function handleStartSleep() {
     startSleep();
@@ -78,10 +73,7 @@ export function SleepScreen() {
 
   return (
     <Screen testID="screen-sleep" scroll>
-      <FlowHeader
-        title={labels.title}
-        subtitle={labels.subtitle(activeChild.displayName)}
-      />
+      <FlowHeader title={labels.title} subtitle={labels.subtitle(activeChild.displayName)} />
 
       <ActionCard
         title={activeSleepStartedAt ? labels.running : labels.start}
@@ -89,7 +81,7 @@ export function SleepScreen() {
           activeSleepStartedAt
             ? labels.runningSubtitle(
                 formatTimestamp(activeSleepStartedAt),
-                formatDuration(activeSleepStartedAt),
+                getRunningDuration(activeSleepStartedAt),
               )
             : labels.startSubtitle
         }
@@ -149,7 +141,7 @@ export function SleepScreen() {
                   {timerPaused
                     ? labels.timerPaused
                     : activeSleepStartedAt
-                      ? labels.timerRunning(formatDuration(activeSleepStartedAt))
+                      ? labels.timerRunning(getRunningDuration(activeSleepStartedAt))
                       : ''}
                 </Text>
                 <View style={styles.promptActions}>
@@ -177,19 +169,19 @@ export function SleepScreen() {
 
       <View style={[styles.statusCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <Text style={[styles.statusTitle, rtlText, { color: theme.text }]}>{labels.latest}</Text>
-        {sleepSessions.length > 0 ? (
-          sleepSessions.slice(0, 4).map((session) => (
+        {recentSessions.length > 0 ? (
+          recentSessions.map((session) => (
             <Text key={session.id} style={[styles.logText, rtlText]}>
               {labels.logLine(
                 formatTimestamp(session.startedAt),
                 formatTimestamp(session.endedAt),
-                session.durationMinutes,
+                formatDurationSeconds(session.durationSeconds, true),
                 session.wakeCount,
               )}
             </Text>
           ))
         ) : (
-          <Text style={[styles.logText, rtlText]}>{recentSummary}</Text>
+          <Text style={[styles.logText, rtlText]}>{commonLabels.noHistory}</Text>
         )}
       </View>
     </Screen>
@@ -218,12 +210,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   input: {
-    borderWidth: 1,
     borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    borderWidth: 1,
     fontSize: 16,
     fontWeight: '700',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
   timerStatus: {
     color: '#6B7D91',
@@ -235,29 +227,29 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   secondaryButton: {
-    flex: 1,
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingVertical: 12,
     alignItems: 'center',
+    borderRadius: 14,
+    borderWidth: 1,
+    flex: 1,
+    paddingVertical: 12,
   },
   secondaryButtonText: {
     fontWeight: '800',
   },
   primaryButton: {
-    flex: 1,
-    borderRadius: 14,
-    paddingVertical: 12,
     alignItems: 'center',
     backgroundColor: colors.blue,
+    borderRadius: 14,
+    flex: 1,
+    paddingVertical: 12,
   },
   primaryButtonText: {
     color: '#0C2944',
     fontWeight: '900',
   },
   statusCard: {
-    borderWidth: 1,
     borderRadius: 18,
+    borderWidth: 1,
     padding: 16,
   },
   statusTitle: {
