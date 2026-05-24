@@ -12,16 +12,18 @@ import {
   normalizeProviderAnswer,
 } from '../ai/format';
 import type { ProviderAnswer } from '../ai/types';
+import { getDictionary, isRtlLanguage } from '../i18n';
 import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 import { getAgeInMonths } from '../utils/age';
 
-const feedbackOptions = ['Good', 'Okay', 'Bad'] as const;
-
 export function AiScreen() {
   const theme = useAppTheme();
   const { activeChild, family, logs } = usePrototypeState();
+  const dictionary = getDictionary(family.language);
+  const labels = dictionary.ai;
+  const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [safetyNote, setSafetyNote] = useState<string | null>(null);
@@ -66,20 +68,17 @@ export function AiScreen() {
 
   return (
     <Screen testID="screen-ai" scroll>
-      <Text style={[styles.title, { color: theme.text }]}>AI</Text>
-      <Text style={styles.subtitle}>
-        Admin mode compares provider answers side by side while the parent-facing app can still show
-        one final recommendation.
-      </Text>
+      <Text style={[styles.title, rtlText, { color: theme.text }]}>{labels.title}</Text>
+      <Text style={[styles.subtitle, rtlText]}>{labels.subtitle}</Text>
 
       <ActionCard
-        title="Compare Gemini + OpenAI"
-        subtitle={loading ? 'Checking both providers...' : 'Run a live comparison for the latest prompt.'}
+        title={labels.compareTitle}
+        subtitle={loading ? labels.checking : labels.compareSubtitle}
         accent={colors.blue}
         onPress={handleCompare}
       >
-        <Text style={styles.actionHint}>
-          Current test prompt: sleep window and likely next need for {activeChild.displayName}.
+        <Text style={[styles.actionHint, rtlText]}>
+          {labels.currentPrompt(activeChild.displayName)}
         </Text>
       </ActionCard>
 
@@ -94,15 +93,13 @@ export function AiScreen() {
         />
       ) : (
         <ActionCard
-          title="Sleep prediction"
-          subtitle="Compare Gemini and OpenAI in admin mode."
+          title={labels.sleepPrediction}
+          subtitle={labels.sleepPredictionSubtitle}
           accent={colors.blue}
         />
       )}
 
-      <ActionCard title="Recipe ideas" subtitle="Search with trusted sources first." accent={colors.pink} />
-
-      {safetyNote ? <Text style={styles.safety}>{safetyNote}</Text> : null}
+      {safetyNote ? <Text style={[styles.safety, rtlText]}>{dictionary.safety.doctor}</Text> : null}
 
       {comparison.length > 0 ? (
         <ScrollView
@@ -119,6 +116,9 @@ export function AiScreen() {
               borderColor={theme.border}
               surface={theme.surface}
               text={theme.text}
+              confidenceLabel={labels.confidence}
+              feedbackOptions={labels.feedback}
+              rtlText={rtlText}
             />
           ))}
         </ScrollView>
@@ -134,6 +134,9 @@ function ProviderCard({
   borderColor,
   surface,
   text,
+  confidenceLabel,
+  feedbackOptions,
+  rtlText,
 }: {
   answer: ProviderAnswer;
   feedback?: string;
@@ -141,6 +144,9 @@ function ProviderCard({
   borderColor: string;
   surface: string;
   text: string;
+  confidenceLabel: string;
+  feedbackOptions: string[];
+  rtlText: object | null;
 }) {
   return (
     <View
@@ -153,10 +159,10 @@ function ProviderCard({
       ]}
     >
       <Text style={styles.providerName}>{answer.provider.toUpperCase()}</Text>
-      <Text style={[styles.providerTitle, { color: text }]}>{answer.title}</Text>
-      <Text style={styles.providerBody}>{compactAiText(answer.body, 260)}</Text>
+      <Text style={[styles.providerTitle, rtlText, { color: text }]}>{answer.title}</Text>
+      <Text style={[styles.providerBody, rtlText]}>{compactAiText(answer.body, 260)}</Text>
       <View style={styles.confidenceRow}>
-        <Text style={styles.confidenceLabel}>Confidence</Text>
+        <Text style={[styles.confidenceLabel, rtlText]}>{confidenceLabel}</Text>
         <ConfidenceBadge label={answer.confidenceLabel} />
       </View>
 
@@ -284,4 +290,5 @@ const styles = StyleSheet.create({
   feedbackLabelSelected: {
     color: '#284D71',
   },
+  rtlText: { textAlign: 'right', writingDirection: 'rtl' },
 });

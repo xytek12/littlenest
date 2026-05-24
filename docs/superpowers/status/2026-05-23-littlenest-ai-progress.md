@@ -950,3 +950,36 @@ Fresh verification completed before commit:
 - `npm test -- --watchAll=false` passes: 11 suites / 33 tests.
 - `npx tsc --noEmit` passes.
 - `npx expo install --check` passes after network escalation: `Dependencies are up to date`.
+
+## 2026-05-24 AI / Recipes / Allergen / Flow Fix Pass
+
+Latest pass addressed the next device-reported issues:
+
+- Removed recipe content from the AI screen; AI now focuses on sleep / hunger comparison only.
+- Hardened Gemini and OpenAI response parsing so raw JSON, markdown fences, and provider quota messages do not leak into mobile cards.
+- Tightened Supabase Edge Function prompts:
+  - sleep guidance returns concise JSON-only parent-facing text
+  - recipe search returns recipe-only content, not growth or schedule guidance
+  - recipe search asks for direct canonical recipe URLs instead of search or redirect URLs
+- Deployed `ai-router` and `recipe-search` Edge Functions to Supabase as version 11 with JWT verification preserved.
+- Recipes screen now:
+  - translates visible labels using the selected app language
+  - removes the broken Yummy Toddler Food fallback URL
+  - skips live AI recipe cards that do not include a direct source URL instead of opening Google
+- Food tasting now lets the parent tap 1 / 2 / 3 checks per allergen and marks completed allergens after 3 checks.
+- Expanded the allergen reference data locally and in Supabase with broader FDA Big 9 coverage, including more tree nuts, fish, and shellfish.
+- Added editable Growth measurements for weight, height, and head circumference with metric / imperial units.
+- Added a Sleep timer modal with pause / resume and wake-count capture before saving.
+- Added broader Hebrew-visible labels for Home, Settings, bottom navigation, Sleep, Growth, Recipes, and AI.
+
+Supabase verification:
+
+- `ai-router` deployed: version 11.
+- `recipe-search` deployed: version 11.
+- `expand_allergen_reference_items` migration applied successfully.
+- Remote allergen counts checked by section: dairy, eggs, fish, nuts, sesame, shellfish, soy, wheat.
+
+Local verification:
+
+- `npm test -- --watchAll=false` passes: 14 suites / 42 tests.
+- `npx tsc --noEmit` passes.

@@ -15,7 +15,7 @@ import { useAppTheme } from '../theme/useAppTheme';
 
 export function FoodTastingScreen() {
   const theme = useAppTheme();
-  const { activeChild, family } = usePrototypeState();
+  const { activeChild, allergenExposures, family, markAllergenExposure } = usePrototypeState();
   const [items, setItems] = useState<AllergenReferenceItem[]>(allergenReferenceItems);
   const accent = getAccentTheme(
     family.mode === 'twins'
@@ -64,19 +64,30 @@ export function FoodTastingScreen() {
           style={[styles.sectionCard, { backgroundColor: theme.surface, borderColor: theme.border }]}
         >
           <Text style={[styles.sectionTitle, { color: theme.text }]}>{section}</Text>
-          {items.map((item) => (
-            <View key={item.id} style={styles.itemRow}>
-              <View style={styles.itemText}>
-                <Text style={[styles.itemName, { color: theme.text }]}>{item.name}</Text>
-                <Text style={styles.itemHint}>
-                  {item.testedCount === 0
-                    ? 'Still needs testing'
-                    : `${item.testedCount}/3 allergy checks complete`}
-                </Text>
+          {items.map((item) => {
+            const count = allergenExposures[activeChild.id]?.[item.id] ?? item.testedCount;
+
+            return (
+              <View key={item.id} style={styles.itemRow}>
+                <View style={styles.itemText}>
+                  <Text style={[styles.itemName, { color: theme.text }]}>{item.name}</Text>
+                  <Text style={styles.itemHint}>
+                    {count === 0
+                      ? 'Still needs testing'
+                      : count >= 3
+                        ? 'All checks complete'
+                        : `${count}/3 allergy checks complete`}
+                  </Text>
+                </View>
+                <FoodTestProgress
+                  count={count}
+                  accent={accent.secondary ?? accent.primary}
+                  itemName={item.name}
+                  onSelect={(nextCount) => markAllergenExposure(item.id, nextCount)}
+                />
               </View>
-              <FoodTestProgress count={item.testedCount} accent={accent.secondary ?? accent.primary} />
-            </View>
-          ))}
+            );
+          })}
         </View>
       ))}
 

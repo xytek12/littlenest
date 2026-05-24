@@ -4,16 +4,23 @@ import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 import type { RootTabParamList } from '../navigation/RootNavigator';
 import { visibleTabs } from '../navigation/tabs';
+import { getDictionary } from '../i18n';
+import { usePrototypeState } from '../state/PrototypeState';
 
 const tabMeta = {
-  Recipes: { emoji: '🍽️', label: 'Recipes' },
-  Home: { emoji: '🏠', label: 'Home' },
-  AI: { emoji: '✨', label: 'AI' },
-  Growth: { emoji: '📊', label: 'Growth' },
-} satisfies Record<(typeof visibleTabs)[number], { emoji: string; label: string }>;
+  Recipes: { emoji: '🍽️', labelKey: 'recipes' },
+  Home: { emoji: '🏠', labelKey: 'home' },
+  AI: { emoji: '✨', labelKey: 'ai' },
+  Growth: { emoji: '📊', labelKey: 'growth' },
+} satisfies Record<
+  (typeof visibleTabs)[number],
+  { emoji: string; labelKey: keyof ReturnType<typeof getDictionary>['tabs'] }
+>;
 
 export function BottomEmojiTabBar({ navigation, state }: BottomTabBarProps) {
   const theme = useAppTheme();
+  const { family } = usePrototypeState();
+  const dictionary = getDictionary(family.language);
   const activeRouteName = state.routes[state.index]?.name as keyof RootTabParamList;
   const selectedTab = visibleTabs.includes(activeRouteName as (typeof visibleTabs)[number])
     ? activeRouteName
@@ -33,11 +40,12 @@ export function BottomEmojiTabBar({ navigation, state }: BottomTabBarProps) {
       {visibleTabs.map((routeName) => {
         const selected = selectedTab === routeName;
         const meta = tabMeta[routeName];
+        const label = dictionary.tabs[meta.labelKey];
 
         return (
           <Pressable
             key={routeName}
-            accessibilityLabel={`${meta.label} tab`}
+            accessibilityLabel={`${label} tab`}
             accessibilityRole="button"
             accessibilityState={{ selected }}
             onPress={() => navigation.navigate(routeName)}
@@ -59,7 +67,7 @@ export function BottomEmojiTabBar({ navigation, state }: BottomTabBarProps) {
                 { color: selected ? colors.blue : theme.mutedText },
               ]}
             >
-              {meta.label}
+              {label}
             </Text>
           </Pressable>
         );

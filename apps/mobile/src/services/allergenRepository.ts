@@ -16,11 +16,11 @@ type AllergenSectionKey =
 
 const sectionLabels: Record<AllergenSectionKey, AllergenReferenceItem['section']> = {
   eggs: 'Eggs',
-  dairy: 'Dairy',
+  dairy: 'Milk / Dairy',
   wheat: 'Wheat',
   soy: 'Soy',
   sesame: 'Sesame',
-  nuts: 'Nuts',
+  nuts: 'Peanut & Tree Nuts',
   fish: 'Fish',
   shellfish: 'Shellfish',
 };
@@ -32,8 +32,7 @@ export async function fetchAllergenReferenceItems(): Promise<AllergenReferenceIt
 
   const { data, error } = await supabase
     .from('allergen_reference_items')
-    .select('id, section, display_name, source_label, source_url')
-    .order('section', { ascending: true })
+    .select('id, section, item_slug, display_name, source_label, source_url, display_order')
     .order('display_order', { ascending: true });
 
   if (error || !data?.length) {
@@ -41,8 +40,8 @@ export async function fetchAllergenReferenceItems(): Promise<AllergenReferenceIt
   }
 
   return data.map((item) => ({
-    id: item.id,
-    section: sectionLabels[item.section as AllergenSectionKey] ?? 'Nuts',
+    id: item.item_slug ?? item.id,
+    section: sectionLabels[item.section as AllergenSectionKey] ?? 'Peanut & Tree Nuts',
     name: item.display_name,
     testedCount: 0,
     sourceLabel: item.source_label,

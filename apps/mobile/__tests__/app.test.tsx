@@ -68,7 +68,16 @@ describe('app shell', () => {
     fireEvent.press(getByLabelText('Open settings'));
     fireEvent.press(getByText('HE'));
 
+    expect(getByLabelText('מתכונים tab')).toBeTruthy();
+    expect(getByLabelText('בית tab')).toBeTruthy();
+    expect(getByLabelText('AI tab')).toBeTruthy();
+    expect(getByLabelText('צמיחה tab')).toBeTruthy();
     expect(getByText('הגדרות')).toBeTruthy();
     expect(getByText('שפה')).toBeTruthy();
+
+    fireEvent.press(getByLabelText('בית tab'));
+
+    expect(getByText('LittleNest לומדת')).toBeTruthy();
+    expect(getByText('שינה')).toBeTruthy();
   });
 });

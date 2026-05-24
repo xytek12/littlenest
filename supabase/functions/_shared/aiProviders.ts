@@ -36,26 +36,122 @@ function normalizeSources(value: unknown): AiSource[] {
     .filter((source): source is AiSource => source !== null);
 }
 
-function parseJsonObject(text: string) {
-  const trimmed = text
+function stripCodeFence(text: string) {
+  return text
     .trim()
     .replace(/^```(?:json)?/i, '')
     .replace(/```$/i, '')
     .trim();
+}
+
+function unwrapProviderPayload(value: unknown): Record<string, unknown> | null {
+  if (!value) {
+    return null;
+  }
+
+  if (typeof value === 'string') {
+    return unwrapProviderPayload(parseJsonObject(value));
+  }
+
+  if (Array.isArray(value)) {
+    return unwrapProviderPayload(value.find((item) => item && typeof item === 'object'));
+  }
+
+  if (typeof value !== 'object') {
+    return null;
+  }
+
+  const candidate = value as Record<string, unknown>;
+
+  if (Array.isArray(candidate.results)) {
+    return unwrapProviderPayload(candidate.results);
+  }
+
+  if (candidate.recommended && typeof candidate.recommended === 'object') {
+    return unwrapProviderPayload(candidate.recommended);
+  }
+
+  return typeof candidate.title === 'string' || typeof candidate.body === 'string'
+    ? candidate
+    : null;
+}
+
+function findBalancedJsonCandidates(value: string) {
+  const candidates: string[] = [];
+  const pairs: Record<string, string> = { '{': '}', '[': ']' };
+
+  for (let start = 0; start < value.length; start += 1) {
+    const opener = value[start];
+    const closer = pairs[opener];
+
+    if (!closer) {
+      continue;
+    }
+
+    const stack = [closer];
+    let inString = false;
+    let escaped = false;
+
+    for (let index = start + 1; index < value.length; index += 1) {
+      const char = value[index];
+
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+
+      if (char === '\\') {
+        escaped = inString;
+        continue;
+      }
+
+      if (char === '"') {
+        inString = !inString;
+        continue;
+      }
+
+      if (inString) {
+        continue;
+      }
+
+      if (pairs[char]) {
+        stack.push(pairs[char]);
+        continue;
+      }
+
+      if (char === stack[stack.length - 1]) {
+        stack.pop();
+      }
+
+      if (stack.length === 0) {
+        candidates.push(value.slice(start, index + 1));
+        break;
+      }
+    }
+  }
+
+  return candidates;
+}
+
+function parseJsonObject(text: string) {
+  const trimmed = stripCodeFence(text);
 
   try {
-    return JSON.parse(trimmed);
+    return unwrapProviderPayload(JSON.parse(trimmed));
   } catch {
-    const match = trimmed.match(/\{[\s\S]*\}/);
-    if (!match) {
-      return null;
+    for (const candidate of findBalancedJsonCandidates(trimmed)) {
+      try {
+        const parsed = unwrapProviderPayload(JSON.parse(candidate));
+
+        if (parsed) {
+          return parsed;
+        }
+      } catch {
+        // Try the next balanced candidate.
+      }
     }
 
-    try {
-      return JSON.parse(match[0]);
-    } catch {
-      return null;
-    }
+    return null;
   }
 }
 

@@ -22,14 +22,14 @@ const recipeIdeas: CuratedRecipeIdea[] = [
   },
   {
     id: 'oatmeal-berries',
-    title: 'Oatmeal with berries',
-    summary: 'Iron-rich grains with fruit flavor for older babies.',
+    title: 'Apple oat pancakes',
+    summary: 'Soft oat pancakes with fruit flavor for older babies.',
     tag: 'Iron-rich',
     imageUrl:
       'https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=1200&q=80',
     source: {
-      title: 'Yummy Toddler Food',
-      url: 'https://www.yummytoddlerfood.com/baby-oatmeal-with-berries/',
+      title: 'Healthy Little Foodies',
+      url: 'https://www.healthylittlefoodies.com/apple-oat-pancakes/',
     },
   },
   {

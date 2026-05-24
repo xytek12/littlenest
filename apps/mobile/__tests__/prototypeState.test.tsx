@@ -34,6 +34,9 @@ function Probe() {
           ? `${state.feedEntries[0].leftMinutes}/${state.feedEntries[0].rightMinutes}`
           : 'none'}
       </Text>
+      <Text testID="salmon-allergen-checks">
+        {state.allergenExposures[state.activeChild.id]?.salmon ?? 'none'}
+      </Text>
 
       <Pressable onPress={() => state.updateFeedUnit('oz')}>
         <Text>set-oz</Text>
@@ -61,6 +64,12 @@ function Probe() {
       </Pressable>
       <Pressable onPress={() => state.finishNursingSession()}>
         <Text>finish-nursing</Text>
+      </Pressable>
+      <Pressable onPress={() => state.markAllergenExposure('salmon', 2)}>
+        <Text>mark-salmon-two</Text>
+      </Pressable>
+      <Pressable onPress={() => state.markAllergenExposure('salmon', 4)}>
+        <Text>mark-salmon-too-high</Text>
       </Pressable>
     </View>
   );
@@ -134,5 +143,19 @@ describe('PrototypeStateProvider', () => {
     expect(getByTestId('latest-feed-kind').props.children).toBe('nursing');
     expect(getByTestId('latest-feed-total').props.children).toBe(12);
     expect(getByTestId('latest-feed-sides').props.children).toBe('7/5');
+  });
+
+  it('stores allergen exposure checks per active child and caps them at three', () => {
+    const { getByText, getByTestId } = renderProbe();
+
+    expect(getByTestId('salmon-allergen-checks').props.children).toBe('none');
+
+    fireEvent.press(getByText('mark-salmon-two'));
+
+    expect(getByTestId('salmon-allergen-checks').props.children).toBe(2);
+
+    fireEvent.press(getByText('mark-salmon-too-high'));
+
+    expect(getByTestId('salmon-allergen-checks').props.children).toBe(3);
   });
 });

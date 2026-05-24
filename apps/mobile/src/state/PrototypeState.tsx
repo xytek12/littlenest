@@ -68,6 +68,8 @@ export type ActiveNursingSession = {
   rightMinutes: number;
 };
 
+export type PrototypeAllergenExposures = Record<string, Record<string, number>>;
+
 type EndSleepInput = {
   wakeCount: number;
   note?: string;
@@ -87,6 +89,7 @@ type PrototypeStateValue = {
   activeNursingSession: ActiveNursingSession;
   sleepSessions: PrototypeSleepSession[];
   feedEntries: PrototypeFeedEntry[];
+  allergenExposures: PrototypeAllergenExposures;
   logs: PrototypeLog[];
   configureFamily: (input: ConfigureFamilyInput) => void;
   editFamily: () => void;
@@ -98,6 +101,7 @@ type PrototypeStateValue = {
   startNursing: (side: NursingSide) => void;
   stopNursing: (side: NursingSide) => void;
   finishNursingSession: (note?: string) => void;
+  markAllergenExposure: (allergenId: string, checks: number) => void;
 };
 
 export type ConfigureFamilyInput = {
@@ -172,6 +176,10 @@ function diffMinutes(startedAt: string, endedAt: string) {
   return Math.max(0, Math.round((Date.parse(endedAt) - Date.parse(startedAt)) / 60000));
 }
 
+function clampAllergenChecks(checks: number) {
+  return Math.min(3, Math.max(0, Math.round(checks)));
+}
+
 function stopSide(
   session: ActiveNursingSession,
   side: NursingSide,
@@ -207,6 +215,7 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
     useState<ActiveNursingSession>(emptyNursingSession);
   const [sleepSessions, setSleepSessions] = useState<PrototypeSleepSession[]>([]);
   const [feedEntries, setFeedEntries] = useState<PrototypeFeedEntry[]>([]);
+  const [allergenExposures, setAllergenExposures] = useState<PrototypeAllergenExposures>({});
   const [logs, setLogs] = useState<PrototypeLog[]>([]);
 
   useEffect(() => {
@@ -227,6 +236,7 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
           activeNursingSession?: ActiveNursingSession;
           sleepSessions?: PrototypeSleepSession[];
           feedEntries?: PrototypeFeedEntry[];
+          allergenExposures?: PrototypeAllergenExposures;
           logs?: PrototypeLog[];
         };
 
@@ -237,6 +247,7 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
           setActiveNursingSession(parsed.activeNursingSession ?? emptyNursingSession);
           setSleepSessions(parsed.sleepSessions ?? []);
           setFeedEntries(parsed.feedEntries ?? []);
+          setAllergenExposures(parsed.allergenExposures ?? {});
           setLogs(parsed.logs ?? []);
         }
       })
@@ -258,10 +269,12 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
         activeNursingSession,
         sleepSessions,
         feedEntries,
+        allergenExposures,
         logs,
       }),
     ).catch(() => undefined);
   }, [
+    allergenExposures,
     activeNursingSession,
     activeSleepStartedAt,
     family,
@@ -284,6 +297,7 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
       activeNursingSession,
       sleepSessions,
       feedEntries,
+      allergenExposures,
       logs,
       configureFamily(input) {
         const children = createChildren(input);
@@ -438,9 +452,21 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
           ...current,
         ]);
       },
+      markAllergenExposure(allergenId, checks) {
+        const safeChecks = clampAllergenChecks(checks);
+
+        setAllergenExposures((current) => ({
+          ...current,
+          [activeChild.id]: {
+            ...current[activeChild.id],
+            [allergenId]: safeChecks,
+          },
+        }));
+      },
     }),
     [
       activeChild,
+      allergenExposures,
       activeNursingSession,
       activeSleepStartedAt,
       family,

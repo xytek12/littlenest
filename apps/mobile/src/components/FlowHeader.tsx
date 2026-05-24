@@ -2,6 +2,8 @@ import { useNavigation } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { RootTabParamList } from '../navigation/RootNavigator';
+import { getDictionary, isRtlLanguage } from '../i18n';
+import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 
@@ -13,19 +15,24 @@ type Props = {
 export function FlowHeader({ title, subtitle }: Props) {
   const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
   const theme = useAppTheme();
+  const { family } = usePrototypeState();
+  const dictionary = getDictionary(family.language);
+  const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
 
   return (
     <View style={styles.container}>
       <Pressable
-        accessibilityLabel="Back to Home"
+        accessibilityLabel={dictionary.common.backHomeLabel}
         accessibilityRole="button"
         onPress={() => navigation.navigate('Home')}
         style={[styles.backButton, { borderColor: theme.border }]}
       >
-        <Text style={[styles.backText, { color: theme.text }]}>← Home</Text>
+        <Text style={[styles.backText, rtlText, { color: theme.text }]}>
+          {dictionary.common.backHome}
+        </Text>
       </Pressable>
-      <Text style={[styles.title, { color: theme.text }]}>{title}</Text>
-      {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+      <Text style={[styles.title, rtlText, { color: theme.text }]}>{title}</Text>
+      {subtitle ? <Text style={[styles.subtitle, rtlText]}>{subtitle}</Text> : null}
     </View>
   );
 }
@@ -55,4 +62,5 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginTop: 8,
   },
+  rtlText: { textAlign: 'right', writingDirection: 'rtl' },
 });

@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { ActionCard } from '../components/ActionCard';
 import { Screen } from '../components/Screen';
+import { getDictionary, isRtlLanguage } from '../i18n';
 import type { RootTabParamList } from '../navigation/RootNavigator';
 import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
@@ -33,6 +34,9 @@ export function HomeScreen() {
     logs,
     sleepSessions,
   } = usePrototypeState();
+  const dictionary = getDictionary(family.language);
+  const labels = dictionary.home;
+  const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
   const accent = getAccentTheme(
     family.mode === 'twins'
       ? { mode: 'twins', twinType: family.twinType ?? 'boy_girl' }
@@ -46,11 +50,11 @@ export function HomeScreen() {
       <View style={styles.headerRow}>
         <View>
           <Text style={[styles.title, { color: theme.text }]}>{activeChild.displayName}</Text>
-          <Text style={styles.subtitle}>{getAgeLabel(activeChild.dateOfBirth)}</Text>
+          <Text style={[styles.subtitle, rtlText]}>{getAgeLabel(activeChild.dateOfBirth)}</Text>
         </View>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Open settings"
+          accessibilityLabel={labels.openSettings}
           onPress={() => navigation.navigate('Settings')}
           style={[styles.settingsButton, { borderColor: theme.border, backgroundColor: theme.surface }]}
         >
@@ -65,41 +69,39 @@ export function HomeScreen() {
         ]}
       >
         <Text style={[styles.learningKicker, { color: accent.primary }]}>
-          {learningReady ? 'AI suggestion' : 'LittleNest is learning'}
+          {learningReady ? labels.suggestionKicker : labels.learningKicker}
         </Text>
-        <Text style={[styles.learningTitle, { color: theme.text }]}>
-          {learningReady
-            ? 'Predictions are ready for your latest routine.'
-            : `Track sleep and feeds for 14 days to unlock smarter guidance.`}
+        <Text style={[styles.learningTitle, rtlText, { color: theme.text }]}>
+          {learningReady ? labels.suggestionTitle : labels.learningTitle}
         </Text>
-        <Text style={styles.learningBody}>
+        <Text style={[styles.learningBody, rtlText]}>
           {learningReady
-            ? `${activeChild.displayName}'s routine now has enough data for stronger sleep and hunger timing suggestions.`
-            : `Right now LittleNest has ${trackedDays} tracked day${trackedDays === 1 ? '' : 's'}. Keep recording sleep and feed patterns so the AI can learn this child's real rhythm.`}
+            ? labels.suggestionBody(activeChild.displayName)
+            : labels.learningBody(trackedDays)}
         </Text>
       </View>
 
       <ActionCard
-        title="Sleep"
-        subtitle="Start or end a sleep session with a running timer."
+        title={labels.sleepTitle}
+        subtitle={labels.sleepSubtitle}
         accent={accent.primary}
         onPress={() => navigation.navigate('SleepFlow')}
       />
       <ActionCard
-        title="Feed"
-        subtitle="Bottle or nursing with exact times and totals."
+        title={labels.feedTitle}
+        subtitle={labels.feedSubtitle}
         accent={family.mode === 'single' && activeChild.sex === 'girl' ? colors.pink : colors.sage}
         onPress={() => navigation.navigate('FeedFlow')}
       />
       <ActionCard
-        title="Food tasting"
-        subtitle="Track first tastes, allergy checks, and what still needs testing."
+        title={labels.foodTastingTitle}
+        subtitle={labels.foodTastingSubtitle}
         accent={accent.secondary ?? accent.primary}
         onPress={() => navigation.navigate('FoodTastingFlow')}
       />
       <ActionCard
-        title="Family setup"
-        subtitle={family.mode === 'twins' ? 'Edit the twins prototype profile.' : 'Edit the child prototype profile.'}
+        title={labels.familySetupTitle}
+        subtitle={family.mode === 'twins' ? labels.familySetupTwins : labels.familySetupSingle}
         accent={accent.secondary ?? accent.primary}
         onPress={() => navigation.navigate('Settings')}
       />
@@ -156,4 +158,5 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginTop: 4,
   },
+  rtlText: { textAlign: 'right', writingDirection: 'rtl' },
 });

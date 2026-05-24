@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { searchRecipes } from '../ai/client';
-import { normalizeProviderAnswer } from '../ai/format';
+import { formatRecipeSearchError, normalizeProviderAnswer } from '../ai/format';
 import { RecipeIdeaCard } from '../components/RecipeIdeaCard';
 import { Screen } from '../components/Screen';
 import { getDailyRecipeIdeas } from '../data/recipeIdeas';
+import { getDictionary, isRtlLanguage } from '../i18n';
 import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
@@ -18,7 +19,9 @@ function summarizeRecipeBody(body: string) {
 export function FoodScreen() {
   const theme = useAppTheme();
   const { activeChild, family } = usePrototypeState();
-  const [query, setQuery] = useState('first tastes and recipes');
+  const labels = getDictionary(family.language).recipes;
+  const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
+  const [query, setQuery] = useState(labels.queryPlaceholder);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [liveResults, setLiveResults] = useState<
@@ -26,6 +29,7 @@ export function FoodScreen() {
   >([]);
   const dailyIdeas = useMemo(() => getDailyRecipeIdeas(new Date()), []);
   const months = getAgeInMonths(activeChild.dateOfBirth);
+  const liveResultsWithSources = liveResults.filter((result) => result.sources[0]);
 
   async function handleSearch() {
     setErrorMessage(null);
@@ -39,7 +43,7 @@ export function FoodScreen() {
       });
       setLiveResults(nextResults.map(normalizeProviderAnswer));
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Recipe search failed');
+      setErrorMessage(formatRecipeSearchError(error));
     } finally {
       setLoading(false);
     }
@@ -47,28 +51,26 @@ export function FoodScreen() {
 
   return (
     <Screen testID="screen-recipes" scroll>
-      <Text style={[styles.title, { color: theme.text }]}>Recipe ideas</Text>
-      <Text style={styles.subtitle}>
-        AI summarizes, then the parent taps straight into the source website. Daily ideas refresh automatically.
-      </Text>
+      <Text style={[styles.title, rtlText, { color: theme.text }]}>{labels.title}</Text>
+      <Text style={[styles.subtitle, rtlText]}>{labels.subtitle}</Text>
 
       <View style={[styles.searchCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-        <Text style={[styles.searchLabel, { color: theme.text }]}>Search trusted sources first</Text>
+        <Text style={[styles.searchLabel, rtlText, { color: theme.text }]}>{labels.searchLabel}</Text>
         <TextInput
           onChangeText={setQuery}
-          placeholder="first tastes and recipes"
+          placeholder={labels.queryPlaceholder}
           placeholderTextColor="#8B99AA"
-          style={[styles.input, { color: theme.text, borderColor: theme.border }]}
+          style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
           value={query}
         />
         <Pressable onPress={handleSearch} style={styles.button}>
-          <Text style={styles.buttonText}>{loading ? 'Searching...' : 'Refresh recipe ideas'}</Text>
+          <Text style={styles.buttonText}>{loading ? labels.searching : labels.refresh}</Text>
         </Pressable>
         {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
       </View>
 
-      <Text style={styles.helperText}>
-        Ideas for {activeChild.displayName}, {months} months old.
+      <Text style={[styles.helperText, rtlText]}>
+        {labels.helper(activeChild.displayName, months)}
       </Text>
 
       {dailyIdeas.map((idea) => (
@@ -78,16 +80,18 @@ export function FoodScreen() {
           summary={idea.summary}
           tag={idea.tag}
           title={idea.title}
+          ctaLabel={labels.openSource}
+          dailyLabel={labels.dailyLabel}
           onPress={() => Linking.openURL(idea.source.url)}
         />
       ))}
 
-      {liveResults.length > 0 ? (
+      {liveResultsWithSources.length > 0 ? (
         <>
-          <Text style={[styles.resultsHeader, { color: theme.text }]}>Fresh AI recipe finds</Text>
-          {liveResults.map((result, index) => {
+          <Text style={[styles.resultsHeader, rtlText, { color: theme.text }]}>{labels.resultsHeader}</Text>
+          {liveResultsWithSources.map((result, index) => {
             const fallbackImage = dailyIdeas[index % dailyIdeas.length]?.imageUrl ?? dailyIdeas[0].imageUrl;
-            const primarySource = result.sources[0];
+            const primarySource = result.sources[0]!;
 
             return (
               <RecipeIdeaCard
@@ -96,7 +100,9 @@ export function FoodScreen() {
                 summary={summarizeRecipeBody(result.body)}
                 tag={result.confidenceLabel}
                 title={result.title}
-                onPress={() => Linking.openURL(primarySource?.url ?? 'https://www.google.com')}
+                ctaLabel={labels.openSource}
+                dailyLabel={labels.dailyLabel}
+                onPress={() => Linking.openURL(primarySource.url)}
               />
             );
           })}
@@ -159,4 +165,5 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 10,
   },
+  rtlText: { textAlign: 'right', writingDirection: 'rtl' },
 });

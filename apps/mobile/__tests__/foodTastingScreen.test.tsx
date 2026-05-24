@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { render, waitFor } from '@testing-library/react-native';
+import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { FoodTastingScreen } from '../src/screens/FoodTastingScreen';
 import { fetchAllergenReferenceItems } from '../src/services/allergenRepository';
 import { PrototypeStateProvider } from '../src/state/PrototypeState';
@@ -40,5 +40,34 @@ describe('FoodTastingScreen', () => {
     await waitFor(() => expect(getByText('Salmon')).toBeTruthy());
     expect(getByText('Fish')).toBeTruthy();
     expect(queryByText(/still local prototype data/i)).toBeNull();
+  });
+
+  it('lets parents mark one, two, or three allergen checks and shows completion', async () => {
+    mockedFetchAllergens.mockResolvedValue([
+      {
+        id: 'salmon',
+        section: 'Fish',
+        name: 'Salmon',
+        testedCount: 0,
+        sourceLabel: 'FDA',
+        sourceUrl: 'https://www.fda.gov/food/food-labeling-nutrition/food-allergies',
+      },
+    ]);
+
+    const { getByLabelText, getByText } = render(
+      <PrototypeStateProvider>
+        <FoodTastingScreen />
+      </PrototypeStateProvider>,
+    );
+
+    await waitFor(() => expect(getByText('Salmon')).toBeTruthy());
+
+    fireEvent.press(getByLabelText('Mark Salmon as 2 checks'));
+
+    expect(getByText('2/3 allergy checks complete')).toBeTruthy();
+
+    fireEvent.press(getByLabelText('Mark Salmon as 3 checks'));
+
+    expect(getByText('All checks complete')).toBeTruthy();
   });
 });

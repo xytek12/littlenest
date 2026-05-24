@@ -16,7 +16,8 @@ const languageName = {
 export function buildBabyGuidancePrompt(input: PromptInput) {
   return `
 You are helping a parent understand baby tracking logs.
-Respond in ${languageName[input.language]}.
+Respond in ${languageName[input.language]}. All title and body text must be in ${languageName[input.language]}.
+If the selected language is Hebrew, write natural Hebrew text.
 The child is ${input.childAgeMonths} months old.
 Prompt type: ${input.promptType}.
 
@@ -26,7 +27,9 @@ Rules:
 - Explain which log patterns support the suggestion.
 - For 4-month solids, allergy concerns, illness, medicine, growth concerns, or unusual symptoms, tell the parent to follow doctor guidance.
 - If recipe or food guidance is requested, prefer age-appropriate and simple foods.
-- Return valid JSON with keys: title, body, confidenceLabel, sources.
+- Keep the parent-facing title and body concise enough for mobile cards.
+- Return only valid JSON with keys: title, body, confidenceLabel, sources.
+- Do not wrap the JSON in markdown fences or add text before or after it.
 
 Child profile:
 ${JSON.stringify(input.childProfile, null, 2)}

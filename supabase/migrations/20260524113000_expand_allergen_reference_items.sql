@@ -1,15 +1,3 @@
-create table public.allergen_reference_items (
-  id uuid primary key default gen_random_uuid(),
-  section text not null check (section in ('eggs', 'dairy', 'wheat', 'soy', 'sesame', 'nuts', 'fish', 'shellfish')),
-  item_slug text not null,
-  display_name text not null,
-  display_order integer not null default 0,
-  source_label text not null,
-  source_url text not null,
-  created_at timestamptz not null default now(),
-  unique (section, item_slug)
-);
-
 insert into public.allergen_reference_items (section, item_slug, display_name, display_order, source_label, source_url)
 values
   ('eggs', 'egg', 'Egg', 10, 'FDA', 'https://www.fda.gov/food/food-labeling-nutrition/food-allergies'),
@@ -37,17 +25,10 @@ values
   ('shellfish', 'crab', 'Crab', 230, 'FDA', 'https://www.fda.gov/food/food-labeling-nutrition/food-allergies'),
   ('shellfish', 'lobster', 'Lobster', 240, 'FDA', 'https://www.fda.gov/food/food-labeling-nutrition/food-allergies'),
   ('shellfish', 'clam', 'Clam', 250, 'FDA', 'https://www.fda.gov/food/food-labeling-nutrition/food-allergies'),
-  ('shellfish', 'scallop', 'Scallop', 260, 'FDA', 'https://www.fda.gov/food/food-labeling-nutrition/food-allergies');
-
-grant select on table public.allergen_reference_items to authenticated, service_role;
-
-alter table public.allergen_reference_items enable row level security;
-
-create policy "allergen reference read authenticated"
-on public.allergen_reference_items
-for select
-to authenticated
-using (true);
-
-create index allergen_reference_section_order_idx
-on public.allergen_reference_items(section, display_order);
+  ('shellfish', 'scallop', 'Scallop', 260, 'FDA', 'https://www.fda.gov/food/food-labeling-nutrition/food-allergies')
+on conflict (section, item_slug) do update
+set
+  display_name = excluded.display_name,
+  display_order = excluded.display_order,
+  source_label = excluded.source_label,
+  source_url = excluded.source_url;

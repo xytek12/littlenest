@@ -1,48 +1,16 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { FlowHeader } from '../components/FlowHeader';
 import { Screen } from '../components/Screen';
+import { getDictionary, isRtlLanguage } from '../i18n';
 import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 
-const labelsByLanguage = {
-  en: {
-    title: 'Settings',
-    subtitle: 'Language, units, family setup, and subscription live here.',
-    feedUnit: 'Feed unit',
-    language: 'Language',
-    familySetup: 'Family setup',
-    familySetupText: 'Update child names, child type, and prototype profile.',
-    subscription: 'Subscription',
-    subscriptionText: 'Monthly and annual family plans will appear here later.',
-  },
-  he: {
-    title: 'הגדרות',
-    subtitle: 'שפה, יחידות, פרטי משפחה ומנוי נמצאים כאן.',
-    feedUnit: 'יחידת האכלה',
-    language: 'שפה',
-    familySetup: 'הגדרת משפחה',
-    familySetupText: 'עדכון שמות הילדים, סוג המשפחה ופרופיל הבדיקה.',
-    subscription: 'מנוי',
-    subscriptionText: 'תוכניות חודשיות ושנתיות יופיעו כאן בהמשך.',
-  },
-  ru: {
-    title: 'Settings',
-    subtitle: 'Language, units, family setup, and subscription live here.',
-    feedUnit: 'Feed unit',
-    language: 'Language',
-    familySetup: 'Family setup',
-    familySetupText: 'Update child names, child type, and prototype profile.',
-    subscription: 'Subscription',
-    subscriptionText: 'Monthly and annual family plans will appear here later.',
-  },
-};
-
 export function SettingsScreen() {
   const theme = useAppTheme();
   const { editFamily, family, settings, updateFeedUnit, updateLanguage } = usePrototypeState();
-  const labels = labelsByLanguage[family.language];
-  const rtlText = family.language === 'he' ? styles.rtlText : null;
+  const labels = getDictionary(family.language).settings;
+  const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
 
   return (
     <Screen testID="screen-settings" scroll>

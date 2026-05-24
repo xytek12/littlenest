@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals
 import { fireEvent, render } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { FeedScreen } from '../src/screens/FeedScreen';
+import { GrowthScreen } from '../src/screens/GrowthScreen';
 import { SleepScreen } from '../src/screens/SleepScreen';
 import { PrototypeStateProvider } from '../src/state/PrototypeState';
 
@@ -34,10 +35,17 @@ describe('interaction flows', () => {
   });
 
   it('asks for wake count before saving a finished sleep session', () => {
-    const { getByText, getByPlaceholderText, queryByText } = renderWithProviders(<SleepScreen />);
+    const { getByLabelText, getByText, getByPlaceholderText, queryByText } =
+      renderWithProviders(<SleepScreen />);
 
     fireEvent.press(getByText('Start sleep'));
-    fireEvent.press(getByText('End sleep'));
+    expect(getByText('Sleep timer')).toBeTruthy();
+
+    fireEvent.press(getByText('Pause'));
+    expect(getByText('Paused')).toBeTruthy();
+
+    fireEvent.press(getByText('Resume'));
+    fireEvent.press(getByLabelText('End sleep session'));
 
     expect(getByText(/How many times did the child wake up/i)).toBeTruthy();
 
@@ -47,6 +55,29 @@ describe('interaction flows', () => {
 
     expect(queryByText(/How many times did the child wake up/i)).toBeNull();
     expect(getByText(/wakes 2/i)).toBeTruthy();
+  });
+
+  it('records growth measurements with metric and imperial units', () => {
+    const { getByPlaceholderText, getByText } = renderWithProviders(<GrowthScreen />);
+
+    fireEvent.press(getByText('Weight'));
+    fireEvent.changeText(getByPlaceholderText('0'), '8.2');
+    fireEvent.press(getByText('Save measurement'));
+
+    expect(getByText(/Weight 8.2 kg/i)).toBeTruthy();
+
+    fireEvent.press(getByText('Imperial'));
+    fireEvent.press(getByText('Height'));
+    fireEvent.changeText(getByPlaceholderText('0'), '27.5');
+    fireEvent.press(getByText('Save measurement'));
+
+    expect(getByText(/Height 27.5 in/i)).toBeTruthy();
+
+    fireEvent.press(getByText('Head circumference'));
+    fireEvent.changeText(getByPlaceholderText('0'), '16.2');
+    fireEvent.press(getByText('Save measurement'));
+
+    expect(getByText(/Head circumference 16.2 in/i)).toBeTruthy();
   });
 
   it('opens bottle mode with presets and saves the chosen amount', () => {

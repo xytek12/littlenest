@@ -8,9 +8,19 @@ type Props = {
   tag: string;
   imageUrl: string;
   onPress: () => void;
+  ctaLabel?: string;
+  dailyLabel?: string;
 };
 
-export function RecipeIdeaCard({ title, summary, tag, imageUrl, onPress }: Props) {
+export function RecipeIdeaCard({
+  title,
+  summary,
+  tag,
+  imageUrl,
+  onPress,
+  ctaLabel = 'Open recipe source',
+  dailyLabel = "Today's idea",
+}: Props) {
   const theme = useAppTheme();
 
   return (
@@ -19,12 +29,12 @@ export function RecipeIdeaCard({ title, summary, tag, imageUrl, onPress }: Props
       <View style={styles.body}>
         <View style={styles.tagRow}>
           <Text style={styles.tag}>{tag}</Text>
-          <Text style={styles.dailyLabel}>Today&apos;s idea</Text>
+          <Text style={styles.dailyLabel}>{dailyLabel}</Text>
         </View>
         <Text style={[styles.title, { color: theme.text }]}>{title}</Text>
         <Text style={styles.summary}>{summary}</Text>
         <Pressable onPress={onPress} style={styles.button}>
-          <Text style={styles.buttonText}>Open recipe source</Text>
+          <Text style={styles.buttonText}>{ctaLabel}</Text>
         </Pressable>
       </View>
     </View>
