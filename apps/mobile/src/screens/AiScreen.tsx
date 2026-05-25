@@ -4,6 +4,8 @@ import { ActionCard } from '../components/ActionCard';
 import { AiSuggestionCard } from '../components/AiSuggestionCard';
 import { ConfidenceBadge } from '../components/ConfidenceBadge';
 import { Screen } from '../components/Screen';
+import { WatercolorHeader } from '../components/WatercolorHeader';
+import { getPalette } from '../theme';
 import { requestAiGuidance } from '../ai/client';
 import {
   compactAiText,
@@ -23,7 +25,13 @@ export function AiScreen() {
   const { activeChild, family, logs } = usePrototypeState();
   const dictionary = getDictionary(family.language);
   const labels = dictionary.ai;
+  const story = dictionary.storybook;
   const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
+  const palette = getPalette(
+    family.mode === 'twins'
+      ? { mode: 'twins', twinType: family.twinType }
+      : { mode: 'single', sex: activeChild.sex },
+  );
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [safetyNote, setSafetyNote] = useState<string | null>(null);
@@ -68,13 +76,18 @@ export function AiScreen() {
 
   return (
     <Screen testID="screen-ai" scroll>
-      <Text style={[styles.title, rtlText, { color: theme.text }]}>{labels.title}</Text>
-      <Text style={[styles.subtitle, rtlText]}>{labels.subtitle}</Text>
+      <WatercolorHeader
+        title={story.ai}
+        subtitle={labels.subtitle}
+        accent={palette.primary}
+        accentSoft={palette.primarySoft}
+      />
+      <Text style={[styles.subtitle, rtlText]} accessibilityElementsHidden>{labels.title}</Text>
 
       <ActionCard
         title={labels.compareTitle}
         subtitle={loading ? labels.checking : labels.compareSubtitle}
-        accent={colors.blue}
+        accent={palette.primary}
         onPress={handleCompare}
       >
         <Text style={[styles.actionHint, rtlText]}>
@@ -95,7 +108,7 @@ export function AiScreen() {
         <ActionCard
           title={labels.sleepPrediction}
           subtitle={labels.sleepPredictionSubtitle}
-          accent={colors.blue}
+          accent={palette.primary}
         />
       )}
 

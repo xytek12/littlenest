@@ -69,6 +69,8 @@ describe('FeedHistoryScreen', () => {
     fireEvent.press(getByTestId('feed-inline-history'));
 
     expect(getByTestId('screen-feed-history')).toBeTruthy();
-    expect(queryAllByText(/Bottle · 120 mL/).length).toBeGreaterThan(0);
+    // History rows now show "Bottle" on the primary line and "120 mL" on a secondary line below.
+    expect(queryAllByText(/Bottle/).length).toBeGreaterThan(0);
+    expect(queryAllByText(/120 mL/).length).toBeGreaterThan(0);
   });
 });

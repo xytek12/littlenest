@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useAppTheme } from '../theme/useAppTheme';
 
 type Props = {
@@ -6,9 +6,10 @@ type Props = {
   secondary?: string;
   accentColor?: string;
   rtl?: boolean;
+  onEdit?: () => void;
 };
 
-export function HistoryListRow({ primary, secondary, accentColor, rtl = false }: Props) {
+export function HistoryListRow({ primary, secondary, accentColor, rtl = false, onEdit }: Props) {
   const theme = useAppTheme();
   const rtlText = rtl ? styles.rtlText : null;
 
@@ -24,6 +25,11 @@ export function HistoryListRow({ primary, secondary, accentColor, rtl = false }:
         <Text style={[styles.primary, rtlText, { color: theme.text }]}>{primary}</Text>
         {secondary ? <Text style={[styles.secondary, rtlText]}>{secondary}</Text> : null}
       </View>
+      {onEdit ? (
+        <Pressable onPress={onEdit} style={styles.editButton} accessibilityLabel="Edit entry">
+          <Text style={[styles.editIcon, { color: theme.text }]}>✏️</Text>
+        </Pressable>
+      ) : null}
     </View>
   );
 }
@@ -42,6 +48,13 @@ const styles = StyleSheet.create({
     width: 6,
   },
   body: { flex: 1 },
+  editButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  editIcon: {
+    fontSize: 16,
+  },
   primary: {
     fontSize: 15,
     fontWeight: '800',

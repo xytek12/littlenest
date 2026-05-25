@@ -13,7 +13,9 @@ export function SettingsScreen() {
   const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
   const theme = useAppTheme();
   const { family, settings, updateFeedUnit, updateLanguage } = usePrototypeState();
-  const labels = getDictionary(family.language).settings;
+  const dictionary = getDictionary(family.language);
+  const labels = dictionary.settings;
+  const story = dictionary.storybook;
   const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
 
   return (
@@ -21,6 +23,7 @@ export function SettingsScreen() {
       <FlowHeader
         title={labels.title}
         subtitle={labels.subtitle}
+        storybookTitle={story.settings}
       />
 
       <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>

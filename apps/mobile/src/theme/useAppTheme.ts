@@ -1,5 +1,5 @@
 import { useColorScheme } from 'react-native';
-import { colors } from './colors';
+import { paletteBase } from './index';
 
 export function useAppTheme() {
   const scheme = useColorScheme();
@@ -7,10 +7,10 @@ export function useAppTheme() {
 
   return {
     isDark,
-    background: isDark ? colors.black : colors.white,
-    text: isDark ? colors.textDark : colors.textLight,
-    mutedText: isDark ? '#8B99AA' : '#5B6B7C',
-    surface: isDark ? '#111820' : colors.white,
-    border: isDark ? '#263443' : '#E6EDF5',
+    background: isDark ? '#1F1A1A' : paletteBase.paperCream,
+    text: isDark ? '#F4EFE9' : paletteBase.ink,
+    mutedText: isDark ? '#B5ACA7' : paletteBase.inkSoft,
+    surface: isDark ? '#2A2424' : paletteBase.cardWash,
+    border: isDark ? '#3A3232' : paletteBase.border,
   };
 }

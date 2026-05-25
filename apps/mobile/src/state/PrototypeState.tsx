@@ -92,6 +92,13 @@ type EndSleepInput = {
   note?: string;
 };
 
+type EditSleepSessionInput = {
+  id: string;
+  startedAt: string;
+  endedAt: string;
+  wakeCount: number;
+};
+
 type RecordBottleFeedInput = {
   amount: number;
   note?: string;
@@ -109,6 +116,8 @@ type PrototypeStateValue = {
   family: PrototypeFamilyConfig;
   settings: PrototypeSettings;
   activeChild: ChildProfile;
+  selectedChildId: string;
+  selectChild: (childId: string) => void;
   activeSleepStartedAt: string | null;
   activeNursingSession: ActiveNursingSession;
   sleepSessions: PrototypeSleepSession[];
@@ -122,6 +131,7 @@ type PrototypeStateValue = {
   updateFeedUnit: (unit: FeedUnit) => void;
   startSleep: () => void;
   endSleep: (input: EndSleepInput) => void;
+  editSleepSession: (input: EditSleepSessionInput) => void;
   recordBottleFeed: (input: RecordBottleFeedInput) => void;
   startNursing: (side: NursingSide) => void;
   stopNursing: (side: NursingSide) => void;
@@ -248,6 +258,7 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
   const [growthEntries, setGrowthEntries] = useState<PrototypeGrowthEntry[]>([]);
   const [allergenExposures, setAllergenExposures] = useState<PrototypeAllergenExposures>({});
   const [logs, setLogs] = useState<PrototypeLog[]>([]);
+  const [selectedChildId, setSelectedChildId] = useState<string>(defaultChild.id);
 
   useEffect(() => {
     if (process.env.NODE_ENV === 'test') {
@@ -320,7 +331,10 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
     sleepSessions,
   ]);
 
-  const activeChild = family.children[0] ?? defaultChild;
+  const activeChild =
+    family.children.find((child) => child.id === selectedChildId) ??
+    family.children[0] ??
+    defaultChild;
 
   const value = useMemo<PrototypeStateValue>(
     () => ({
@@ -328,6 +342,12 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
       family,
       settings,
       activeChild,
+      selectedChildId: activeChild.id,
+      selectChild(childId: string) {
+        if (family.children.some((child) => child.id === childId)) {
+          setSelectedChildId(childId);
+        }
+      },
       activeSleepStartedAt,
       activeNursingSession,
       sleepSessions,
@@ -345,6 +365,7 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
           language: nextLanguage,
           children,
         });
+        setSelectedChildId(children[0].id);
         setActiveSleepStartedAt(null);
         setActiveNursingSession(emptyNursingSession);
         setSleepSessions([]);
@@ -422,6 +443,16 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
           },
           ...current,
         ]);
+      },
+      editSleepSession({ id, startedAt, endedAt, wakeCount }) {
+        setSleepSessions((current) =>
+          current.map((session) => {
+            if (session.id !== id) return session;
+            const durationSeconds = diffSeconds(startedAt, endedAt);
+            const durationMinutes = diffMinutes(startedAt, endedAt);
+            return { ...session, startedAt, endedAt, durationSeconds, durationMinutes, wakeCount };
+          }),
+        );
       },
       recordBottleFeed({ amount, note }) {
         const timestamp = new Date().toISOString();
@@ -541,6 +572,7 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
       growthEntries,
       loading,
       logs,
+      selectedChildId,
       settings,
       sleepSessions,
     ],

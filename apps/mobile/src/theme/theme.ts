@@ -1,5 +1,5 @@
 import type { ChildSex, TwinType } from '../types/domain';
-import { colors } from './colors';
+import { getPalette } from './index';
 
 export type AccentInput =
   | { mode: 'single'; sex: ChildSex }
@@ -12,23 +12,18 @@ export type AccentTheme = {
   softSecondary?: string;
 };
 
+// Backwards-compatible helper. Internally reads the new pastel watercolor
+// palette so the rest of the app stays in sync with the central theme.
 export function getAccentTheme(input: AccentInput): AccentTheme {
-  if (input.mode === 'single') {
-    return input.sex === 'boy'
-      ? { primary: colors.blue, softPrimary: colors.blueSoft }
-      : { primary: colors.pink, softPrimary: colors.pinkSoft };
-  }
+  const palette =
+    input.mode === 'single'
+      ? getPalette({ mode: 'single', sex: input.sex })
+      : getPalette({ mode: 'twins', twinType: input.twinType });
 
-  if (input.twinType === 'boy_girl') {
-    return {
-      primary: colors.blue,
-      secondary: colors.pink,
-      softPrimary: colors.blueSoft,
-      softSecondary: colors.pinkSoft,
-    };
-  }
-
-  return input.twinType === 'boy_boy'
-    ? { primary: colors.blue, softPrimary: colors.blueSoft }
-    : { primary: colors.pink, softPrimary: colors.pinkSoft };
+  return {
+    primary: palette.primary,
+    softPrimary: palette.primarySoft,
+    secondary: palette.secondary,
+    softSecondary: palette.secondarySoft,
+  };
 }

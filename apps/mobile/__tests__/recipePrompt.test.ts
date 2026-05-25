@@ -15,7 +15,10 @@ describe('recipe search prompt', () => {
     expect(promptSource).toContain('Do not include growth');
     expect(promptSource).toContain('Do not include sleep, feeding schedule, or daily schedule');
     expect(promptSource).toContain('${input.childAgeMonths} months');
-    expect(promptSource).toContain('Hebrew-language recipe sites');
+    // Language -> source allow-list: Hebrew is restricted to matkonia.co.il,
+    // English (and Russian fallback) to a small set of baby-food sites.
+    expect(promptSource).toContain('matkonia.co.il');
+    expect(promptSource).toContain('solidstarts.com');
     expect(promptSource).toContain('Every "url" MUST be a real, direct, HTTPS link');
     expect(promptSource).toContain('Return exactly 6 recipes as a JSON array');
   });

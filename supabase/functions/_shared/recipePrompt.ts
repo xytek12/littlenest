@@ -12,17 +12,78 @@ const languageName = {
   ru: 'Russian',
 } as const;
 
-const localizedSearchPhrase = {
-  en: (months: number) => `baby food recipes for a ${months} month old`,
-  he: (months: number) => `מתכונים לתינוק בן ${months} חודשים`,
-  ru: (months: number) => `рецепты для ребёнка ${months} месяцев`,
+// Allowed source domains per language. The model MUST only return URLs whose
+// host (or a parent of it) matches one of these domains.
+// - he: restricted to matkonia.co.il (per product decision).
+// - en: 2-3 reputable English-language sites focused on 6-24 month babies.
+// - ru: per product decision, Russian falls back to the English allow-list.
+const ALLOWED_DOMAINS = {
+  en: ['solidstarts.com', 'babyfoode.com', 'weelicious.com'],
+  he: ['matkonia.co.il'],
+  ru: ['solidstarts.com', 'babyfoode.com', 'weelicious.com'],
 } as const;
 
-const sourceLanguageInstruction = {
-  en: 'All results MUST come from English-language recipe sites, and titles and descriptions MUST be written in natural English.',
-  he: 'All results MUST come from Hebrew-language recipe sites, and titles and descriptions MUST be written in natural Hebrew. Do not pick specific sites for me — choose reputable Hebrew cooking sites yourself.',
-  ru: 'All results MUST come from Russian-language recipe sites, and titles and descriptions MUST be written in natural Russian.',
+// English search phrase is reused for Russian, so we get the same trusted
+// English-language baby-food sites even when the UI language is Russian.
+const localizedSearchPhrase = {
+  en: (months: number) =>
+    `baby food recipes for a ${months} month old site:solidstarts.com OR site:babyfoode.com OR site:weelicious.com`,
+  he: (months: number) => `מתכונים לתינוק בן ${months} חודשים site:matkonia.co.il`,
+  ru: (months: number) =>
+    `baby food recipes for a ${months} month old site:solidstarts.com OR site:babyfoode.com OR site:weelicious.com`,
 } as const;
+
+function buildSourceInstruction(language: 'en' | 'he' | 'ru') {
+  const domains = ALLOWED_DOMAINS[language];
+  const domainList = domains.map((d) => `https://${d}`).join(', ');
+  if (language === 'he') {
+    return `All results MUST come ONLY from matkonia.co.il (${domainList}). Every "url" host MUST be matkonia.co.il (or a subdomain of it). Titles and descriptions MUST be written in natural Hebrew. Do NOT use any other site, including general Hebrew cooking sites.`;
+  }
+  if (language === 'ru') {
+    return `All results MUST come ONLY from these English-language baby-food sites: ${domainList}. Every "url" host MUST be one of: ${domains.join(', ')} (or a subdomain). Titles and descriptions MUST be written in natural Russian (translate the English source content into natural Russian). Do NOT pull from any other site.`;
+  }
+  return `All results MUST come ONLY from these reputable baby-food sites: ${domainList}. Every "url" host MUST be one of: ${domains.join(', ')} (or a subdomain). Titles and descriptions MUST be written in natural English. Do NOT pull from any other site.`;
+}
+
+export function getAllowedRecipeDomains(language: 'en' | 'he' | 'ru'): readonly string[] {
+  return ALLOWED_DOMAINS[language];
+}
+
+/**
+ * Build a guaranteed-working search URL for the given language and recipe title.
+ *
+ * AI-generated direct recipe URLs are often fabricated or stale, causing 404s.
+ * Instead of linking to a specific (possibly non-existent) recipe page, we link
+ * to the site's own search results page for the recipe title — these pages always
+ * exist and gracefully show relevant results (or a "no results" message) instead
+ * of a 404.
+ *
+ * Supported search URL formats:
+ *   - he  → https://www.matkonia.co.il/?s=<title>
+ *   - en/ru → https://solidstarts.com/?s=<title>
+ */
+export function buildSourceUrl(language: 'en' | 'he' | 'ru', title: string): string {
+  const encoded = encodeURIComponent(title);
+  if (language === 'he') {
+    return `https://www.matkonia.co.il/?s=${encoded}`;
+  }
+  // English and Russian both use the English baby-food sites; solidstarts.com is
+  // the primary source in the allow-list.
+  return `https://solidstarts.com/?s=${encoded}`;
+}
+
+/**
+ * Returns true if `url`'s host matches one of `allowedDomains` (or a subdomain).
+ * Used to enforce the language -> source restriction server-side after model output.
+ */
+export function isUrlOnAllowedDomain(url: string, allowedDomains: readonly string[]): boolean {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return allowedDomains.some((d) => host === d || host.endsWith(`.${d}`));
+  } catch {
+    return false;
+  }
+}
 
 export function buildRecipeSearchPrompt(input: RecipePromptInput) {
   const today = input.today ?? new Date().toISOString().slice(0, 10);
@@ -42,10 +103,11 @@ Child age:
 
 Language and sources:
 - Respond in ${languageName[input.language]}.
-- ${sourceLanguageInstruction[input.language]}
+- ${buildSourceInstruction(input.language)}
 
 URL rules:
 - Every "url" MUST be a real, direct, HTTPS link to a single recipe page that is likely to open right now.
+- Every "url" MUST be on one of the allowed source domains listed above. Reject any candidate page whose host is not in the allow-list, even if its content looks relevant.
 - Do NOT return search-result, redirect, tracking, shortened, social-media, or aggregator URLs.
 - Avoid Google, Bing, Yahoo, DuckDuckGo, and any link that is not a direct recipe page.
 

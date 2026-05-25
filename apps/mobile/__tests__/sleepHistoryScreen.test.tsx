@@ -72,6 +72,8 @@ describe('SleepHistoryScreen', () => {
     fireEvent.press(getByTestId('sleep-inline-history'));
 
     expect(getByTestId('screen-sleep-history')).toBeTruthy();
-    expect(queryAllByText(/01:35:27 · 2 wakes/).length).toBeGreaterThan(0);
+    // History rows now show human-readable duration on the primary line and wakes on a secondary line below.
+    expect(queryAllByText(/1 hr 35 min/).length).toBeGreaterThan(0);
+    expect(queryAllByText(/2 wakes/).length).toBeGreaterThan(0);
   });
 });

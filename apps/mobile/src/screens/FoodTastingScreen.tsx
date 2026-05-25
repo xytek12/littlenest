@@ -19,7 +19,9 @@ import { useAppTheme } from '../theme/useAppTheme';
 export function FoodTastingScreen() {
   const theme = useAppTheme();
   const { activeChild, allergenExposures, family, markAllergenExposure } = usePrototypeState();
-  const labels = getDictionary(family.language).foodTasting;
+  const dictionary = getDictionary(family.language);
+  const labels = dictionary.foodTasting;
+  const story = dictionary.storybook;
   const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
   const [items, setItems] = useState<AllergenReferenceItem[]>(allergenReferenceItems);
   const accent = getAccentTheme(
@@ -59,7 +61,11 @@ export function FoodTastingScreen() {
 
   return (
     <Screen testID="screen-food-tasting" scroll>
-      <FlowHeader title={labels.title} subtitle={labels.subtitle(activeChild.displayName)} />
+      <FlowHeader
+        title={labels.title}
+        subtitle={labels.subtitle(activeChild.displayName)}
+        storybookTitle={story.foodTasting}
+      />
 
       {groupedSections.map(([section, sectionItems]) => (
         <View

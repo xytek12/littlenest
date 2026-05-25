@@ -1,5 +1,17 @@
 export const en = {
-  tabs: { recipes: 'Recipes', home: 'Home', ai: 'AI', growth: 'Growth' },
+  tabs: { recipes: 'Recipes', home: 'Home', ai: 'AI', growth: 'Growth', settings: 'Settings' },
+  storybook: {
+    homeSingle: (name: string) => `Once upon a day with ${name}…`,
+    homeTwins: (twinA: string, twinB: string) => `Once upon a day with ${twinA} & ${twinB}…`,
+    sleep: 'Chapter: Dreamtime ⋆',
+    nursing: 'Chapter: Little feasts ⋆',
+    growth: 'Chapter: Growing wonders ⋆',
+    ai: 'Smart advice ⋆',
+    recipes: 'Yummy recipes ⋆',
+    settings: 'Chapter: Your nest ⋆',
+    foodTasting: 'Chapter: First nibbles ⋆',
+    bothTwins: 'Both',
+  },
   confidence: { low: 'Low', medium: 'Medium', high: 'High' },
   actions: {
     logSleep: 'Log sleep',
@@ -26,6 +38,12 @@ export const en = {
     history3Months: 'Last 3 months',
     noHistory: 'No history recorded yet.',
     selected: 'Selected',
+    durationSeconds: (n: number) => `${n} ${n === 1 ? 'second' : 'seconds'}`,
+    durationMinutes: (n: number) => `${n} ${n === 1 ? 'minute' : 'minutes'}`,
+    durationHours: (h: number, m: number) =>
+      m === 0
+        ? `${h} ${h === 1 ? 'hr' : 'hrs'}`
+        : `${h} ${h === 1 ? 'hr' : 'hrs'} ${m} min`,
   },
   home: {
     learningKicker: 'LittleNest is learning',
@@ -154,10 +172,19 @@ export const en = {
     empty: 'No sleep session recorded yet.',
     logLine: (start: string, end: string, duration: string, wakes: number) =>
       `${start}-${end} | ${duration} | wakes ${wakes}`,
+    editTitle: 'Edit sleep session',
+    editStartLabel: 'Start time (HH:MM)',
+    editEndLabel: 'End time (HH:MM)',
+    editWakesLabel: 'Times woken up',
+    editSave: 'Save changes',
     history: {
       title: 'Sleep history',
       row: (date: string, time: string, duration: string, wakeCount: number) =>
         `${date}, ${time}  ·  ${duration}  ·  ${wakeCount} wakes`,
+      rowPrimary: (date: string, time: string, duration: string) =>
+        `${date}, ${time}  ·  ${duration}`,
+      rowWakes: (wakeCount: number) =>
+        `${wakeCount} ${wakeCount === 1 ? 'wake' : 'wakes'}`,
     },
   },
   feed: {
@@ -191,6 +218,10 @@ export const en = {
         `${date}, ${time}  ·  Bottle  ·  ${amount} ${unit}`,
       nursingRow: (date: string, time: string, total: string, left: string, right: string) =>
         `${date}, ${time}  ·  Nursing  ·  ${total} (L ${left} / R ${right})`,
+      nursingRowPrimary: (date: string, time: string) => `${date}, ${time}  ·  Nursing`,
+      nursingRowSides: (left: string, right: string) => `left: ${left}   right: ${right}`,
+      bottleRowPrimary: (date: string, time: string) => `${date}, ${time}  ·  Bottle`,
+      bottleRowAmount: (amount: number, unit: string) => `${amount} ${unit}`,
     },
   },
   foodTasting: {

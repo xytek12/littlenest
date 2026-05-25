@@ -1,5 +1,17 @@
 export const he = {
-  tabs: { recipes: 'מתכונים', home: 'בית', ai: 'AI', growth: 'צמיחה' },
+  tabs: { recipes: 'מתכונים', home: 'בית', ai: 'AI', growth: 'צמיחה', settings: 'הגדרות' },
+  storybook: {
+    homeSingle: (name: string) => `היה היה יום עם ${name}…`,
+    homeTwins: (twinA: string, twinB: string) => `היה היה יום עם ${twinA} ו-${twinB}…`,
+    sleep: 'פרק: שעת חלום ⋆',
+    nursing: 'פרק: סעודות קטנות ⋆',
+    growth: 'פרק: פלאי הגדילה ⋆',
+    ai: 'פרק: עצות חכמות ⋆',
+    recipes: 'פרק: מתכונים טעימים ⋆',
+    settings: 'פרק: הקן שלכם ⋆',
+    foodTasting: 'פרק: ביסים ראשונים ⋆',
+    bothTwins: 'שניהם',
+  },
   confidence: { low: 'נמוך', medium: 'בינוני', high: 'גבוה' },
   actions: {
     logSleep: 'רישום שינה',
@@ -26,9 +38,15 @@ export const he = {
     history3Months: 'שלושת החודשים האחרונים',
     noHistory: 'עדיין אין היסטוריה לשלב הזה.',
     selected: 'נבחר',
+    durationSeconds: (n: number) => `${n} שניות`,
+    durationMinutes: (n: number) => `${n} דקות`,
+    durationHours: (h: number, m: number) =>
+      m === 0
+        ? `${h} ${h === 1 ? 'שעה' : 'שעות'}`
+        : `${h} ${h === 1 ? 'שעה' : 'שעות'} ו-${m} דקות`,
   },
   home: {
-    learningKicker: 'LittleNest לומדת',
+    learningKicker: 'LittleNest עוקבת',
     suggestionKicker: 'הצעת AI',
     learningTitle: 'רשמו שינה והאכלות במשך 14 ימים כדי לפתוח הכוונה חכמה יותר.',
     suggestionTitle: 'התחזיות מוכנות לשגרה האחרונה שלכם.',
@@ -148,10 +166,19 @@ export const he = {
     empty: 'עדיין לא נרשמה שינה.',
     logLine: (start: string, end: string, duration: string, wakes: number) =>
       `${start}-${end} | ${duration} | ${wakes} התעוררויות`,
+    editTitle: 'עריכת שינה',
+    editStartLabel: 'שעת התחלה (HH:MM)',
+    editEndLabel: 'שעת סיום (HH:MM)',
+    editWakesLabel: 'מספר התעוררויות',
+    editSave: 'שמירת שינויים',
     history: {
       title: 'היסטוריית שינה',
       row: (date: string, time: string, duration: string, wakeCount: number) =>
         `${date}, ${time}  ·  ${duration}  ·  ${wakeCount} התעוררויות`,
+      rowPrimary: (date: string, time: string, duration: string) =>
+        `${date}, ${time}  ·  ${duration}`,
+      rowWakes: (wakeCount: number) =>
+        `${wakeCount} ${wakeCount === 1 ? 'התעוררות' : 'התעוררויות'}`,
     },
   },
   feed: {
@@ -184,7 +211,11 @@ export const he = {
       bottleRow: (date: string, time: string, amount: number, unit: string) =>
         `${date}, ${time}  ·  בקבוק  ·  ${amount} ${unit}`,
       nursingRow: (date: string, time: string, total: string, left: string, right: string) =>
-        `${date}, ${time}  ·  הנקה  ·  ${total} (ש ${left} / י ${right})`,
+        `${date}, ${time}  ·  הנקה  ·  ${total} (שמאל ${left} / ימין ${right})`,
+      nursingRowPrimary: (date: string, time: string) => `${date}, ${time}  ·  הנקה`,
+      nursingRowSides: (left: string, right: string) => `שמאל: ${left}   ימין: ${right}`,
+      bottleRowPrimary: (date: string, time: string) => `${date}, ${time}  ·  בקבוק`,
+      bottleRowAmount: (amount: number, unit: string) => `${amount} ${unit}`,
     },
   },
   foodTasting: {

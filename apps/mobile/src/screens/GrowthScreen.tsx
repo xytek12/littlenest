@@ -5,6 +5,8 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { ActionCard } from '../components/ActionCard';
 import { InlineHistoryCard, type InlineHistoryRow } from '../components/InlineHistoryCard';
 import { Screen } from '../components/Screen';
+import { TwinSelector } from '../components/TwinSelector';
+import { WatercolorHeader } from '../components/WatercolorHeader';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import type { GrowthStackParamList } from '../navigation/RootNavigator';
 import {
@@ -13,6 +15,7 @@ import {
   type PrototypeGrowthUnitSystem,
 } from '../state/PrototypeState';
 import type { ChildProfile } from '../types/domain';
+import { getChildAccent, getPalette } from '../theme';
 import { colors } from '../theme/colors';
 import { getAccentTheme } from '../theme/theme';
 import { useAppTheme } from '../theme/useAppTheme';
@@ -45,17 +48,27 @@ function accentForSex(sex: ChildProfile['sex']) {
 export function GrowthScreen() {
   const theme = useAppTheme();
   const navigation = useNavigation<NativeStackNavigationProp<GrowthStackParamList>>();
-  const { family, growthEntries, saveGrowthEntry } = usePrototypeState();
-  const labels = getDictionary(family.language).growth;
+  const { activeChild, family, growthEntries, saveGrowthEntry, selectChild } = usePrototypeState();
+  const dictionary = getDictionary(family.language);
+  const labels = dictionary.growth;
+  const story = dictionary.storybook;
   const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
+  const isTwins = family.mode === 'twins';
+  const palette = getPalette(
+    isTwins
+      ? { mode: 'twins', twinType: family.twinType }
+      : { mode: 'single', sex: activeChild.sex },
+  );
   const [unitSystem, setUnitSystem] = useState<PrototypeGrowthUnitSystem>('metric');
   const [selectedKind, setSelectedKind] = useState<PrototypeGrowthKind | null>(null);
   const [valueDraft, setValueDraft] = useState('');
+  const [twinFilter, setTwinFilter] = useState<string | null>(isTwins ? activeChild.id : null);
   const units = unitSystem === 'metric' ? metricUnits : imperialUnits;
   const selectedUnit = selectedKind ? units[selectedKind] : '';
+  const baseAccent = palette.primary;
   const baseKinds: LocalizedGrowthKind[] = [
-    { key: 'weight', label: labels.weight, subtitle: labels.weightSubtitle, accent: colors.blue },
-    { key: 'height', label: labels.height, subtitle: labels.heightSubtitle, accent: colors.blue },
+    { key: 'weight', label: labels.weight, subtitle: labels.weightSubtitle, accent: baseAccent },
+    { key: 'height', label: labels.height, subtitle: labels.heightSubtitle, accent: baseAccent },
   ];
 
   const childById = useMemo(() => {
@@ -64,19 +77,30 @@ export function GrowthScreen() {
     return map;
   }, [family.children]);
 
+  const filteredGrowthEntries = useMemo(() => {
+    if (!isTwins || twinFilter == null) return growthEntries;
+    return growthEntries.filter((entry) => entry.childId === twinFilter);
+  }, [growthEntries, isTwins, twinFilter]);
+
   const inlineRows = useMemo<InlineHistoryRow[]>(() => {
-    return entriesInLast24h(growthEntries, (entry) => entry.recordedAt)
+    return entriesInLast24h(filteredGrowthEntries, (entry) => entry.recordedAt)
       .slice(0, 5)
       .map((entry) => {
         const date = formatHistoryDate(entry.recordedAt, family.language);
         const time = formatHistoryTime(entry.recordedAt, family.language);
         const value = `${entry.value} ${entry.unit}`;
+        const child = childById.get(entry.childId);
+        const childIndex = family.children.findIndex((c) => c.id === entry.childId);
+        const twinAccent = child
+          ? getChildAccent(child, Math.max(0, childIndex), palette).primary
+          : palette.primary;
 
         if (entry.kind === 'weight') {
           return {
             key: entry.id,
             primary: labels.history.weightRow(date, time, value),
-            accentColor: colors.blue,
+            secondary: isTwins ? child?.displayName : undefined,
+            accentColor: isTwins ? twinAccent : colors.blue,
           };
         }
 
@@ -84,18 +108,18 @@ export function GrowthScreen() {
           return {
             key: entry.id,
             primary: labels.history.heightRow(date, time, value),
-            accentColor: colors.blue,
+            secondary: isTwins ? child?.displayName : undefined,
+            accentColor: isTwins ? twinAccent : colors.blue,
           };
         }
 
-        const child = childById.get(entry.childId);
         return {
           key: entry.id,
           primary: labels.history.headRow(date, time, value, child?.displayName ?? ''),
-          accentColor: child ? accentForSex(child.sex) : colors.pink,
+          accentColor: isTwins ? twinAccent : child ? accentForSex(child.sex) : colors.pink,
         };
       });
-  }, [childById, family.language, growthEntries, labels.history]);
+  }, [childById, family.children, family.language, filteredGrowthEntries, isTwins, labels.history, palette]);
 
   function openComposer(kind: PrototypeGrowthKind) {
     setSelectedKind(kind);
@@ -125,7 +149,22 @@ export function GrowthScreen() {
 
   return (
     <Screen testID="screen-growth" scroll>
-      <Text style={[styles.title, rtlText, { color: theme.text }]}>{labels.title}</Text>
+      <WatercolorHeader
+        title={story.growth}
+        subtitle={labels.title}
+        accent={palette.primary}
+        accentSoft={palette.primarySoft}
+      />
+
+      {isTwins ? (
+        <TwinSelector
+          selectedChildId={twinFilter}
+          onSelect={(id) => {
+            setTwinFilter(id);
+            if (id) selectChild(id);
+          }}
+        />
+      ) : null}
 
       <View style={[styles.segmentRow, { borderColor: theme.border }]}>
         {(['metric', 'imperial'] as const).map((nextSystem) => {
@@ -138,11 +177,11 @@ export function GrowthScreen() {
               style={[
                 styles.segment,
                 selected
-                  ? { backgroundColor: colors.blueSoft, borderColor: colors.blue }
+                  ? { backgroundColor: palette.primarySoft, borderColor: palette.primary }
                   : { borderColor: theme.border },
               ]}
             >
-              <Text style={[styles.segmentText, { color: selected ? '#284D71' : theme.text }]}>
+              <Text style={[styles.segmentText, { color: selected ? palette.primaryDeep : theme.text }]}>
                 {nextSystem === 'metric' ? labels.metric : labels.imperial}
               </Text>
             </Pressable>
@@ -160,16 +199,23 @@ export function GrowthScreen() {
         />
       ))}
 
-      {family.mode === 'twins' ? (
-        family.children.map((child) => (
-          <ActionCard
-            key={`head-${child.id}`}
-            title={`${labels.head} · ${child.displayName}`}
-            subtitle={labels.headSubtitle}
-            accent={accentForSex(child.sex)}
-            onPress={() => openComposer('head')}
-          />
-        ))
+      {isTwins ? (
+        family.children.map((child, index) => {
+          const accent = getChildAccent(child, index, palette);
+          return (
+            <ActionCard
+              key={`head-${child.id}`}
+              title={`${labels.head} · ${child.displayName}`}
+              subtitle={labels.headSubtitle}
+              accent={accent.primary}
+              onPress={() => {
+                selectChild(child.id);
+                setTwinFilter(child.id);
+                openComposer('head');
+              }}
+            />
+          );
+        })
       ) : (
         <ActionCard
           title={labels.head}

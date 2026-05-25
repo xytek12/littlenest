@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { RecipeIdeaCard } from '../components/RecipeIdeaCard';
 import { Screen } from '../components/Screen';
+import { WatercolorHeader } from '../components/WatercolorHeader';
+import { getPalette } from '../theme';
 import {
   RecipeFetchLimitError,
   canFetchRecipes,
@@ -64,8 +66,15 @@ function seedRecipesToDisplay(
 export function FoodScreen() {
   const theme = useAppTheme();
   const { activeChild, family } = usePrototypeState();
-  const labels = getDictionary(family.language).recipes;
+  const dictionary = getDictionary(family.language);
+  const labels = dictionary.recipes;
+  const story = dictionary.storybook;
   const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
+  const palette = getPalette(
+    family.mode === 'twins'
+      ? { mode: 'twins', twinType: family.twinType }
+      : { mode: 'single', sex: activeChild.sex },
+  );
   const [query, setQuery] = useState('');
   const [refreshNonce, setRefreshNonce] = useState(0);
   const months = getAgeInMonths(activeChild.dateOfBirth);
@@ -156,8 +165,15 @@ export function FoodScreen() {
 
   return (
     <Screen testID="screen-recipes" scroll>
-      <Text style={[styles.title, rtlText, { color: theme.text }]}>{labels.title}</Text>
-      <Text style={[styles.subtitle, rtlText]}>{labels.subtitle}</Text>
+      <WatercolorHeader
+        title={story.recipes}
+        subtitle={labels.subtitle}
+        accent={palette.primary}
+        accentSoft={palette.primarySoft}
+      />
+      <Text style={[styles.title, rtlText, { color: theme.text }]}>
+        {labels.title}
+      </Text>
 
       <View style={[styles.searchCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <Text style={[styles.searchLabel, rtlText, { color: theme.text }]}>{labels.searchLabel}</Text>

@@ -6,7 +6,7 @@ import { HistoryBackButton } from '../navigation/HistoryBackButton';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import { usePrototypeState } from '../state/PrototypeState';
 import { useAppTheme } from '../theme/useAppTheme';
-import { formatDurationSeconds } from '../utils/formatDuration';
+import { formatDurationHuman } from '../utils/formatDuration';
 import { formatHistoryDate, formatHistoryTime } from '../utils/formatHistoryDate';
 import { entriesInLast90Days } from '../utils/historyFilters';
 
@@ -46,22 +46,25 @@ export function FeedHistoryScreen() {
               ? childById.get(entry.childId)?.displayName
               : undefined;
 
-            const primary =
-              entry.kind === 'bottle'
-                ? labels.bottleRow(date, time, entry.amount, entry.unit)
-                : labels.nursingRow(
-                    date,
-                    time,
-                    formatDurationSeconds(entry.totalSeconds),
-                    formatDurationSeconds(entry.leftSeconds),
-                    formatDurationSeconds(entry.rightSeconds),
-                  );
+            let primary: string;
+            let detail: string;
+            if (entry.kind === 'bottle') {
+              primary = labels.bottleRowPrimary(date, time);
+              detail = labels.bottleRowAmount(entry.amount, entry.unit);
+            } else {
+              primary = labels.nursingRowPrimary(date, time);
+              detail = labels.nursingRowSides(
+                formatDurationHuman(entry.leftSeconds, family.language),
+                formatDurationHuman(entry.rightSeconds, family.language),
+              );
+            }
+            const secondary = childName ? `${detail}  ·  ${childName}` : detail;
 
             return (
               <HistoryListRow
                 key={entry.id}
                 primary={primary}
-                secondary={childName}
+                secondary={secondary}
                 rtl={rtl}
               />
             );

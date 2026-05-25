@@ -6,9 +6,11 @@ import { ActionCard } from '../components/ActionCard';
 import { FlowHeader } from '../components/FlowHeader';
 import { InlineHistoryCard, type InlineHistoryRow } from '../components/InlineHistoryCard';
 import { Screen } from '../components/Screen';
+import { TwinSelector } from '../components/TwinSelector';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import type { SleepStackParamList } from '../navigation/RootNavigator';
 import { usePrototypeState } from '../state/PrototypeState';
+import { getChildAccent, getPalette } from '../theme';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 import { formatDurationSeconds } from '../utils/formatDuration';
@@ -31,12 +33,29 @@ function getRunningDuration(startedAt: string) {
 export function SleepScreen() {
   const theme = useAppTheme();
   const navigation = useNavigation<NativeStackNavigationProp<SleepStackParamList>>();
-  const { activeChild, activeSleepStartedAt, endSleep, family, sleepSessions, startSleep } =
-    usePrototypeState();
-  const labels = getDictionary(family.language).sleep;
-  const commonLabels = getDictionary(family.language).common;
+  const {
+    activeChild,
+    activeSleepStartedAt,
+    endSleep,
+    family,
+    selectChild,
+    sleepSessions,
+    startSleep,
+  } = usePrototypeState();
+  const dictionary = getDictionary(family.language);
+  const labels = dictionary.sleep;
+  const commonLabels = dictionary.common;
+  const story = dictionary.storybook;
   const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
   const isTwins = family.mode === 'twins';
+  const palette = getPalette(
+    isTwins
+      ? { mode: 'twins', twinType: family.twinType }
+      : { mode: 'single', sex: activeChild.sex },
+  );
+  const activeIndex = family.children.findIndex((child) => child.id === activeChild.id);
+  const activeAccent = getChildAccent(activeChild, Math.max(0, activeIndex), palette);
+  const [twinFilter, setTwinFilter] = useState<string | null>(isTwins ? activeChild.id : null);
   const [wakeCountDraft, setWakeCountDraft] = useState('0');
   const [showTimerSheet, setShowTimerSheet] = useState(false);
   const [showWakePrompt, setShowWakePrompt] = useState(false);
@@ -48,22 +67,34 @@ export function SleepScreen() {
     family.children.forEach((child) => map.set(child.id, child));
     return map;
   }, [family.children]);
+  const filteredSessions = useMemo(() => {
+    if (!isTwins || twinFilter == null) return sleepSessions;
+    return sleepSessions.filter((session) => session.childId === twinFilter);
+  }, [isTwins, sleepSessions, twinFilter]);
+
   const inlineRows = useMemo<InlineHistoryRow[]>(
     () =>
-      entriesInLast24h(sleepSessions, (session) => session.startedAt)
+      entriesInLast24h(filteredSessions, (session) => session.startedAt)
         .slice(0, 5)
-        .map((session) => ({
-          key: session.id,
-          primary: labels.history.row(
-            formatHistoryDate(session.startedAt, family.language),
-            formatHistoryTime(session.startedAt, family.language),
-            formatDurationSeconds(session.durationSeconds, true),
-            session.wakeCount,
-          ),
-          secondary: isTwins ? childById.get(session.childId)?.displayName : undefined,
-          accentColor: colors.blue,
-        })),
-    [childById, family.language, isTwins, labels.history, sleepSessions],
+        .map((session) => {
+          const child = childById.get(session.childId);
+          const childIndex = family.children.findIndex((c) => c.id === session.childId);
+          const accent = child
+            ? getChildAccent(child, Math.max(0, childIndex), palette)
+            : { primary: palette.primary };
+          return {
+            key: session.id,
+            primary: labels.history.row(
+              formatHistoryDate(session.startedAt, family.language),
+              formatHistoryTime(session.startedAt, family.language),
+              formatDurationSeconds(session.durationSeconds, true),
+              session.wakeCount,
+            ),
+            secondary: isTwins ? child?.displayName : undefined,
+            accentColor: isTwins ? accent.primary : colors.blue,
+          };
+        }),
+    [childById, family.children, family.language, filteredSessions, isTwins, labels.history, palette],
   );
   const canEnd = Boolean(activeSleepStartedAt);
 
@@ -94,7 +125,21 @@ export function SleepScreen() {
 
   return (
     <Screen testID="screen-sleep" scroll>
-      <FlowHeader title={labels.title} subtitle={labels.subtitle(activeChild.displayName)} />
+      <FlowHeader
+        title={labels.title}
+        subtitle={labels.subtitle(activeChild.displayName)}
+        storybookTitle={story.sleep}
+      />
+
+      {isTwins ? (
+        <TwinSelector
+          selectedChildId={twinFilter}
+          onSelect={(id) => {
+            setTwinFilter(id);
+            if (id) selectChild(id);
+          }}
+        />
+      ) : null}
 
       <ActionCard
         title={activeSleepStartedAt ? labels.running : labels.start}
@@ -106,13 +151,13 @@ export function SleepScreen() {
               )
             : labels.startSubtitle
         }
-        accent={colors.blue}
+        accent={activeAccent.primary}
         onPress={activeSleepStartedAt ? () => setShowTimerSheet(true) : handleStartSleep}
       />
       <ActionCard
         title={labels.end}
         subtitle={labels.endSubtitle}
-        accent={colors.blue}
+        accent={activeAccent.primary}
         onPress={canEnd ? handleEndSleep : undefined}
       />
 

@@ -88,7 +88,7 @@ describe('app shell', () => {
     expect(getByLabelText(`${he.tabs.home} tab`)).toBeTruthy();
     expect(getByLabelText('AI tab')).toBeTruthy();
     expect(getByLabelText(`${he.tabs.growth} tab`)).toBeTruthy();
-    expect(getByText(he.settings.title)).toBeTruthy();
+    expect(getByTestId('screen-settings')).toBeTruthy();
     expect(getByText(he.settings.language)).toBeTruthy();
 
     fireEvent.press(getByText(he.settings.familySetup));

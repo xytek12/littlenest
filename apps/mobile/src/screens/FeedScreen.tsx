@@ -6,9 +6,11 @@ import { ActionCard } from '../components/ActionCard';
 import { FlowHeader } from '../components/FlowHeader';
 import { InlineHistoryCard, type InlineHistoryRow } from '../components/InlineHistoryCard';
 import { Screen } from '../components/Screen';
+import { TwinSelector } from '../components/TwinSelector';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import type { FeedStackParamList } from '../navigation/RootNavigator';
 import { usePrototypeState } from '../state/PrototypeState';
+import { getChildAccent, getPalette } from '../theme';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 import { formatDurationSeconds } from '../utils/formatDuration';
@@ -44,13 +46,24 @@ export function FeedScreen() {
     feedEntries,
     finishNursingSession,
     recordBottleFeed,
+    selectChild,
     settings,
     startNursing,
     stopNursing,
   } = usePrototypeState();
-  const labels = getDictionary(family.language).feed;
+  const dictionary = getDictionary(family.language);
+  const labels = dictionary.feed;
+  const story = dictionary.storybook;
   const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
   const isTwins = family.mode === 'twins';
+  const palette = getPalette(
+    isTwins
+      ? { mode: 'twins', twinType: family.twinType }
+      : { mode: 'single', sex: activeChild.sex },
+  );
+  const activeIndex = family.children.findIndex((child) => child.id === activeChild.id);
+  const activeAccent = getChildAccent(activeChild, Math.max(0, activeIndex), palette);
+  const [twinFilter, setTwinFilter] = useState<string | null>(isTwins ? activeChild.id : null);
   const isNursingActive =
     activeNursingSession.leftStartedAt != null || activeNursingSession.rightStartedAt != null;
   useTickEverySecond(isNursingActive);
@@ -67,15 +80,29 @@ export function FeedScreen() {
     family.children.forEach((child) => map.set(child.id, child));
     return map;
   }, [family.children]);
+  const filteredFeedEntries = useMemo(() => {
+    if (!isTwins || twinFilter == null) return feedEntries;
+    return feedEntries.filter((entry) => entry.childId === twinFilter);
+  }, [feedEntries, isTwins, twinFilter]);
+
   const inlineRows = useMemo<InlineHistoryRow[]>(
     () =>
-      entriesInLast24h(feedEntries, (entry) => entry.timestamp)
+      entriesInLast24h(filteredFeedEntries, (entry) => entry.timestamp)
         .slice(0, 5)
         .map((entry) => {
           const date = formatHistoryDate(entry.timestamp, family.language);
           const time = formatHistoryTime(entry.timestamp, family.language);
-          const secondary = isTwins ? childById.get(entry.childId)?.displayName : undefined;
-          const accentColor = entry.kind === 'bottle' ? colors.pink : colors.sage;
+          const child = childById.get(entry.childId);
+          const secondary = isTwins ? child?.displayName : undefined;
+          const childIndex = family.children.findIndex((c) => c.id === entry.childId);
+          const accentForTwin = child
+            ? getChildAccent(child, Math.max(0, childIndex), palette).primary
+            : palette.primary;
+          const accentColor = isTwins
+            ? accentForTwin
+            : entry.kind === 'bottle'
+              ? colors.pink
+              : colors.sage;
           const primary =
             entry.kind === 'bottle'
               ? labels.history.bottleRow(date, time, entry.amount, entry.unit)
@@ -88,7 +115,7 @@ export function FeedScreen() {
                 );
           return { key: entry.id, primary, secondary, accentColor };
         }),
-    [childById, family.language, feedEntries, isTwins, labels.history],
+    [childById, family.children, family.language, filteredFeedEntries, isTwins, labels.history, palette],
   );
 
   function handleSaveBottle() {
@@ -104,12 +131,26 @@ export function FeedScreen() {
 
   return (
     <Screen testID="screen-feed" scroll>
-      <FlowHeader title={labels.title} subtitle={labels.subtitle(activeChild.displayName)} />
+      <FlowHeader
+        title={labels.title}
+        subtitle={labels.subtitle(activeChild.displayName)}
+        storybookTitle={story.nursing}
+      />
+
+      {isTwins ? (
+        <TwinSelector
+          selectedChildId={twinFilter}
+          onSelect={(id) => {
+            setTwinFilter(id);
+            if (id) selectChild(id);
+          }}
+        />
+      ) : null}
 
       <ActionCard
         title={labels.actionTitle}
         subtitle={labels.actionSubtitle}
-        accent={colors.sage}
+        accent={activeAccent.primary}
         onPress={() => setShowComposer(true)}
       />
 
