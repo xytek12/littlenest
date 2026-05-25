@@ -87,7 +87,7 @@ describe('interaction flows', () => {
     expect(queryByText(/How many times did the child wake up/i)).toBeNull();
     // New inline history card format: "{date}, {time}  ·  {duration}  ·  {wakeCount} wakes".
     // (Testing Library normalizes runs of whitespace to a single space.)
-    expect(queryAllByText(/01:35:27 · 2 wakes/).length).toBeGreaterThan(0);
+    expect(queryAllByText(/1 hr 35 min · 2 wakes/).length).toBeGreaterThan(0);
   });
 
   it('records growth measurements with metric and imperial units', () => {
@@ -150,13 +150,13 @@ describe('interaction flows', () => {
       jest.advanceTimersByTime(5000);
     });
 
-    expect(queryAllByText(/00:00:05/).length).toBeGreaterThan(0);
+    expect(queryAllByText(/5 seconds/).length).toBeGreaterThan(0);
 
     act(() => {
       jest.advanceTimersByTime(7000);
     });
 
-    expect(queryAllByText(/00:00:12/).length).toBeGreaterThan(0);
+    expect(queryAllByText(/12 seconds/).length).toBeGreaterThan(0);
   });
 
   it('ticks the nursing left side display every second while running', () => {
