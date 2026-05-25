@@ -14,6 +14,30 @@ A running log of every change made to this project so we (and any Claude session
 
 ---
 
+## 2026-05-25 — Home header age number font fix (Windows session, later)
+
+**Branch:** `master` + `codex/littlenest-ai-prototype` (same fix on both)
+
+### Issue fixed
+
+4. **Home page header — baby age number (e.g. `14`) used a mismatched fallback font next to the Hebrew text**
+   - **Root cause:** `WatercolorHeader.tsx` rendered the entire subtitle (`14 חודשים`) inside a single `<Text>` using `typography.body`. On iOS, when digits are mixed inline with Hebrew glyphs, the system substitutes a different font for the digits, which made the `14` look smaller and visually disconnected from `חודשים`.
+   - **Fix:** Split the subtitle string on digit runs (`/(\d+)/`) and wrap each digit run in an inner `<Text>` with an explicit style (`typography.bodyBlack`, `fontSize: 17`, `fontWeight: '800'`). Non-digit parts keep the parent style.
+   - **Result:** The number now stands out at a slightly larger size with the body-black font, and matches the rest of the header visually. Works for any age value (`1`, `14`, `18`, `24` …) and for English (`14 months`) and Russian (`14 месяцев`) too.
+
+### Files changed
+
+| File | Change |
+|------|--------|
+| `apps/mobile/src/components/WatercolorHeader.tsx` | Subtitle now parses out digit runs and styles them with `subtitleNumber` (fontSize 17, bodyBlack, weight 800). Added `subtitleNumber` style. |
+
+### Tests
+
+- **All 69 tests passing** ✅
+- TypeScript clean.
+
+---
+
 ## 2026-05-25 — Bug fixes from device testing (Windows session)
 
 **Branch:** `master` (cherry-pick to `codex/littlenest-ai-prototype` if still active)

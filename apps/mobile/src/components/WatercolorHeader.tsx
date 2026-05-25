@@ -58,7 +58,15 @@ export function WatercolorHeader({
         </Text>
         {subtitle ? (
           <Text style={[styles.subtitle, rtlText]} numberOfLines={3}>
-            {subtitle}
+            {subtitle.split(/(\d+)/).map((part, index) =>
+              /^\d+$/.test(part) ? (
+                <Text key={`n-${index}`} style={styles.subtitleNumber}>
+                  {part}
+                </Text>
+              ) : (
+                part
+              ),
+            )}
           </Text>
         ) : null}
         {children}
@@ -132,6 +140,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     marginTop: 8,
+  },
+  subtitleNumber: {
+    fontFamily: typography.bodyBlack,
+    fontSize: 17,
+    fontWeight: '800',
   },
   rtlText: { textAlign: 'right', writingDirection: 'rtl' },
 });
