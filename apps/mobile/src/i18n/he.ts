@@ -46,14 +46,14 @@ export const he = {
         : `${h} ${h === 1 ? 'שעה' : 'שעות'} ו-${m} דקות`,
   },
   home: {
-    learningKicker: 'LittleNest עוקבת',
+    learningKicker: 'קן קטן עוקב',
     suggestionKicker: 'הצעת AI',
     learningTitle: 'רשמו שינה והאכלות במשך 14 ימים כדי לפתוח הכוונה חכמה יותר.',
     suggestionTitle: 'התחזיות מוכנות לשגרה האחרונה שלכם.',
     suggestionBody: (name: string) =>
       `לשגרה של ${name} יש עכשיו מספיק נתונים להצעות חזקות יותר על תזמון שינה ורעב.`,
     learningBody: (trackedDays: number) =>
-      `כרגע יש ל-LittleNest ${trackedDays} ימי מעקב. המשיכו לרשום שינה והאכלה כדי שה-AI ילמד את הקצב האמיתי של הילד.`,
+      `כרגע יש לקן הקטן ${trackedDays} ימי מעקב. המשיכו לרשום שינה והאכלה כדי שה-AI ילמד את הקצב האמיתי של הילד.`,
     sleepTitle: 'שינה',
     sleepSubtitle: 'התחילו או סיימו שינה עם טיימר פעיל.',
     feedTitle: 'האכלה',
@@ -80,7 +80,7 @@ export const he = {
     secondChildName: 'שם הילד השני',
     girl: 'ילדה',
     boy: 'ילד',
-    startTesting: 'התחלת בדיקת LittleNest',
+    startTesting: 'התחלת בדיקה ב-קן קטן',
     prototypeNote: 'הערת אבטיפוס',
     prototypeNoteText: 'הגרסה הזו מיועדת כרגע לבדיקה אישית בלבד, וההגדרות נשמרות על המכשיר.',
     singleTitle: 'תינוק אחד',
