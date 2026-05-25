@@ -14,6 +14,43 @@ A running log of every change made to this project so we (and any Claude session
 
 ---
 
+## 2026-05-25 — Learning card "14" font + Hebrew brand name (Windows session, latest)
+
+**Branch:** `master` + `codex/littlenest-ai-prototype` (same fixes on both)
+
+### Issues fixed
+
+5. **Learning card body — the number `14` inside "...{trackedDays} ימי מעקב..." rendered with a smaller iOS fallback font next to Hebrew**
+   - **Root cause:** Same digit-font-substitution issue we hit in `WatercolorHeader` — the entire `labels.learningBody(trackedDays)` string was one `<Text>`, so iOS swapped a different font for the digits when they sat next to Hebrew.
+   - **Fix:** Added a `renderWithStyledDigits(text, digitStyle)` helper in `HomeScreen.tsx` (splits on `/(\d+)/` and wraps digit runs in an inner `<Text>`). Added a `learningBodyNumber` style (`typography.bodyBlack`, `fontSize: 18`, `fontWeight: '800'`).
+   - **Result:** The `14` in "קן קטן עוקב — כרגע יש לקן הקטן **14** ימי מעקב..." now matches the body font and stands out at the larger size, the way the user wanted.
+
+6. **The brand name "LittleNest" stayed in Latin letters even when the UI language was Hebrew**
+   - **Root cause:** `he.ts` had hard-coded "LittleNest" inside three Hebrew strings (`home.learningKicker`, `home.learningBody`, `familySetup.startTesting`).
+   - **Fix:** Translated to literal Hebrew meaning — "קן קטן" ("little nest"). With grammar tweaks:
+     - kicker: `LittleNest עוקבת` → `קן קטן עוקב` (verb agrees with masculine "קן")
+     - body: `כרגע יש ל-LittleNest ${n} ימי מעקב…` → `כרגע יש לקן הקטן ${n} ימי מעקב…` (definite article merges cleanly with the lamed prefix)
+     - setup CTA: `התחלת בדיקת LittleNest` → `התחלת בדיקה ב-קן קטן`
+   - **Result:** A Hebrew-locale user no longer sees Latin "LittleNest" inside Hebrew sentences; the brand reads as "קן קטן" throughout.
+
+### Files changed
+
+| File | Change |
+|------|--------|
+| `apps/mobile/src/screens/HomeScreen.tsx` | New `renderWithStyledDigits` helper + apply to `learningBody`; added `learningBodyNumber` style |
+| `apps/mobile/src/i18n/he.ts` | Replaced 3 hard-coded `LittleNest` strings with `קן קטן` (grammar-adjusted) |
+
+### Tests
+
+- **All 69 tests passing** ✅
+
+### Notes for next session
+
+- English (`en.ts`) and Russian (`ru.ts`) **still say "LittleNest"** by design — only Hebrew was translated, because the user asked specifically for the Hebrew localization. If we later want a translated brand name in Russian too, we'd add it to `ru.ts` (currently re-exports `en`).
+- The earlier `WatercolorHeader` subtitle digit-styling fix (item 4 below) is intentionally **kept** as a side benefit for the age subtitle (`14 חודשים`), even though the user originally meant the learning-card "14".
+
+---
+
 ## 2026-05-25 — Home header age number font fix (Windows session, later)
 
 **Branch:** `master` + `codex/littlenest-ai-prototype` (same fix on both)

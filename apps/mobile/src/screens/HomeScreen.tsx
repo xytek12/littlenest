@@ -12,6 +12,21 @@ import { getChildAccent, getPalette, paletteBase, typography } from '../theme';
 import { useAppTheme } from '../theme/useAppTheme';
 import { getAgeLabel } from '../utils/age';
 
+// Render a string so that any digit runs (e.g. "14" inside "14 ימי מעקב")
+// get an explicit larger / bolder style. Fixes iOS substituting a smaller
+// fallback font for digits when they sit next to Hebrew glyphs.
+function renderWithStyledDigits(text: string, digitStyle: object) {
+  return text.split(/(\d+)/).map((part, index) =>
+    /^\d+$/.test(part) ? (
+      <Text key={`n-${index}`} style={digitStyle}>
+        {part}
+      </Text>
+    ) : (
+      part
+    ),
+  );
+}
+
 function countTrackedDays(
   sleepSessions: { startedAt: string }[],
   feedEntries: { timestamp: string }[],
@@ -85,7 +100,10 @@ export function HomeScreen() {
         <Text style={[styles.learningBody, rtlText, { color: theme.mutedText }]}>
           {learningReady
             ? labels.suggestionBody(activeChild.displayName)
-            : labels.learningBody(trackedDays)}
+            : renderWithStyledDigits(
+                labels.learningBody(trackedDays),
+                styles.learningBodyNumber,
+              )}
         </Text>
       </View>
 
@@ -194,6 +212,11 @@ const styles = StyleSheet.create({
     fontFamily: typography.body,
     lineHeight: 22,
     marginTop: 10,
+  },
+  learningBodyNumber: {
+    fontFamily: typography.bodyBlack,
+    fontSize: 18,
+    fontWeight: '800',
   },
   twinRow: {
     flexDirection: 'row',
