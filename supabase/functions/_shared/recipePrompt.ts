@@ -65,7 +65,7 @@ export function getAllowedRecipeDomains(language: 'en' | 'he' | 'ru'): readonly 
 export function buildSourceUrl(language: 'en' | 'he' | 'ru', title: string): string {
   const encoded = encodeURIComponent(title);
   if (language === 'he') {
-    return `https://www.matkonia.co.il/?s=${encoded}`;
+    return `https://matkonia.co.il/?s=${encoded}`;
   }
   // English and Russian both use the English baby-food sites; solidstarts.com is
   // the primary source in the allow-list.

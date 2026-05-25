@@ -13,7 +13,7 @@ import { usePrototypeState } from '../state/PrototypeState';
 import { getChildAccent, getPalette } from '../theme';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
-import { formatDurationSeconds } from '../utils/formatDuration';
+import { formatDurationHuman, formatDurationSeconds } from '../utils/formatDuration';
 import { formatHistoryDate, formatHistoryTime } from '../utils/formatHistoryDate';
 import { entriesInLast24h } from '../utils/historyFilters';
 import { useTickEverySecond } from '../utils/useTickEverySecond';
@@ -23,10 +23,10 @@ function formatTimestamp(value: string) {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 
-function getRunningDuration(startedAt: string) {
-  return formatDurationSeconds(
+function getRunningDuration(startedAt: string, language = 'he') {
+  return formatDurationHuman(
     Math.max(0, Math.round((Date.now() - Date.parse(startedAt)) / 1000)),
-    true,
+    language,
   );
 }
 
@@ -87,7 +87,7 @@ export function SleepScreen() {
             primary: labels.history.row(
               formatHistoryDate(session.startedAt, family.language),
               formatHistoryTime(session.startedAt, family.language),
-              formatDurationSeconds(session.durationSeconds, true),
+              formatDurationHuman(session.durationSeconds, family.language),
               session.wakeCount,
             ),
             secondary: isTwins ? child?.displayName : undefined,
@@ -147,7 +147,7 @@ export function SleepScreen() {
           activeSleepStartedAt
             ? labels.runningSubtitle(
                 formatTimestamp(activeSleepStartedAt),
-                getRunningDuration(activeSleepStartedAt),
+                getRunningDuration(activeSleepStartedAt, family.language),
               )
             : labels.startSubtitle
         }
@@ -207,7 +207,7 @@ export function SleepScreen() {
                   {timerPaused
                     ? labels.timerPaused
                     : activeSleepStartedAt
-                      ? labels.timerRunning(getRunningDuration(activeSleepStartedAt))
+                      ? labels.timerRunning(getRunningDuration(activeSleepStartedAt, family.language))
                       : ''}
                 </Text>
                 <View style={styles.promptActions}>

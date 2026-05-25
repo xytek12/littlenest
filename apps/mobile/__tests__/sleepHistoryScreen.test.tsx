@@ -67,7 +67,7 @@ describe('SleepHistoryScreen', () => {
 
     // Inline card shows the duration and wake count.
     // (Testing Library normalizes runs of whitespace to a single space.)
-    expect(queryAllByText(/01:35:27 · 2 wakes/).length).toBeGreaterThan(0);
+    expect(queryAllByText(/1 hr 35 min · 2 wakes/).length).toBeGreaterThan(0);
 
     fireEvent.press(getByTestId('sleep-inline-history'));
 

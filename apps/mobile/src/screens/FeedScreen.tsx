@@ -390,18 +390,18 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   nursingGrid: {
-    flexDirection: 'row',
-    gap: 10,
+    flexDirection: 'column',
+    gap: 16,
   },
   sideCard: {
     borderRadius: 16,
     borderWidth: 1,
-    flex: 1,
-    padding: 12,
+    padding: 14,
   },
   sideTitle: {
     fontSize: 15,
     fontWeight: '900',
+    marginBottom: 6,
   },
   sideHint: {
     color: '#6B7D91',
