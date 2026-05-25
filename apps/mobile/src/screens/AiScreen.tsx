@@ -82,7 +82,7 @@ export function AiScreen() {
         accent={palette.primary}
         accentSoft={palette.primarySoft}
       />
-      <Text style={[styles.subtitle, rtlText]} accessibilityElementsHidden>{labels.title}</Text>
+      <Text style={[styles.subtitle, rtlText, { color: theme.mutedText }]} accessibilityElementsHidden>{labels.title}</Text>
 
       <ActionCard
         title={labels.compareTitle}
@@ -90,7 +90,7 @@ export function AiScreen() {
         accent={palette.primary}
         onPress={handleCompare}
       >
-        <Text style={[styles.actionHint, rtlText]}>
+        <Text style={[styles.actionHint, rtlText, { color: theme.mutedText }]}>
           {labels.currentPrompt(activeChild.displayName)}
         </Text>
       </ActionCard>
@@ -112,7 +112,7 @@ export function AiScreen() {
         />
       )}
 
-      {safetyNote ? <Text style={[styles.safety, rtlText]}>{dictionary.safety.doctor}</Text> : null}
+      {safetyNote ? <Text style={[styles.safety, rtlText, { color: theme.mutedText }]}>{dictionary.safety.doctor}</Text> : null}
 
       {comparison.length > 0 ? (
         <ScrollView
@@ -129,6 +129,7 @@ export function AiScreen() {
               borderColor={theme.border}
               surface={theme.surface}
               text={theme.text}
+              mutedText={theme.mutedText}
               confidenceLabel={labels.confidence}
               feedbackOptions={labels.feedback}
               rtlText={rtlText}
@@ -147,6 +148,7 @@ function ProviderCard({
   borderColor,
   surface,
   text,
+  mutedText,
   confidenceLabel,
   feedbackOptions,
   rtlText,
@@ -157,6 +159,7 @@ function ProviderCard({
   borderColor: string;
   surface: string;
   text: string;
+  mutedText: string;
   confidenceLabel: string;
   feedbackOptions: string[];
   rtlText: object | null;
@@ -173,16 +176,16 @@ function ProviderCard({
     >
       <Text style={styles.providerName}>{answer.provider.toUpperCase()}</Text>
       <Text style={[styles.providerTitle, rtlText, { color: text }]}>{answer.title}</Text>
-      <Text style={[styles.providerBody, rtlText]}>{compactAiText(answer.body, 260)}</Text>
+      <Text style={[styles.providerBody, rtlText, { color: mutedText }]}>{compactAiText(answer.body, 260)}</Text>
       <View style={styles.confidenceRow}>
-        <Text style={[styles.confidenceLabel, rtlText]}>{confidenceLabel}</Text>
+        <Text style={[styles.confidenceLabel, rtlText, { color: mutedText }]}>{confidenceLabel}</Text>
         <ConfidenceBadge label={answer.confidenceLabel} />
       </View>
 
       {answer.sources.length > 0 ? (
         <View style={styles.sourcesBlock}>
           {answer.sources.slice(0, 3).map((source) => (
-            <Text key={`${answer.provider}-${source.url}`} style={styles.sourceText}>
+            <Text key={`${answer.provider}-${source.url}`} style={[styles.sourceText, { color: colors.blue }]}>
               {source.title || formatSourceTitle(source.url)}
             </Text>
           ))}
@@ -199,10 +202,17 @@ function ProviderCard({
               onPress={() => onFeedback(answer.provider, option)}
               style={[
                 styles.feedbackButton,
+                { borderColor },
                 selected ? styles.feedbackButtonSelected : null,
               ]}
             >
-              <Text style={[styles.feedbackLabel, selected ? styles.feedbackLabelSelected : null]}>
+              <Text
+                style={[
+                  styles.feedbackLabel,
+                  { color: mutedText },
+                  selected ? styles.feedbackLabelSelected : null,
+                ]}
+              >
                 {option}
               </Text>
             </Pressable>

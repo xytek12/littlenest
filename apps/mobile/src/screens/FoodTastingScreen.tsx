@@ -86,7 +86,7 @@ export function FoodTastingScreen() {
                   <Text style={[styles.itemName, rtlText, { color: theme.text }]}>
                     {getLocalizedAllergenItem(family.language, item.id, item.name)}
                   </Text>
-                  <Text style={[styles.itemHint, rtlText]}>{statusLabel}</Text>
+                  <Text style={[styles.itemHint, rtlText, { color: theme.mutedText }]}>{statusLabel}</Text>
                 </View>
                 <FoodTestProgress
                   count={count}

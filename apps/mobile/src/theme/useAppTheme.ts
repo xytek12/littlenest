@@ -7,10 +7,10 @@ export function useAppTheme() {
 
   return {
     isDark,
-    background: isDark ? '#1F1A1A' : paletteBase.paperCream,
+    background: isDark ? '#1A1517' : paletteBase.paperCream,
     text: isDark ? '#F4EFE9' : paletteBase.ink,
-    mutedText: isDark ? '#B5ACA7' : paletteBase.inkSoft,
-    surface: isDark ? '#2A2424' : paletteBase.cardWash,
+    mutedText: isDark ? '#9F948F' : paletteBase.inkSoft,
+    surface: isDark ? '#26201F' : paletteBase.cardWash,
     border: isDark ? '#3A3232' : paletteBase.border,
   };
 }

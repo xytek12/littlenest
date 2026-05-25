@@ -237,7 +237,7 @@ export function FeedScreen() {
                   keyboardType="number-pad"
                   onChangeText={setManualAmount}
                   placeholder={labels.customAmount}
-                  placeholderTextColor="#8B99AA"
+                  placeholderTextColor={theme.mutedText}
                   style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
                   value={manualAmount}
                 />
@@ -251,7 +251,7 @@ export function FeedScreen() {
                 <View style={styles.nursingGrid}>
                   <View style={[styles.sideCard, { borderColor: theme.border }]}>
                     <Text style={[styles.sideTitle, rtlText, { color: theme.text }]}>{labels.leftBreast}</Text>
-                    <Text style={[styles.sideHint, rtlText]}>
+                    <Text style={[styles.sideHint, rtlText, { color: theme.mutedText }]}>
                       {labels.savedDuration(
                         formatDurationSeconds(getLiveSideSeconds('left', activeNursingSession)),
                       )}
@@ -269,7 +269,7 @@ export function FeedScreen() {
                   </View>
                   <View style={[styles.sideCard, { borderColor: theme.border }]}>
                     <Text style={[styles.sideTitle, rtlText, { color: theme.text }]}>{labels.rightBreast}</Text>
-                    <Text style={[styles.sideHint, rtlText]}>
+                    <Text style={[styles.sideHint, rtlText, { color: theme.mutedText }]}>
                       {labels.savedDuration(
                         formatDurationSeconds(getLiveSideSeconds('right', activeNursingSession)),
                       )}

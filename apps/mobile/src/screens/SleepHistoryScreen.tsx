@@ -115,7 +115,7 @@ export function SleepHistoryScreen() {
             );
           })
         ) : (
-          <Text style={[styles.empty, rtlText]}>
+          <Text style={[styles.empty, rtlText, { color: theme.mutedText }]}>
             {dictionary.history.emptyAll}
           </Text>
         )}
@@ -146,7 +146,7 @@ export function SleepHistoryScreen() {
               onChangeText={setEditStart}
               keyboardType="numbers-and-punctuation"
               placeholder="07:30"
-              placeholderTextColor="#8B99AA"
+              placeholderTextColor={theme.mutedText}
               style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
             />
 
@@ -158,7 +158,7 @@ export function SleepHistoryScreen() {
               onChangeText={setEditEnd}
               keyboardType="numbers-and-punctuation"
               placeholder="09:15"
-              placeholderTextColor="#8B99AA"
+              placeholderTextColor={theme.mutedText}
               style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
             />
 
@@ -170,7 +170,7 @@ export function SleepHistoryScreen() {
               onChangeText={setEditWakes}
               keyboardType="number-pad"
               placeholder="0"
-              placeholderTextColor="#8B99AA"
+              placeholderTextColor={theme.mutedText}
               style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
             />
 

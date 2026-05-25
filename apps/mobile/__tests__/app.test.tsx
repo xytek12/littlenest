@@ -67,11 +67,11 @@ describe('app shell', () => {
     expect(queryAllByText('Family setup')).toHaveLength(0);
   });
 
-  it('opens settings from the home header gear', () => {
+  it('opens settings from the bottom Settings tab', () => {
     const { getByLabelText, getByTestId, getByText } = render(<App />);
 
     completeFamilySetup(getByText);
-    fireEvent.press(getByLabelText('Open settings'));
+    fireEvent.press(getByLabelText('Settings tab'));
 
     expect(getByTestId('screen-settings')).toBeTruthy();
     expect(getByLabelText('Home tab')).toBeTruthy();
@@ -81,7 +81,7 @@ describe('app shell', () => {
     const { getByLabelText, getByText, getByTestId } = render(<App />);
 
     completeFamilySetup(getByText);
-    fireEvent.press(getByLabelText('Open settings'));
+    fireEvent.press(getByLabelText('Settings tab'));
     fireEvent.press(getByText('HE'));
 
     expect(getByLabelText(`${he.tabs.recipes} tab`)).toBeTruthy();
@@ -107,7 +107,7 @@ describe('app shell', () => {
     const { getAllByText, getByLabelText, getByText } = render(<App />);
 
     completeFamilySetup(getByText);
-    fireEvent.press(getByLabelText('Open settings'));
+    fireEvent.press(getByLabelText('Settings tab'));
     fireEvent.press(getByText('HE'));
     fireEvent.press(getByLabelText(`${he.tabs.home} tab`));
 

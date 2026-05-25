@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useAppTheme } from '../theme/useAppTheme';
 
 type Props = {
   count: number;
@@ -8,6 +9,11 @@ type Props = {
 };
 
 export function FoodTestProgress({ count, accent, itemName, onSelect }: Props) {
+  const theme = useAppTheme();
+  const inactiveBg = theme.isDark ? theme.background : '#E6EDF5';
+  const inactiveBorder = theme.border;
+  const inactiveText = theme.mutedText;
+
   return (
     <View>
       <View style={styles.row}>
@@ -20,12 +26,12 @@ export function FoodTestProgress({ count, accent, itemName, onSelect }: Props) {
             style={[
               styles.stepButton,
               {
-                backgroundColor: count >= step ? accent : '#E6EDF5',
-                borderColor: count >= step ? accent : '#D3DEEA',
+                backgroundColor: count >= step ? accent : inactiveBg,
+                borderColor: count >= step ? accent : inactiveBorder,
               },
             ]}
           >
-            <Text style={[styles.stepText, { color: count >= step ? '#FFFFFF' : '#52677D' }]}>
+            <Text style={[styles.stepText, { color: count >= step ? '#FFFFFF' : inactiveText }]}>
               {step}
             </Text>
           </Pressable>

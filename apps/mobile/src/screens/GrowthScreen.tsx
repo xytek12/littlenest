@@ -241,7 +241,7 @@ export function GrowthScreen() {
             keyboardType="decimal-pad"
             onChangeText={setValueDraft}
             placeholder={labels.placeholder}
-            placeholderTextColor="#8B99AA"
+            placeholderTextColor={theme.mutedText}
             style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
             value={valueDraft}
           />

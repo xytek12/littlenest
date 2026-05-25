@@ -23,7 +23,7 @@ export function HistoryListRow({ primary, secondary, accentColor, rtl = false, o
       />
       <View style={styles.body}>
         <Text style={[styles.primary, rtlText, { color: theme.text }]}>{primary}</Text>
-        {secondary ? <Text style={[styles.secondary, rtlText]}>{secondary}</Text> : null}
+        {secondary ? <Text style={[styles.secondary, rtlText, { color: theme.mutedText }]}>{secondary}</Text> : null}
       </View>
       {onEdit ? (
         <Pressable onPress={onEdit} style={styles.editButton} accessibilityLabel="Edit entry">

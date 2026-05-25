@@ -83,12 +83,12 @@ export function SettingsScreen() {
         style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}
       >
         <Text style={[styles.sectionTitle, rtlText, { color: theme.text }]}>{labels.familySetup}</Text>
-        <Text style={[styles.rowText, rtlText]}>{labels.familySetupText}</Text>
+        <Text style={[styles.rowText, rtlText, { color: theme.mutedText }]}>{labels.familySetupText}</Text>
       </Pressable>
 
       <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <Text style={[styles.sectionTitle, rtlText, { color: theme.text }]}>{labels.subscription}</Text>
-        <Text style={[styles.rowText, rtlText]}>{labels.subscriptionText}</Text>
+        <Text style={[styles.rowText, rtlText, { color: theme.mutedText }]}>{labels.subscriptionText}</Text>
       </View>
     </Screen>
   );

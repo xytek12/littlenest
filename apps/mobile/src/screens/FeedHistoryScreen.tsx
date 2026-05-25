@@ -70,7 +70,7 @@ export function FeedHistoryScreen() {
             );
           })
         ) : (
-          <Text style={[styles.empty, rtl ? styles.rtlText : null]}>
+          <Text style={[styles.empty, rtl ? styles.rtlText : null, { color: theme.mutedText }]}>
             {dictionary.history.emptyAll}
           </Text>
         )}

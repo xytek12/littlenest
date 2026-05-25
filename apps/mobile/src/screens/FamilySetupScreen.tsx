@@ -167,7 +167,7 @@ export function FamilySetupScreen({ embeddedInTabs = false, onComplete }: Props)
       ) : (
         <>
           <Text style={[styles.title, rtlText, { color: theme.text }]}>{labels.title}</Text>
-          <Text style={[styles.subtitle, rtlText]}>{labels.subtitle}</Text>
+          <Text style={[styles.subtitle, rtlText, { color: theme.mutedText }]}>{labels.subtitle}</Text>
         </>
       )}
 
@@ -206,7 +206,7 @@ export function FamilySetupScreen({ embeddedInTabs = false, onComplete }: Props)
         <TextInput
           onChangeText={setChildName}
           placeholder={labels.childName}
-          placeholderTextColor="#8B99AA"
+          placeholderTextColor={theme.mutedText}
           style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
           value={childName}
         />
@@ -242,7 +242,7 @@ export function FamilySetupScreen({ embeddedInTabs = false, onComplete }: Props)
             <TextInput
               onChangeText={setSecondChildName}
               placeholder={labels.secondChildName}
-              placeholderTextColor="#8B99AA"
+              placeholderTextColor={theme.mutedText}
               style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
               value={secondChildName}
             />
@@ -256,7 +256,7 @@ export function FamilySetupScreen({ embeddedInTabs = false, onComplete }: Props)
               keyboardType="number-pad"
               onChangeText={setDay}
               placeholder="22"
-              placeholderTextColor="#8B99AA"
+              placeholderTextColor={theme.mutedText}
               style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
               value={day}
             />
@@ -267,7 +267,7 @@ export function FamilySetupScreen({ embeddedInTabs = false, onComplete }: Props)
               keyboardType="number-pad"
               onChangeText={setMonth}
               placeholder="09"
-              placeholderTextColor="#8B99AA"
+              placeholderTextColor={theme.mutedText}
               style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
               value={month}
             />
@@ -278,7 +278,7 @@ export function FamilySetupScreen({ embeddedInTabs = false, onComplete }: Props)
               keyboardType="number-pad"
               onChangeText={setYear}
               placeholder="2025"
-              placeholderTextColor="#8B99AA"
+              placeholderTextColor={theme.mutedText}
               style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
               value={year}
             />
@@ -301,7 +301,7 @@ export function FamilySetupScreen({ embeddedInTabs = false, onComplete }: Props)
 
       <View style={[styles.summaryCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <Text style={[styles.summaryTitle, rtlText, { color: theme.text }]}>{labels.prototypeNote}</Text>
-        <Text style={[styles.summaryText, rtlText]}>{labels.prototypeNoteText}</Text>
+        <Text style={[styles.summaryText, rtlText, { color: theme.mutedText }]}>{labels.prototypeNoteText}</Text>
       </View>
     </Screen>
   );
