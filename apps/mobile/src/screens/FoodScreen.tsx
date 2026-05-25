@@ -16,7 +16,7 @@ import { hasSupabaseEnv } from '../services/supabase';
 import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
-import { getAgeInMonths } from '../utils/age';
+import { getAgeInMonths, getAgeLabel } from '../utils/age';
 
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=1200&q=80';
@@ -195,7 +195,9 @@ export function FoodScreen() {
         </Pressable>
       </View>
 
-      <Text style={[styles.helperText, rtlText]}>{labels.helper(activeChild.displayName, months)}</Text>
+      <Text style={[styles.helperText, rtlText]}>
+        {labels.helper(activeChild.displayName, getAgeLabel(activeChild.dateOfBirth, new Date(), family.language))}
+      </Text>
 
       {limitReached ? (
         <Text style={[styles.noticeText, rtlText]} testID="recipes-limit">

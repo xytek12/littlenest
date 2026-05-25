@@ -99,7 +99,7 @@ export const he = {
     queryPlaceholder: 'רעיונות למתכוני אוכל אמיתי',
     searching: 'מחפש...',
     refresh: 'רענון רעיונות למתכונים',
-    helper: (name: string, months: number) => `רעיונות עבור ${name}, גיל ${months} חודשים.`,
+    helper: (name: string, ageLabel: string) => `רעיונות עבור ${name}, גיל ${ageLabel}.`,
     resultsHeader: 'בחירות מתכונים יומיות',
     dailyLabel: 'רעיון יומי',
     openSource: 'פתיחת מקור המתכון',

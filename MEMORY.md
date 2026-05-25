@@ -14,6 +14,57 @@ A running log of every change made to this project so we (and any Claude session
 
 ---
 
+## 2026-05-25 — Dark mode polish + Supabase env + recipe-page age + settings icon (Windows session, latest)
+
+**Branch:** `master` + `codex/littlenest-ai-prototype` (same fixes on both)
+
+### Issues fixed (round 4 — from device screenshots in dark mode)
+
+7. **Recipes / AI screens both showed "missing Supabase public connection settings" — recipes were offline, OpenAI/Gemini compare didn't run**
+   - **Root cause:** `apps/mobile/.env` did not exist on this machine — only `.env.example` (template) and `ENV_LOCAL_EDIT_ME.txt` (real values). Expo only loads `.env` at Metro startup, so `process.env.EXPO_PUBLIC_SUPABASE_*` were the placeholders, and `hasSupabaseEnv()` returned `false`.
+   - **Fix:** Copied `ENV_LOCAL_EDIT_ME.txt` → `apps/mobile/.env` (file is gitignored — secrets stayed local). Verified both `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` are present and not placeholder strings. Metro restart with `--clear` picks them up.
+   - **Result:** `hasSupabaseEnv()` now returns true → recipe-search edge function fires, ai-router fires, login flow works.
+
+8. **Recipes page showed "גיל 18 חודשים" (months only) while Home page showed "שנה ו-6 חודשים" (years + months)**
+   - **Root cause:** `i18n.recipes.helper(name, months)` was hard-coded to format months. Home page uses the shared `getAgeLabel()` util which handles years + months in Hebrew correctly.
+   - **Fix:** Changed `helper` signature in `en.ts` and `he.ts` from `(name, months: number)` to `(name, ageLabel: string)`. `FoodScreen.tsx` now passes `getAgeLabel(activeChild.dateOfBirth, new Date(), family.language)` instead of the raw month count. (`ru.ts` re-exports `en.ts` so it picks up the change automatically.)
+   - **Result:** Recipes page now shows the same age label as Home (`שנה ו-6 חודשים` / `1 year and 6 months`).
+
+9. **Settings gear icon in the Home page WatercolorHeader was invisible in dark mode**
+   - **Root cause:** Icon + border were hard-coded to `paletteBase.stickerCharcoal` (#2B2B3A) which sits on a near-black `theme.surface` (#2A2424) in dark mode — invisible.
+   - **Fix:** In `HomeScreen.tsx`, swap `stickerCharcoal` for `theme.text` when `theme.isDark` (both the icon `color` and the button `borderColor`). Light mode behaviour is unchanged.
+   - **Result:** Gear icon is now legible in both themes.
+
+10. **Watercolor storybook header looked like a "washed-out grey blob" in dark mode**
+    - **Root cause:** `WatercolorHeader` hard-coded `paletteBase.paperCream` for the bottom strip and `paletteBase.ink` for title text. On the dark `#1F1A1A` background, the cream strip created a weird light band and the dark `ink` text was unreadable on the muted accent overlay. The accent overlay opacity (0.55) over the dark page also turned the accent into mud.
+    - **Fix:** Made `WatercolorHeader` theme-aware via `useAppTheme()`:
+      - Bottom "paper" strip now uses `theme.background` (blends seamlessly in both modes)
+      - Title / subtitle / sparkles now use `theme.text` / `theme.mutedText`
+      - Accent overlay opacity drops to `0.32` (top) / `0.22` (mid) in dark mode, so the accent still tints the header but doesn't wash it out
+    - **Result:** Header reads cleanly in both light and dark mode; the storybook title remains the visual anchor instead of a grey smudge.
+
+### Files changed
+
+| File | Change |
+|------|--------|
+| `apps/mobile/.env` (new, gitignored) | Copied from `ENV_LOCAL_EDIT_ME.txt` so Expo picks up the real Supabase publishable key |
+| `apps/mobile/src/i18n/en.ts` | `recipes.helper(name, months: number)` → `(name, ageLabel: string)` |
+| `apps/mobile/src/i18n/he.ts` | Same signature change for Hebrew helper |
+| `apps/mobile/src/screens/FoodScreen.tsx` | Pass `getAgeLabel(dob, now, lang)` instead of raw months |
+| `apps/mobile/src/screens/HomeScreen.tsx` | Settings gear `color` + `borderColor` now react to `theme.isDark` |
+| `apps/mobile/src/components/WatercolorHeader.tsx` | Theme-aware: bottom strip uses `theme.background`, text uses `theme.text` / `theme.mutedText`, accent overlays use lower opacity in dark |
+
+### Tests
+
+- **All 69 tests passing** ✅
+
+### Notes for next session
+
+- `.env` is intentionally gitignored. If someone clones this on a fresh machine, repeat `cp apps/mobile/ENV_LOCAL_EDIT_ME.txt apps/mobile/.env` before `npx expo start`.
+- Other screens (`AiScreen`, `FoodTastingScreen`, etc.) inherit the `WatercolorHeader` dark-mode improvements automatically since they all use that component. The card surfaces use `theme.surface` already — they're fine.
+
+---
+
 ## 2026-05-25 — Learning card "14" font + Hebrew brand name (Windows session, latest)
 
 **Branch:** `master` + `codex/littlenest-ai-prototype` (same fixes on both)
