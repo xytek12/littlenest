@@ -78,9 +78,19 @@ export function HomeScreen() {
             accessibilityRole="button"
             accessibilityLabel={labels.openSettings}
             onPress={() => navigation.navigate('Settings')}
-            style={[styles.settingsButton, { borderColor: paletteBase.stickerCharcoal, backgroundColor: theme.surface }]}
+            style={[
+              styles.settingsButton,
+              {
+                borderColor: theme.isDark ? theme.text : paletteBase.stickerCharcoal,
+                backgroundColor: theme.surface,
+              },
+            ]}
           >
-            <Ionicons name="settings-outline" size={18} color={paletteBase.stickerCharcoal} />
+            <Ionicons
+              name="settings-outline"
+              size={18}
+              color={theme.isDark ? theme.text : paletteBase.stickerCharcoal}
+            />
           </Pressable>
         }
       />

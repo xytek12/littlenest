@@ -102,7 +102,7 @@ export const en = {
     queryPlaceholder: 'real food recipe ideas',
     searching: 'Searching...',
     refresh: 'Refresh recipe ideas',
-    helper: (name: string, months: number) => `Ideas for ${name}, ${months} months old.`,
+    helper: (name: string, ageLabel: string) => `Ideas for ${name}, ${ageLabel} old.`,
     resultsHeader: 'Daily recipe picks',
     dailyLabel: "Today's idea",
     openSource: 'Open recipe source',

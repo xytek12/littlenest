@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { isRtlLanguage } from '../i18n';
 import { usePrototypeState } from '../state/PrototypeState';
 import { paletteBase, typography } from '../theme';
+import { useAppTheme } from '../theme/useAppTheme';
 
 type Props = PropsWithChildren<{
   title: string;
@@ -14,9 +15,14 @@ type Props = PropsWithChildren<{
 }>;
 
 // Magical-storybook header: a soft gradient wash of the primary accent fading
-// into the cream paper, with sparkle stars and an italic display title.
+// into the page background, with sparkle stars and an italic display title.
 // Implemented without expo-linear-gradient so it keeps rendering even before
 // the user runs `npm install`.
+//
+// Dark-mode aware: the bottom "paper" strip blends with the page background
+// (not a fixed cream), and the title / subtitle / sparkles use theme text
+// colours so they stay readable. The accent overlay opacity is also lowered
+// in dark mode so the header doesn't look like a washed-out grey blob.
 export function WatercolorHeader({
   title,
   subtitle,
@@ -26,6 +32,7 @@ export function WatercolorHeader({
   trailing,
   children,
 }: Props) {
+  const theme = useAppTheme();
   const { family } = usePrototypeState();
   const rtl = isRtlLanguage(family.language);
   const rtlText = rtl ? styles.rtlText : null;
@@ -35,29 +42,44 @@ export function WatercolorHeader({
     <View style={styles.wrapper}>
       <View
         pointerEvents="none"
-        style={[styles.layerTop, { backgroundColor: tintTop }]}
+        style={[
+          styles.layerTop,
+          { backgroundColor: tintTop, opacity: theme.isDark ? 0.32 : 0.55 },
+        ]}
       />
       <View
         pointerEvents="none"
-        style={[styles.layerMid, { backgroundColor: accent, opacity: 0.18 }]}
+        style={[
+          styles.layerMid,
+          { backgroundColor: accent, opacity: theme.isDark ? 0.22 : 0.18 },
+        ]}
       />
       <View
         pointerEvents="none"
-        style={[styles.layerBottom, { backgroundColor: paletteBase.paperCream }]}
+        style={[styles.layerBottom, { backgroundColor: theme.background }]}
       />
 
       <View style={styles.content}>
         <View style={styles.headerTopRow}>
-          <Text style={[styles.sparkles, rtlText]} accessibilityElementsHidden>
+          <Text
+            style={[styles.sparkles, { color: theme.mutedText }, rtlText]}
+            accessibilityElementsHidden
+          >
             {sparkles}
           </Text>
           {trailing ? <View style={styles.trailing}>{trailing}</View> : null}
         </View>
-        <Text style={[styles.title, rtlText]} numberOfLines={2}>
+        <Text
+          style={[styles.title, { color: theme.text }, rtlText]}
+          numberOfLines={2}
+        >
           {title}
         </Text>
         {subtitle ? (
-          <Text style={[styles.subtitle, rtlText]} numberOfLines={3}>
+          <Text
+            style={[styles.subtitle, { color: theme.mutedText }, rtlText]}
+            numberOfLines={3}
+          >
             {subtitle.split(/(\d+)/).map((part, index) =>
               /^\d+$/.test(part) ? (
                 <Text key={`n-${index}`} style={styles.subtitleNumber}>
@@ -85,7 +107,6 @@ const styles = StyleSheet.create({
   layerTop: {
     height: '100%',
     left: 0,
-    opacity: 0.55,
     position: 'absolute',
     right: 0,
     top: 0,
@@ -117,16 +138,14 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   sparkles: {
-    color: paletteBase.ink,
     fontSize: 13,
     letterSpacing: 4,
-    opacity: 0.55,
+    opacity: 0.7,
   },
   trailing: {
     marginLeft: 8,
   },
   title: {
-    color: paletteBase.ink,
     fontFamily: typography.displayItalic,
     fontSize: 30,
     fontStyle: 'italic',
@@ -135,7 +154,6 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   subtitle: {
-    color: paletteBase.inkSoft,
     fontFamily: typography.body,
     fontSize: 14,
     lineHeight: 20,
@@ -148,3 +166,7 @@ const styles = StyleSheet.create({
   },
   rtlText: { textAlign: 'right', writingDirection: 'rtl' },
 });
+
+// (paletteBase is intentionally still imported above in case a downstream
+//  consumer extends this file — kept for parity with the original module.)
+void paletteBase;
