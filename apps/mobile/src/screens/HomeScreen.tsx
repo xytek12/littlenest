@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -73,26 +72,6 @@ export function HomeScreen() {
         subtitle={isTwins ? undefined : getAgeLabel(activeChild.dateOfBirth, new Date(), family.language)}
         accent={palette.primary}
         accentSoft={palette.primarySoft}
-        trailing={
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={labels.openSettings}
-            onPress={() => navigation.navigate('Settings')}
-            style={[
-              styles.settingsButton,
-              {
-                borderColor: theme.isDark ? theme.text : paletteBase.stickerCharcoal,
-                backgroundColor: theme.surface,
-              },
-            ]}
-          >
-            <Ionicons
-              name="settings-outline"
-              size={18}
-              color={theme.isDark ? theme.text : paletteBase.stickerCharcoal}
-            />
-          </Pressable>
-        }
       />
 
       <View
@@ -190,14 +169,6 @@ export function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  settingsButton: {
-    alignItems: 'center',
-    borderRadius: 20,
-    borderWidth: 2,
-    height: 40,
-    justifyContent: 'center',
-    width: 40,
-  },
   learningCard: {
     borderRadius: 22,
     borderWidth: 1,

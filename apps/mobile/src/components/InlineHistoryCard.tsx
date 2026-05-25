@@ -45,13 +45,13 @@ export function InlineHistoryCard({ rows, onPress, testID }: Props) {
             <View style={styles.rowBody}>
               <Text style={[styles.rowPrimary, rtlText, { color: theme.text }]}>{row.primary}</Text>
               {row.secondary ? (
-                <Text style={[styles.rowSecondary, rtlText]}>{row.secondary}</Text>
+                <Text style={[styles.rowSecondary, rtlText, { color: theme.mutedText }]}>{row.secondary}</Text>
               ) : null}
             </View>
           </View>
         ))
       ) : (
-        <Text style={[styles.empty, rtlText]}>{history.empty24h}</Text>
+        <Text style={[styles.empty, rtlText, { color: theme.mutedText }]}>{history.empty24h}</Text>
       )}
     </Pressable>
   );

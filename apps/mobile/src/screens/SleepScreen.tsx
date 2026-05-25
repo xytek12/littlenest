@@ -184,7 +184,7 @@ export function SleepScreen() {
                   onChangeText={setWakeCountDraft}
                   keyboardType="number-pad"
                   placeholder="0"
-                  placeholderTextColor="#8B99AA"
+                  placeholderTextColor={theme.mutedText}
                   style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
                 />
                 <View style={styles.promptActions}>
@@ -203,7 +203,7 @@ export function SleepScreen() {
               </>
             ) : (
               <>
-                <Text style={[styles.timerStatus, rtlText]}>
+                <Text style={[styles.timerStatus, rtlText, { color: theme.mutedText }]}>
                   {timerPaused
                     ? labels.timerPaused
                     : activeSleepStartedAt

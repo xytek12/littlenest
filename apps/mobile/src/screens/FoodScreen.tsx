@@ -180,7 +180,7 @@ export function FoodScreen() {
         <TextInput
           onChangeText={setQuery}
           placeholder={labels.queryPlaceholder}
-          placeholderTextColor="#8B99AA"
+          placeholderTextColor={theme.mutedText}
           style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
           value={query}
         />
@@ -195,17 +195,17 @@ export function FoodScreen() {
         </Pressable>
       </View>
 
-      <Text style={[styles.helperText, rtlText]}>
+      <Text style={[styles.helperText, rtlText, { color: theme.mutedText }]}>
         {labels.helper(activeChild.displayName, getAgeLabel(activeChild.dateOfBirth, new Date(), family.language))}
       </Text>
 
       {limitReached ? (
-        <Text style={[styles.noticeText, rtlText]} testID="recipes-limit">
+        <Text style={[styles.noticeText, rtlText, { color: theme.mutedText }]} testID="recipes-limit">
           {labels.limitReached}
         </Text>
       ) : null}
       {usedFallback && !limitReached ? (
-        <Text style={[styles.noticeText, rtlText]} testID="recipes-fallback">
+        <Text style={[styles.noticeText, rtlText, { color: theme.mutedText }]} testID="recipes-fallback">
           {hasSupabaseEnv() ? labels.error : labels.offlineNote}
         </Text>
       ) : null}
@@ -215,10 +215,10 @@ export function FoodScreen() {
       {loading ? (
         <View style={styles.loadingRow} testID="recipes-loading">
           <ActivityIndicator color={colors.blue} />
-          <Text style={[styles.loadingText, rtlText]}>{labels.loading}</Text>
+          <Text style={[styles.loadingText, rtlText, { color: theme.mutedText }]}>{labels.loading}</Text>
         </View>
       ) : visibleRecipes.length === 0 ? (
-        <Text style={[styles.noticeText, rtlText]} testID="recipes-empty">
+        <Text style={[styles.noticeText, rtlText, { color: theme.mutedText }]} testID="recipes-empty">
           {labels.empty}
         </Text>
       ) : (

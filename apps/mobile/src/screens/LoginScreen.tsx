@@ -39,10 +39,10 @@ export function LoginScreen() {
 
   return (
     <Screen testID="screen-login" scroll>
-      <View style={[styles.hero, { backgroundColor: colors.neutral }]}>
+      <View style={[styles.hero, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <Text style={[styles.kicker, { color: colors.berry }]}>LittleNest AI</Text>
         <Text style={[styles.title, { color: theme.text }]}>Admin test sign in</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.subtitle, { color: theme.mutedText }]}>
           Use your Supabase admin account to test login, AI comparisons, and recipe search.
         </Text>
       </View>
@@ -63,7 +63,7 @@ export function LoginScreen() {
           keyboardType="email-address"
           onChangeText={setEmail}
           placeholder="admin@example.com"
-          placeholderTextColor="#8B99AA"
+          placeholderTextColor={theme.mutedText}
           style={[styles.input, { color: theme.text, borderColor: theme.border }]}
           value={email}
         />
@@ -74,7 +74,7 @@ export function LoginScreen() {
           autoCorrect={false}
           onChangeText={setPassword}
           placeholder="Password"
-          placeholderTextColor="#8B99AA"
+          placeholderTextColor={theme.mutedText}
           secureTextEntry
           style={[styles.input, { color: theme.text, borderColor: theme.border }]}
           value={password}

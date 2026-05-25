@@ -59,7 +59,7 @@ export function getAllowedRecipeDomains(language: 'en' | 'he' | 'ru'): readonly 
  * of a 404.
  *
  * Supported search URL formats:
- *   - he  → https://www.matkonia.co.il/?s=<title>
+ *   - he  → https://matkonia.co.il/?s=<title>
  *   - en/ru → https://solidstarts.com/?s=<title>
  */
 export function buildSourceUrl(language: 'en' | 'he' | 'ru', title: string): string {

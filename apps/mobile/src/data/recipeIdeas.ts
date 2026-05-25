@@ -19,6 +19,23 @@ type RecipeSeed = {
   copy: Record<AppLanguage, Pick<CuratedRecipeIdea, 'title' | 'summary' | 'tag'>>;
 };
 
+// For Hebrew users we replace English seed-source URLs with a Hebrew search URL
+// on matkonia.co.il keyed by the Hebrew recipe title. Keeps users on Hebrew
+// content (matches the recipe-search Edge Function behaviour).
+function buildHebrewSource(hebrewTitle: string): { title: string; url: string } {
+  return {
+    title: 'מתכוניה',
+    url: `https://matkonia.co.il/?s=${encodeURIComponent(hebrewTitle)}`,
+  };
+}
+
+function resolveSource(seed: RecipeSeed, language: AppLanguage): { title: string; url: string } {
+  if (language === 'he') {
+    return buildHebrewSource(seed.copy.he.title);
+  }
+  return seed.source;
+}
+
 const recipeSeeds: RecipeSeed[] = [
   {
     id: 'avocado-puree',
@@ -240,7 +257,7 @@ export function getDailyRecipeIdeas(input: {
       summary: seed.copy[language].summary,
       tag: seed.copy[language].tag,
       imageUrl: seed.imageUrl,
-      source: seed.source,
+      source: resolveSource(seed, language),
     } satisfies CuratedRecipeIdea;
   });
 }

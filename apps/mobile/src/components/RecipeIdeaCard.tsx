@@ -33,10 +33,10 @@ export function RecipeIdeaCard({
       <View style={styles.body}>
         <View style={styles.tagRow}>
           <Text style={styles.tag}>{tag}</Text>
-          <Text style={styles.dailyLabel}>{dailyLabel}</Text>
+          <Text style={[styles.dailyLabel, { color: theme.mutedText }]}>{dailyLabel}</Text>
         </View>
         <Text style={[styles.title, { color: theme.text }]}>{title}</Text>
-        <Text style={styles.summary}>{summary}</Text>
+        <Text style={[styles.summary, { color: theme.mutedText }]}>{summary}</Text>
         <Pressable
           onPress={onPress}
           style={[styles.button, { backgroundColor: accent.softPrimary }]}
