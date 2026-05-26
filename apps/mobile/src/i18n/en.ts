@@ -17,6 +17,8 @@ export const en = {
       bottle: 'bottle',
       whisper: 'whisper',
       allergen: 'tasting',
+      growth: 'growth',
+      ai: 'AI',
     },
     actions: {
       beginDream: 'begin a dream',
@@ -24,6 +26,9 @@ export const en = {
       openTimer: 'open timer',
       logFeast: 'log a feast',
       finishFeast: 'finish the feast',
+      startTasting: 'start tasting',
+      addMeasurement: 'add a note',
+      runComparison: 'run comparison',
     },
     status: {
       sleepIdleSingle: (name: string) => `${name}'s nest is quiet — start a dream when sleep begins.`,
@@ -34,6 +39,8 @@ export const en = {
         `nursing now · left ${left} · right ${right}`,
       allergenIntro: (name: string) =>
         `Each new flavour gets three small tastes for ${name}. Tick them off as you go.`,
+      foodTastingIdle: (name: string) =>
+        `New flavours are waiting to be tasted for ${name}.`,
     },
   },
   confidence: { low: 'Low', medium: 'Medium', high: 'High' },

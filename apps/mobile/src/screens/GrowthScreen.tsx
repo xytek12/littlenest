@@ -2,12 +2,12 @@ import { useMemo, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { ActionCard } from '../components/ActionCard';
 import {
   GroupedHistoryCard,
   type GroupedHistoryDay,
 } from '../components/GroupedHistoryCard';
 import { Screen } from '../components/Screen';
+import { StorybookCard } from '../components/StorybookCard';
 import { TwinPickerCards } from '../components/TwinPickerCards';
 import { WatercolorHeader } from '../components/WatercolorHeader';
 import { getDictionary, isRtlLanguage } from '../i18n';
@@ -195,12 +195,16 @@ export function GrowthScreen() {
       </View>
 
       {baseKinds.map((kind) => (
-        <ActionCard
+        <StorybookCard
           key={kind.key}
+          kicker={story.kickers.growth}
           title={kind.label}
           subtitle={kind.subtitle}
-          accent={kind.accent}
-          onPress={() => openComposer(kind.key)}
+          primaryAction={{
+            label: story.actions.addMeasurement,
+            accessibilityLabel: kind.label,
+            onPress: () => openComposer(kind.key),
+          }}
         />
       ))}
 
@@ -208,24 +212,32 @@ export function GrowthScreen() {
         family.children.map((child, index) => {
           const accent = getChildAccent(child, index, palette);
           return (
-            <ActionCard
+            <StorybookCard
               key={`head-${child.id}`}
+              kicker={story.kickers.growth}
               title={`${labels.head} · ${child.displayName}`}
               subtitle={labels.headSubtitle}
-              accent={accent.primary}
-              onPress={() => {
-                selectChild(child.id);
-                openComposer('head');
+              primaryAction={{
+                label: story.actions.addMeasurement,
+                accessibilityLabel: `${labels.head} · ${child.displayName}`,
+                onPress: () => {
+                  selectChild(child.id);
+                  openComposer('head');
+                },
               }}
             />
           );
         })
       ) : (
-        <ActionCard
+        <StorybookCard
+          kicker={story.kickers.growth}
           title={labels.head}
           subtitle={labels.headSubtitle}
-          accent={accentForSex(family.children[0]?.sex ?? 'girl')}
-          onPress={() => openComposer('head')}
+          primaryAction={{
+            label: story.actions.addMeasurement,
+            accessibilityLabel: labels.head,
+            onPress: () => openComposer('head'),
+          }}
         />
       )}
 

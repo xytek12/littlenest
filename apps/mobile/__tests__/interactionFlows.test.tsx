@@ -91,9 +91,9 @@ describe('interaction flows', () => {
   });
 
   it('records growth measurements with metric and imperial units', () => {
-    const { getByPlaceholderText, getByText, queryAllByText } = renderGrowth();
+    const { getByLabelText, getByPlaceholderText, getByText, queryAllByText } = renderGrowth();
 
-    fireEvent.press(getByText('Weight'));
+    fireEvent.press(getByLabelText('Weight'));
     fireEvent.changeText(getByPlaceholderText('0'), '8.2');
     fireEvent.press(getByText('Save measurement'));
 
@@ -102,13 +102,13 @@ describe('interaction flows', () => {
     expect(queryAllByText(/Weight · 8.2 kg/).length).toBeGreaterThan(0);
 
     fireEvent.press(getByText('Imperial'));
-    fireEvent.press(getByText('Height'));
+    fireEvent.press(getByLabelText('Height'));
     fireEvent.changeText(getByPlaceholderText('0'), '27.5');
     fireEvent.press(getByText('Save measurement'));
 
     expect(queryAllByText(/Height · 27.5 in/).length).toBeGreaterThan(0);
 
-    fireEvent.press(getByText('Head circumference'));
+    fireEvent.press(getByLabelText('Head circumference'));
     fireEvent.changeText(getByPlaceholderText('0'), '16.2');
     fireEvent.press(getByText('Save measurement'));
 

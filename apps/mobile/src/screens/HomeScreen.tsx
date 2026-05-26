@@ -1,14 +1,14 @@
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, Text, View } from 'react-native';
-import { ActionCard } from '../components/ActionCard';
 import { Screen } from '../components/Screen';
+import { StorybookCard } from '../components/StorybookCard';
 import { TwinPickerCards } from '../components/TwinPickerCards';
 import { WatercolorHeader } from '../components/WatercolorHeader';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import type { RootTabParamList } from '../navigation/RootNavigator';
 import { usePrototypeState } from '../state/PrototypeState';
-import { getPalette, paletteBase, typography } from '../theme';
+import { getPalette, typography } from '../theme';
 import { useAppTheme } from '../theme/useAppTheme';
 import { getAgeLabel } from '../utils/age';
 
@@ -111,23 +111,41 @@ export function HomeScreen() {
       <TwinPickerCards />
 
 
-      <ActionCard
-        title={labels.sleepTitle}
+      <StorybookCard
+        kicker={story.kickers.sleep}
+        title={
+          activeSleepStartedAt
+            ? story.status.sleepRunning(activeChild.displayName, labels.sleepTitle)
+            : isTwins
+              ? story.status.sleepIdleTwins
+              : story.status.sleepIdleSingle(activeChild.displayName)
+        }
         subtitle={labels.sleepSubtitle}
-        accent={palette.primary}
-        onPress={() => navigation.navigate('SleepFlow')}
+        primaryAction={{
+          label: story.actions.beginDream,
+          accessibilityLabel: labels.sleepTitle,
+          onPress: () => navigation.navigate('SleepFlow'),
+        }}
       />
-      <ActionCard
-        title={labels.feedTitle}
+      <StorybookCard
+        kicker={story.kickers.nursing}
+        title={story.status.feedIdle(activeChild.displayName)}
         subtitle={labels.feedSubtitle}
-        accent={palette.secondary ?? paletteBase.sage}
-        onPress={() => navigation.navigate('FeedFlow')}
+        primaryAction={{
+          label: story.actions.logFeast,
+          accessibilityLabel: labels.feedTitle,
+          onPress: () => navigation.navigate('FeedFlow'),
+        }}
       />
-      <ActionCard
-        title={labels.foodTastingTitle}
+      <StorybookCard
+        kicker={story.kickers.allergen}
+        title={story.status.foodTastingIdle(activeChild.displayName)}
         subtitle={labels.foodTastingSubtitle}
-        accent={palette.bridge ?? palette.primary}
-        onPress={() => navigation.navigate('FoodTastingFlow')}
+        primaryAction={{
+          label: story.actions.startTasting,
+          accessibilityLabel: labels.foodTastingTitle,
+          onPress: () => navigation.navigate('FoodTastingFlow'),
+        }}
       />
     </Screen>
   );

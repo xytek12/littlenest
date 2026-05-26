@@ -17,6 +17,8 @@ export const he = {
       bottle: 'בקבוק',
       whisper: 'לחישה',
       allergen: 'טעימה',
+      growth: 'צמיחה',
+      ai: 'AI',
     },
     actions: {
       beginDream: 'מתחילים חלום',
@@ -24,6 +26,9 @@ export const he = {
       openTimer: 'פתיחת טיימר',
       logFeast: 'רישום סעודה',
       finishFeast: 'סיום הסעודה',
+      startTasting: 'נלך לטעום',
+      addMeasurement: 'הוספת מדידה',
+      runComparison: 'הפעלת השוואה',
     },
     status: {
       sleepIdleSingle: (name: string) => `הקן של ${name} שקט — התחילו חלום כשהשינה מתחילה.`,
@@ -34,6 +39,8 @@ export const he = {
         `הנקה פעילה · שמאל ${left} · ימין ${right}`,
       allergenIntro: (name: string) =>
         `כל טעם חדש מקבל שלוש טעימות קטנות עבור ${name}. סמנו כל אחת כשנעשתה.`,
+      foodTastingIdle: (name: string) =>
+        `טעמים חדשים מחכים לגילוי עבור ${name}.`,
     },
   },
   confidence: { low: 'נמוך', medium: 'בינוני', high: 'גבוה' },

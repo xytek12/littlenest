@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { ActionCard } from '../components/ActionCard';
 import { AiSuggestionCard } from '../components/AiSuggestionCard';
+import { StorybookCard } from '../components/StorybookCard';
 import { ConfidenceBadge } from '../components/ConfidenceBadge';
 import { Screen } from '../components/Screen';
 import { WatercolorHeader } from '../components/WatercolorHeader';
@@ -84,16 +84,21 @@ export function AiScreen() {
       />
       <Text style={[styles.subtitle, rtlText, { color: theme.mutedText }]} accessibilityElementsHidden>{labels.title}</Text>
 
-      <ActionCard
+      <StorybookCard
+        kicker={story.kickers.ai}
         title={labels.compareTitle}
         subtitle={loading ? labels.checking : labels.compareSubtitle}
-        accent={palette.primary}
-        onPress={handleCompare}
+        primaryAction={{
+          label: story.actions.runComparison,
+          accessibilityLabel: labels.compareTitle,
+          disabled: loading,
+          onPress: handleCompare,
+        }}
       >
         <Text style={[styles.actionHint, rtlText, { color: theme.mutedText }]}>
           {labels.currentPrompt(activeChild.displayName)}
         </Text>
-      </ActionCard>
+      </StorybookCard>
 
       {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
 
@@ -105,10 +110,10 @@ export function AiScreen() {
           accent={colors.berry}
         />
       ) : (
-        <ActionCard
+        <StorybookCard
+          kicker={story.kickers.ai}
           title={labels.sleepPrediction}
           subtitle={labels.sleepPredictionSubtitle}
-          accent={palette.primary}
         />
       )}
 
