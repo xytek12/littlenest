@@ -40,6 +40,10 @@ function TabButton({
   emoji,
   stickerColor,
   isDark,
+  darkActiveBg,
+  darkActiveText,
+  darkInactiveText,
+  darkBorder,
 }: {
   selected: boolean;
   onPress: () => void;
@@ -47,6 +51,10 @@ function TabButton({
   emoji: string;
   stickerColor: string;
   isDark: boolean;
+  darkActiveBg: string;
+  darkActiveText: string;
+  darkInactiveText: string;
+  darkBorder: string;
 }) {
   const scale = useRef(new Animated.Value(selected ? 1.08 : 1)).current;
 
@@ -90,11 +98,17 @@ function TabButton({
       <Animated.View
         style={[
           styles.tab,
-          {
-            backgroundColor: selected ? stickerColor : 'transparent',
-            borderColor: selected ? paletteBase.stickerCharcoal : 'transparent',
-            transform: [{ scale }],
-          },
+          isDark
+            ? {
+                backgroundColor: selected ? darkActiveBg : 'transparent',
+                borderColor: selected ? darkBorder : 'transparent',
+                transform: [{ scale }],
+              }
+            : {
+                backgroundColor: selected ? stickerColor : 'transparent',
+                borderColor: selected ? paletteBase.stickerCharcoal : 'transparent',
+                transform: [{ scale }],
+              },
         ]}
       >
         <Text style={styles.emoji}>{emoji}</Text>
@@ -102,7 +116,13 @@ function TabButton({
           numberOfLines={1}
           style={[
             styles.label,
-            { color: selected ? paletteBase.stickerCharcoal : isDark ? '#C9BFB7' : paletteBase.stickerCharcoal },
+            {
+              color: isDark
+                ? selected
+                  ? darkActiveText
+                  : darkInactiveText
+                : paletteBase.stickerCharcoal,
+            },
           ]}
         >
           {label}
@@ -132,9 +152,14 @@ export function BottomEmojiTabBar({ navigation, state }: BottomTabBarProps) {
         accessibilityRole="tablist"
         style={[
           styles.container,
-          {
-            backgroundColor: theme.isDark ? '#221C1C' : '#FFFFFF',
-          },
+          theme.isDark
+            ? {
+                backgroundColor: theme.surface,
+                borderColor: theme.border,
+              }
+            : {
+                backgroundColor: '#FFFFFF',
+              },
         ]}
       >
         {visibleTabs.map((routeName) => {
@@ -151,6 +176,10 @@ export function BottomEmojiTabBar({ navigation, state }: BottomTabBarProps) {
               emoji={meta.emoji}
               stickerColor={stickerColor}
               isDark={theme.isDark}
+              darkActiveBg={theme.dockActiveBg}
+              darkActiveText={theme.dockActiveText}
+              darkInactiveText={theme.dockInactiveText}
+              darkBorder={theme.border}
               onPress={() => navigation.navigate(routeName)}
             />
           );

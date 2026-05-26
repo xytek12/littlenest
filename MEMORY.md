@@ -14,6 +14,79 @@ A running log of every change made to this project so we (and any Claude session
 
 ---
 
+## 2026-05-26 — Indigo Dream dark mode + gender-aware sleep verb + twin picker cards + per-recipe images (Mac session)
+
+**Branch:** `codex/littlenest-ai-prototype`
+
+### What changed
+
+1. **Indigo Dream dark mode applied (light mode untouched)**
+   - User picked variant 6 ("Indigo Dream") from the dark-mode lookbook (`ui-lookbook/dark.html`).
+   - `useAppTheme.ts`: replaced sepia-brown dark palette with indigo. New tokens: `background: #161629`, `surface: #1F1F38`, `text: #EFEAFF`, `mutedText: #A8A2C9`, `border: #363659`. Added derived dock tokens: `dockActiveBg: #9FB7E8`, `dockActiveText: #161629`, `dockInactiveText: rgba(239,234,255,0.7)`.
+   - `BottomEmojiTabBar.tsx`: kept Sticker Pop geometry (chunky border + hard offset shadow + active pill). Dark mode branch reads the new dock tokens; light mode code path is **byte-identical to before** (same `#FFFFFF` bg, same `stickerCharcoal` border + labels + sticker colors).
+   - `WatercolorHeader.tsx`: unchanged — existing 0.32/0.22 dark overlays harmonize with indigo bg.
+
+2. **Gender-aware Hebrew sleep status in Home header**
+   - User feedback: lookbook mockup showed "ענר ישנה בשקט" — feminine verb but ענר is a boy's name. Fix: verb must agree with `activeChild.sex`.
+   - Added i18n keys: `home.sleepingStatus(name, sex)` in `en.ts` ("${name} is sleeping peacefully"), `he.ts` ("בוקר טוב, ${name} ${sex === 'boy' ? 'ישן' : 'ישנה'} בשקט"). `ru.ts` re-exports `en.ts` so it picks up automatically.
+   - `HomeScreen.tsx` subtitle logic: if `activeSleepStartedAt` is set, show `sleepingStatus(name, sex)`; else age label (single mode) or `undefined` (twins). NOTE: `activeSleepStartedAt` is a single global value in `PrototypeState`, so the sleeping child is always `activeChild` — no per-child branch needed.
+
+3. **Twin picker cards on 5 screens (Home + 4 detail screens)**
+   - Created `apps/mobile/src/components/TwinPickerCards.tsx` — reusable two-card child picker (extracted from inline JSX in `HomeScreen`). Prop `compact?: boolean` omits the home-only quick list. Returns `null` for single-baby families.
+   - Added i18n keys `home.twinActive` / `home.twinTapToFocus` (en: "★ Active" / "Tap to focus", he: "★ פעיל" / "לחצו לבחירה") — replaces the hardcoded English literals.
+   - `HomeScreen.tsx`: replaced inline twin block with `<TwinPickerCards />`.
+   - `SleepScreen.tsx`, `FeedScreen.tsx`, `GrowthScreen.tsx`: **replaced** `<TwinSelector ... />` segmented control with `<TwinPickerCards compact />`. Removed unused `selectedChildId` local state — data now filters by global `activeChild.id`.
+   - `FoodTastingScreen.tsx`, `FoodScreen.tsx`: **added** `<TwinPickerCards compact />` near the top (they had no twin handling before).
+   - `TwinSelector.tsx` kept on disk in case re-needed; no longer imported anywhere.
+
+4. **Per-recipe Unsplash images + new fallback (from earlier same-day work)**
+   - `supabase/functions/_shared/recipePrompt.ts`: added `buildRecipeImageUrl(category)` — strips non-ASCII, takes up to 2 tokens from category, appends `baby,food`, returns `https://source.unsplash.com/600x400/?<keywords>`.
+   - `recipe-search/index.ts`: imports + sets `imageUrl` on every returned recipe. **Deployed to Supabase project `lolesbmajbrhbsmvxgos`.**
+   - `apps/mobile/src/ai/client.ts`: `StructuredRecipe.imageUrl?: string` added.
+   - `FoodScreen.tsx`: `aiRecipesToDisplay()` uses `recipe.imageUrl ?? FALLBACK_IMAGE`. New `FALLBACK_IMAGE` = baby-food bowl (`photo-1604908176997-125f25cc6f3d`), replaces the "guys-at-computers" photo.
+   - `data/recipeIdeas.ts`: 6 seed Unsplash URLs replaced with deterministic food themes (avocado, pancakes, oatmeal, sweet potato, salmon, baby-food bowl).
+
+### Files changed
+
+| File | Change |
+|------|--------|
+| `apps/mobile/src/theme/useAppTheme.ts` | Indigo Dream palette + 3 new dock tokens |
+| `apps/mobile/src/components/BottomEmojiTabBar.tsx` | `isDark` branch reads dock tokens (light path byte-identical) |
+| `apps/mobile/src/components/TwinPickerCards.tsx` | NEW component (extracted from HomeScreen) |
+| `apps/mobile/src/screens/HomeScreen.tsx` | Subtitle uses `sleepingStatus` when sleeping; uses `TwinPickerCards` |
+| `apps/mobile/src/screens/SleepScreen.tsx` | TwinSelector → TwinPickerCards, removed local selectedChildId |
+| `apps/mobile/src/screens/FeedScreen.tsx` | TwinSelector → TwinPickerCards |
+| `apps/mobile/src/screens/GrowthScreen.tsx` | TwinSelector → TwinPickerCards |
+| `apps/mobile/src/screens/FoodTastingScreen.tsx` | Added TwinPickerCards |
+| `apps/mobile/src/screens/FoodScreen.tsx` | Added TwinPickerCards + uses per-recipe imageUrl |
+| `apps/mobile/src/i18n/en.ts` | + `sleepingStatus`, `twinActive`, `twinTapToFocus` |
+| `apps/mobile/src/i18n/he.ts` | + Hebrew translations (gender-aware verb) |
+| `apps/mobile/src/ai/client.ts` | `StructuredRecipe.imageUrl?: string` |
+| `apps/mobile/src/data/recipeIdeas.ts` | Food-themed deterministic Unsplash URLs |
+| `supabase/functions/_shared/recipePrompt.ts` | `buildRecipeImageUrl(category)` helper |
+| `supabase/functions/recipe-search/index.ts` | Attaches `imageUrl` to every recipe |
+| `ui-lookbook/dark.html` | NEW — 6-variant dark-mode lookbook (Hebrew RTL, 3 phones each) |
+| `ui-lookbook/index.html` | Added nav link to dark.html |
+
+### Backend ops performed
+
+- **Deployed:** `recipe-search` edge function (per-recipe images live in production)
+- **Verified:** Supabase secrets `GEMINI_API_KEY`, `GEMINI_MODEL`, `OPENAI_API_KEY`, `OPENAI_MODEL` all set on project `lolesbmajbrhbsmvxgos`
+
+### Tests
+
+- **All 69 tests passing** ✅
+- TypeScript clean ✅
+
+### Notes for next session
+
+- **Light mode is intentionally unchanged.** User explicitly requested only dark mode shift to Indigo Dream. Any future dark-mode tweaks must continue gating on `theme.isDark`.
+- **Sleep status string assumes single active sleep session.** If `PrototypeState` ever supports per-child concurrent sleep sessions (e.g. both twins napping at once), `HomeScreen` subtitle logic needs to detect which child is sleeping rather than assuming `activeChild`.
+- **`TwinSelector.tsx` is dead code now** — left on disk for safety. Delete in a follow-up if not re-used in 1-2 sessions.
+- The "תזכורת" (reminder): the user runs `expo start --tunnel --clear` to get a QR scannable from anywhere (not just same Wi-Fi). Tunnel mode uses ngrok-style relay, so it's slower than LAN but works through corporate networks / cellular.
+
+---
+
 ## 2026-05-25 — Dark mode polish + Supabase env + recipe-page age + settings icon (Windows session, latest)
 
 **Branch:** `master` + `codex/littlenest-ai-prototype` (same fixes on both)

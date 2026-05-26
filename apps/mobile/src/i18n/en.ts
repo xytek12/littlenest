@@ -61,6 +61,10 @@ export const en = {
     foodTastingTitle: 'Food tasting',
     foodTastingSubtitle: 'Track first tastes, allergy checks, and what still needs testing.',
     openSettings: 'Open settings',
+    sleepingStatus: (name: string, _sex: 'boy' | 'girl') =>
+      `${name} is sleeping peacefully`,
+    twinActive: '★ Active',
+    twinTapToFocus: 'Tap to focus',
   },
   settings: {
     title: 'Settings',

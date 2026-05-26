@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { RecipeIdeaCard } from '../components/RecipeIdeaCard';
 import { Screen } from '../components/Screen';
+import { TwinPickerCards } from '../components/TwinPickerCards';
 import { WatercolorHeader } from '../components/WatercolorHeader';
 import { getPalette } from '../theme';
 import {
@@ -18,8 +19,9 @@ import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 import { getAgeInMonths, getAgeLabel } from '../utils/age';
 
+// Baby food bowl — used only when a recipe has no derived imageUrl.
 const FALLBACK_IMAGE =
-  'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=1200&q=80';
+  'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=1200&q=80';
 
 type DisplayRecipe = {
   id: string;
@@ -36,7 +38,7 @@ function aiRecipesToDisplay(recipes: StructuredRecipe[]): DisplayRecipe[] {
     title: recipe.title,
     summary: recipe.description,
     tag: recipe.category || recipe.ageRangeMonths || '',
-    imageUrl: FALLBACK_IMAGE,
+    imageUrl: recipe.imageUrl && recipe.imageUrl.length > 0 ? recipe.imageUrl : FALLBACK_IMAGE,
     url: recipe.url,
   }));
 }
@@ -171,6 +173,9 @@ export function FoodScreen() {
         accent={palette.primary}
         accentSoft={palette.primarySoft}
       />
+
+      <TwinPickerCards compact />
+
       <Text style={[styles.title, rtlText, { color: theme.text }]}>
         {labels.title}
       </Text>

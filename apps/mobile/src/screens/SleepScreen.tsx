@@ -6,7 +6,7 @@ import { ActionCard } from '../components/ActionCard';
 import { FlowHeader } from '../components/FlowHeader';
 import { InlineHistoryCard, type InlineHistoryRow } from '../components/InlineHistoryCard';
 import { Screen } from '../components/Screen';
-import { TwinSelector } from '../components/TwinSelector';
+import { TwinPickerCards } from '../components/TwinPickerCards';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import type { SleepStackParamList } from '../navigation/RootNavigator';
 import { usePrototypeState } from '../state/PrototypeState';
@@ -38,7 +38,6 @@ export function SleepScreen() {
     activeSleepStartedAt,
     endSleep,
     family,
-    selectChild,
     sleepSessions,
     startSleep,
   } = usePrototypeState();
@@ -55,7 +54,6 @@ export function SleepScreen() {
   );
   const activeIndex = family.children.findIndex((child) => child.id === activeChild.id);
   const activeAccent = getChildAccent(activeChild, Math.max(0, activeIndex), palette);
-  const [twinFilter, setTwinFilter] = useState<string | null>(isTwins ? activeChild.id : null);
   const [wakeCountDraft, setWakeCountDraft] = useState('0');
   const [showTimerSheet, setShowTimerSheet] = useState(false);
   const [showWakePrompt, setShowWakePrompt] = useState(false);
@@ -68,9 +66,9 @@ export function SleepScreen() {
     return map;
   }, [family.children]);
   const filteredSessions = useMemo(() => {
-    if (!isTwins || twinFilter == null) return sleepSessions;
-    return sleepSessions.filter((session) => session.childId === twinFilter);
-  }, [isTwins, sleepSessions, twinFilter]);
+    if (!isTwins) return sleepSessions;
+    return sleepSessions.filter((session) => session.childId === activeChild.id);
+  }, [activeChild.id, isTwins, sleepSessions]);
 
   const inlineRows = useMemo<InlineHistoryRow[]>(
     () =>
@@ -131,15 +129,7 @@ export function SleepScreen() {
         storybookTitle={story.sleep}
       />
 
-      {isTwins ? (
-        <TwinSelector
-          selectedChildId={twinFilter}
-          onSelect={(id) => {
-            setTwinFilter(id);
-            if (id) selectChild(id);
-          }}
-        />
-      ) : null}
+      <TwinPickerCards compact />
 
       <ActionCard
         title={activeSleepStartedAt ? labels.running : labels.start}

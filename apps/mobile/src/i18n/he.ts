@@ -61,6 +61,10 @@ export const he = {
     foodTastingTitle: 'טעימות',
     foodTastingSubtitle: 'עקבו אחרי טעימות ראשונות, בדיקות אלרגיה ומה עוד צריך לבדוק.',
     openSettings: 'פתיחת הגדרות',
+    sleepingStatus: (name: string, sex: 'boy' | 'girl') =>
+      `בוקר טוב, ${name} ${sex === 'boy' ? 'ישן' : 'ישנה'} בשקט`,
+    twinActive: '★ פעיל',
+    twinTapToFocus: 'לחצו לבחירה',
   },
   settings: {
     title: 'הגדרות',

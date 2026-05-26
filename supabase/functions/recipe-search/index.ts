@@ -2,6 +2,7 @@ import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { fetchGeminiText } from '../_shared/aiProviders.ts';
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts';
 import {
+  buildRecipeImageUrl,
   buildRecipeSearchPrompt,
   buildSourceUrl,
   getAllowedRecipeDomains,
@@ -44,7 +45,13 @@ Deno.serve(async (req) => {
       // The model often fabricates or hallucinates specific recipe paths that
       // return 404. Using the site's search endpoint with the recipe title as
       // the query always resolves to a real page.
-      .map((r) => ({ ...r, url: buildSourceUrl(language, r.title) }));
+      // Also derive a per-recipe image URL using Unsplash Source so each card
+      // has a thematic photo instead of one shared fallback image.
+      .map((r) => ({
+        ...r,
+        url: buildSourceUrl(language, r.title),
+        imageUrl: buildRecipeImageUrl(r.category),
+      }));
 
     if (recipes.length === 0) {
       return jsonResponse(

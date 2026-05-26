@@ -43,7 +43,7 @@ const recipeSeeds: RecipeSeed[] = [
     maxMonths: 12,
     tags: ['avocado', 'banana', 'puree', 'first taste', 'soft'],
     imageUrl:
-      'https://images.unsplash.com/photo-1603046891744-76e6300f89ea?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1601039641847-7857b994d704?auto=format&fit=crop&w=1200&q=80',
     source: {
       title: 'Baby Foode',
       url: 'https://babyfoode.com/blog/avocado-for-baby-4-delicious-ways/',
@@ -72,7 +72,7 @@ const recipeSeeds: RecipeSeed[] = [
     maxMonths: 24,
     tags: ['banana', 'pancakes', 'breakfast', 'finger food'],
     imageUrl:
-      'https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=1200&q=80',
     source: {
       title: 'Yummy Toddler Food',
       url: 'https://www.yummytoddlerfood.com/banana-oatmeal-pancakes/',
@@ -101,7 +101,7 @@ const recipeSeeds: RecipeSeed[] = [
     maxMonths: 18,
     tags: ['oatmeal', 'oats', 'iron', 'berries', 'breakfast'],
     imageUrl:
-      'https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=1200&q=80',
     source: {
       title: 'MJ and Hungryman',
       url: 'https://www.mjandhungryman.com/vegetable-baby-oatmeal/',
@@ -130,7 +130,7 @@ const recipeSeeds: RecipeSeed[] = [
     maxMonths: 18,
     tags: ['sweet potato', 'vegetable', 'lunch', 'mash'],
     imageUrl:
-      'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1596097635121-14b38c5d7a55?auto=format&fit=crop&w=1200&q=80',
     source: {
       title: 'Baby Foode',
       url: 'https://babyfoode.com/blog/sweet-potato-curry/',
@@ -159,7 +159,7 @@ const recipeSeeds: RecipeSeed[] = [
     maxMonths: 24,
     tags: ['salmon', 'fish', 'omega', 'dinner', 'finger food'],
     imageUrl:
-      'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1485921325833-c519f76c4927?auto=format&fit=crop&w=1200&q=80',
     source: {
       title: 'MJ and Hungryman',
       url: 'https://www.mjandhungryman.com/baked-salmon-cake-with-mango-yogurt-sauce/',
@@ -188,7 +188,7 @@ const recipeSeeds: RecipeSeed[] = [
     maxMonths: 24,
     tags: ['meal ideas', 'older baby', 'schedule', 'family meals'],
     imageUrl:
-      'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=1200&q=80',
     source: {
       title: 'Bucket List Tummy',
       url: 'https://bucketlisttummy.com/what-do-18-month-olds-eat/',

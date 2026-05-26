@@ -17,6 +17,9 @@ export type StructuredRecipe = {
   url: string;
   ageRangeMonths: string;
   category: string;
+  // Optional: the edge function derives a per-recipe Unsplash image URL.
+  // Older cached responses won't include it, so callers must tolerate undefined.
+  imageUrl?: string;
 };
 
 export type RecipeSearchInput = {

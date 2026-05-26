@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { ActionCard } from '../components/ActionCard';
 import { InlineHistoryCard, type InlineHistoryRow } from '../components/InlineHistoryCard';
 import { Screen } from '../components/Screen';
-import { TwinSelector } from '../components/TwinSelector';
+import { TwinPickerCards } from '../components/TwinPickerCards';
 import { WatercolorHeader } from '../components/WatercolorHeader';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import type { GrowthStackParamList } from '../navigation/RootNavigator';
@@ -62,7 +62,6 @@ export function GrowthScreen() {
   const [unitSystem, setUnitSystem] = useState<PrototypeGrowthUnitSystem>('metric');
   const [selectedKind, setSelectedKind] = useState<PrototypeGrowthKind | null>(null);
   const [valueDraft, setValueDraft] = useState('');
-  const [twinFilter, setTwinFilter] = useState<string | null>(isTwins ? activeChild.id : null);
   const units = unitSystem === 'metric' ? metricUnits : imperialUnits;
   const selectedUnit = selectedKind ? units[selectedKind] : '';
   const baseAccent = palette.primary;
@@ -78,9 +77,9 @@ export function GrowthScreen() {
   }, [family.children]);
 
   const filteredGrowthEntries = useMemo(() => {
-    if (!isTwins || twinFilter == null) return growthEntries;
-    return growthEntries.filter((entry) => entry.childId === twinFilter);
-  }, [growthEntries, isTwins, twinFilter]);
+    if (!isTwins) return growthEntries;
+    return growthEntries.filter((entry) => entry.childId === activeChild.id);
+  }, [activeChild.id, growthEntries, isTwins]);
 
   const inlineRows = useMemo<InlineHistoryRow[]>(() => {
     return entriesInLast24h(filteredGrowthEntries, (entry) => entry.recordedAt)
@@ -156,15 +155,7 @@ export function GrowthScreen() {
         accentSoft={palette.primarySoft}
       />
 
-      {isTwins ? (
-        <TwinSelector
-          selectedChildId={twinFilter}
-          onSelect={(id) => {
-            setTwinFilter(id);
-            if (id) selectChild(id);
-          }}
-        />
-      ) : null}
+      <TwinPickerCards compact />
 
       <View style={[styles.segmentRow, { borderColor: theme.border }]}>
         {(['metric', 'imperial'] as const).map((nextSystem) => {
@@ -210,7 +201,6 @@ export function GrowthScreen() {
               accent={accent.primary}
               onPress={() => {
                 selectChild(child.id);
-                setTwinFilter(child.id);
                 openComposer('head');
               }}
             />

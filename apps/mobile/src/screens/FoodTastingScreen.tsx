@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { FoodTestProgress } from '../components/FoodTestProgress';
 import { FlowHeader } from '../components/FlowHeader';
 import { Screen } from '../components/Screen';
+import { TwinPickerCards } from '../components/TwinPickerCards';
 import {
   allergenReferenceItems,
   getLocalizedAllergenItem,
@@ -66,6 +67,8 @@ export function FoodTastingScreen() {
         subtitle={labels.subtitle(activeChild.displayName)}
         storybookTitle={story.foodTasting}
       />
+
+      <TwinPickerCards compact />
 
       {groupedSections.map(([section, sectionItems]) => (
         <View

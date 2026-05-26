@@ -73,6 +73,32 @@ export function buildSourceUrl(language: 'en' | 'he' | 'ru', title: string): str
 }
 
 /**
+ * Build a thematic image URL for a recipe card using Unsplash Source.
+ *
+ * The model returns `category` as a short English label (e.g. "Breakfast",
+ * "Vegetable", "Snack") even when the recipe title/description are in Hebrew
+ * or Russian. We extract ASCII keywords from `category`, fall back to a
+ * generic "baby food" tag when nothing usable is left, and always append
+ * "baby,food" so the photo stays on-theme.
+ */
+export function buildRecipeImageUrl(category: string | undefined): string {
+  const raw = (category ?? '').toLowerCase();
+  // Keep only ASCII letters / spaces / commas — Unsplash Source ignores
+  // non-ASCII and we want predictable, food-themed photos.
+  const cleaned = raw.replace(/[^a-z, ]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const tokens = cleaned
+    .split(/[\s,]+/)
+    .map((t) => t.trim())
+    .filter((t) => t.length > 2);
+  const keywords = (tokens.length > 0 ? tokens.slice(0, 2) : ['baby', 'food']).concat([
+    'baby',
+    'food',
+  ]);
+  const dedup = Array.from(new Set(keywords)).slice(0, 4).join(',');
+  return `https://source.unsplash.com/600x400/?${encodeURIComponent(dedup)}`;
+}
+
+/**
  * Returns true if `url`'s host matches one of `allowedDomains` (or a subdomain).
  * Used to enforce the language -> source restriction server-side after model output.
  */

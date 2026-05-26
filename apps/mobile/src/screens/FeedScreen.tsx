@@ -6,7 +6,7 @@ import { ActionCard } from '../components/ActionCard';
 import { FlowHeader } from '../components/FlowHeader';
 import { InlineHistoryCard, type InlineHistoryRow } from '../components/InlineHistoryCard';
 import { Screen } from '../components/Screen';
-import { TwinSelector } from '../components/TwinSelector';
+import { TwinPickerCards } from '../components/TwinPickerCards';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import type { FeedStackParamList } from '../navigation/RootNavigator';
 import { usePrototypeState } from '../state/PrototypeState';
@@ -46,7 +46,6 @@ export function FeedScreen() {
     feedEntries,
     finishNursingSession,
     recordBottleFeed,
-    selectChild,
     settings,
     startNursing,
     stopNursing,
@@ -63,7 +62,6 @@ export function FeedScreen() {
   );
   const activeIndex = family.children.findIndex((child) => child.id === activeChild.id);
   const activeAccent = getChildAccent(activeChild, Math.max(0, activeIndex), palette);
-  const [twinFilter, setTwinFilter] = useState<string | null>(isTwins ? activeChild.id : null);
   const isNursingActive =
     activeNursingSession.leftStartedAt != null || activeNursingSession.rightStartedAt != null;
   useTickEverySecond(isNursingActive);
@@ -81,9 +79,9 @@ export function FeedScreen() {
     return map;
   }, [family.children]);
   const filteredFeedEntries = useMemo(() => {
-    if (!isTwins || twinFilter == null) return feedEntries;
-    return feedEntries.filter((entry) => entry.childId === twinFilter);
-  }, [feedEntries, isTwins, twinFilter]);
+    if (!isTwins) return feedEntries;
+    return feedEntries.filter((entry) => entry.childId === activeChild.id);
+  }, [activeChild.id, feedEntries, isTwins]);
 
   const inlineRows = useMemo<InlineHistoryRow[]>(
     () =>
@@ -137,15 +135,7 @@ export function FeedScreen() {
         storybookTitle={story.nursing}
       />
 
-      {isTwins ? (
-        <TwinSelector
-          selectedChildId={twinFilter}
-          onSelect={(id) => {
-            setTwinFilter(id);
-            if (id) selectChild(id);
-          }}
-        />
-      ) : null}
+      <TwinPickerCards compact />
 
       <ActionCard
         title={labels.actionTitle}

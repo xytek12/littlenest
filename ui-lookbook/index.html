@@ -1,0 +1,1202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LittleNest UI Lookbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&family=Baloo+2:wght@500;600;700;800&family=Caveat:wght@500;700&family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Work+Sans:wght@300;400;500;600&family=Source+Serif+Pro:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ---------- base ---------- */
+  *,*::before,*::after { box-sizing: border-box; }
+  html,body { margin: 0; padding: 0; }
+  body {
+    background: #fafafa;
+    color: #1c1c1c;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+  .site-hero {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+  .site-hero h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(36px, 5vw, 56px);
+    letter-spacing: -0.02em;
+    margin: 0 0 12px;
+    color: #1c1c1c;
+  }
+  .site-hero p {
+    color: #555;
+    font-size: 16px;
+    max-width: 640px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+  .theme-section {
+    margin-bottom: 88px;
+    padding-top: 24px;
+  }
+  .theme-header {
+    margin-bottom: 28px;
+    border-top: 1px solid #ececec;
+    padding-top: 36px;
+  }
+  .theme-num {
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    color: #999;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .theme-name {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+  }
+  .theme-vibe {
+    color: #666;
+    font-size: 15px;
+    font-style: italic;
+    margin: 0;
+  }
+  .phones {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+    align-items: start;
+    margin-top: 28px;
+  }
+  @media (max-width: 900px) {
+    .phones { grid-template-columns: 1fr; justify-items: center; }
+  }
+  .variant {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .variant-label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #777;
+    margin-bottom: 12px;
+  }
+  /* phone shell */
+  .phone {
+    width: 280px;
+    height: 580px;
+    border-radius: 36px;
+    box-shadow:
+      0 30px 50px -20px rgba(0,0,0,0.25),
+      0 12px 24px -10px rgba(0,0,0,0.15),
+      0 0 0 1px rgba(0,0,0,0.04);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .palette {
+    display: flex;
+    gap: 6px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 280px;
+  }
+  .sw {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 9px;
+    color: #777;
+    font-family: 'Inter', monospace;
+  }
+  .sw-dot {
+    width: 22px; height: 22px; border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+    margin-bottom: 3px;
+  }
+  /* shared mockup pieces */
+  .status {
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 22px;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .status .right { display: flex; gap: 4px; align-items: center; }
+  .status .bat {
+    width: 18px; height: 9px; border-radius: 2px;
+    border: 1px solid currentColor; position: relative;
+  }
+  .status .bat::after {
+    content: ''; position: absolute; right: -3px; top: 2px;
+    width: 2px; height: 5px; background: currentColor; border-radius: 0 1px 1px 0;
+  }
+  .status .bat::before {
+    content: ''; position: absolute; left: 1px; top: 1px; bottom: 1px;
+    width: 70%; background: currentColor; border-radius: 1px;
+  }
+  .body {
+    flex: 1;
+    overflow: hidden;
+    padding: 14px 18px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .tabbar {
+    height: 56px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 12px 14px;
+    font-size: 18px;
+  }
+  .tab { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .tab-dot {
+    width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .tab-label { font-size: 8px; letter-spacing: 0.04em; }
+  .tab.active .tab-dot { font-weight: 700; }
+
+  /* card base */
+  .card {
+    border-radius: 16px;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  .card-title {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 6px;
+  }
+  .card-main { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .btn {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: default;
+  }
+  .greet { font-size: 18px; font-weight: 700; line-height: 1.25; }
+  .sub { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+  .insight {
+    font-style: italic;
+    font-size: 11.5px;
+    line-height: 1.45;
+  }
+  .row { display: flex; justify-content: space-between; align-items: center; }
+  .pill {
+    font-size: 9px; padding: 2px 8px; border-radius: 999px;
+    letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600;
+  }
+
+  /* ========== THEME 1: Soft Pastel Watercolor ========== */
+  .t1 {
+    --c1: #F6D9D2; --c2: #E8A6A0; --c3: #FBF6F0; --c4: #A7BFA3; --c5: #3F3A3A;
+    background: var(--c3);
+    color: var(--c5);
+    font-family: 'Nunito', sans-serif;
+  }
+  .t1.boy   { --c1:#CFE0EE; --c2:#7FA6C9; --c3:#FBF6F0; --c4:#A7BFA3; --c5:#3F3A3A; }
+  .t1.twins { --c1:#F6D9D2; --c2:#CFE0EE; --c3:#FBF6F0; --c4:#C9BBD9; --c5:#3F3A3A; }
+  .t1 .greet { font-family: 'Fraunces', serif; font-weight: 600; }
+  .t1 .body { background:
+    radial-gradient(circle at 20% 10%, var(--c1) 0%, transparent 45%),
+    radial-gradient(circle at 90% 30%, var(--c2) 0%, transparent 40%),
+    radial-gradient(circle at 60% 90%, var(--c4) 0%, transparent 40%),
+    var(--c3);
+  }
+  .t1 .status { color: var(--c5); background: transparent; }
+  .t1 .card { background: rgba(255,255,255,0.7); backdrop-filter: blur(6px); box-shadow: 0 4px 12px rgba(63,58,58,0.06); }
+  .t1 .btn { background: var(--c2); color: #fff; }
+  .t1 .insight-card { background: rgba(167,191,163,0.25); }
+  .t1 .tabbar { background: rgba(255,255,255,0.6); color: var(--c5); }
+
+  /* ========== THEME 2: Sticker Pop ========== */
+  .t2 {
+    --c1: #FF8FB1; --c2: #FFC36B; --c3: #7EE3C1; --c4: #FFF8F2; --c5: #2B2B3A;
+    background: var(--c4);
+    color: var(--c5);
+    font-family: 'Quicksand', sans-serif;
+  }
+  .t2.boy   { --c1:#5EC0FF; --c2:#FFC36B; --c3:#B6E36A; --c4:#FFF8F2; --c5:#2B2B3A; }
+  .t2.twins { --c1:#FF8FB1; --c2:#5EC0FF; --c3:#FFC36B; --c4:#FFF8F2; --c5:#2B2B3A; }
+  .t2 .greet { font-family: 'Baloo 2', sans-serif; font-weight: 800; }
+  .t2 .body { background: var(--c4); }
+  .t2 .status { color: var(--c5); }
+  .t2 .card { border: 2.5px solid var(--c5); box-shadow: 4px 4px 0 var(--c5); background: #fff; }
+  .t2 .card-sleep { background: var(--c1); color: var(--c5); transform: rotate(-1.2deg); }
+  .t2 .card-nurse { background: var(--c3); transform: rotate(0.8deg); }
+  .t2 .card-insight { background: var(--c2); transform: rotate(-0.6deg); }
+  .t2 .btn { background: var(--c5); color: #fff; border: 2px solid var(--c5); font-family: 'Baloo 2'; font-weight: 700; }
+  .t2 .tabbar { background: #fff; border-top: 2.5px solid var(--c5); color: var(--c5); }
+
+  /* ========== THEME 3: Cozy Paper-Craft ========== */
+  .t3 {
+    --c1: #E7D4B5; --c2: #D98C8C; --c3: #FAF3E7; --c4: #7C8A5B; --c5: #3A2A1F;
+    background: var(--c3);
+    color: var(--c5);
+    font-family: 'Inter', sans-serif;
+  }
+  .t3.boy   { --c1:#E7D4B5; --c2:#5C82A4; --c3:#FAF3E7; --c4:#7C8A5B; --c5:#3A2A1F; }
+  .t3.twins { --c1:#E7D4B5; --c2:#D98C8C; --c3:#5C82A4; --c4:#FAF3E7; --c5:#3A2A1F; }
+  .t3 .greet { font-family: 'DM Serif Display', serif; font-weight: 400; }
+  .t3 .handwrite { font-family: 'Caveat', cursive; font-weight: 700; }
+  .t3 .body {
+    background:
+      radial-gradient(circle at 1px 1px, rgba(58,42,31,0.07) 1px, transparent 0) 0 0 / 4px 4px,
+      var(--c3);
+  }
+  .t3 .status { color: var(--c5); background: transparent; }
+  .t3 .card {
+    background: #fff;
+    box-shadow: 0 3px 10px rgba(58,42,31,0.1), 0 0 0 1px rgba(58,42,31,0.06);
+    position: relative;
+  }
+  .t3 .card::before {
+    content:''; position: absolute; top: -7px; left: 18px;
+    width: 50px; height: 14px;
+    background: var(--c2);
+    opacity: 0.55;
+    transform: rotate(-4deg);
+    border-radius: 1px;
+  }
+  .t3 .card-nurse::before { left: auto; right: 22px; background: var(--c4); transform: rotate(3deg); }
+  .t3 .card-insight::before { left: 38%; background: var(--c1); transform: rotate(-2deg); }
+  .t3 .btn { background: var(--c4); color: #fff; }
+  .t3 .insight { font-family: 'Caveat', cursive; font-size: 16px; font-style: normal; }
+  .t3 .tabbar { background: #fff; border-top: 1px dashed var(--c5); color: var(--c5); }
+
+  /* ========== THEME 4: Minimalist Scandi ========== */
+  .t4 {
+    --c1: #F4F1ED; --c2: #C97B63; --c3: #9A938A; --c4: #1F1E1B; --c5: #E3E0DB;
+    background: var(--c1);
+    color: var(--c4);
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+  }
+  .t4.boy   { --c1:#F4F1ED; --c2:#586C7E; --c3:#9A938A; --c4:#1F1E1B; --c5:#E3E0DB; }
+  .t4.twins { --c1:#F4F1ED; --c2:#C97B63; --c3:#586C7E; --c4:#9A938A; --c5:#1F1E1B; }
+  .t4 .body { background: var(--c1); padding: 18px 20px 0; gap: 16px; }
+  .t4 .status { color: var(--c4); }
+  .t4 .greet { font-weight: 500; font-size: 22px; letter-spacing: -0.02em; }
+  .t4 .sub { opacity: 0.55; }
+  .t4 .card {
+    background: transparent;
+    border-top: 1px solid var(--c5);
+    border-radius: 0;
+    padding: 14px 0;
+  }
+  .t4 .card-title { letter-spacing: 0.16em; opacity: 0.45; }
+  .t4 .btn { background: transparent; border: 1px solid var(--c4); color: var(--c4); border-radius: 0; padding: 8px 14px; }
+  .t4 .insight { color: var(--c2); font-weight: 500; font-style: normal; }
+  .t4 .tabbar { background: var(--c1); border-top: 1px solid var(--c5); color: var(--c4); }
+  .t4 .tab-dot { font-weight: 300; }
+
+  /* ========== THEME 5: Magical Storybook ========== */
+  .t5 {
+    --c1: #6A4A7A; --c2: #E7B7A6; --c3: #FFF4E2; --c4: #B9E2D7; --c5: #1B1936;
+    background: var(--c3);
+    color: var(--c5);
+    font-family: 'Work Sans', sans-serif;
+  }
+  .t5.boy   { --c1:#2B3A6B; --c2:#4DB6A7; --c3:#FFF4E2; --c4:#F2C66B; --c5:#1B1936; }
+  .t5.twins { --c1:#6A4A7A; --c2:#2B3A6B; --c3:#F2C66B; --c4:#FFF4E2; --c5:#1B1936; }
+  .t5 .greet { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: 22px; }
+  .t5 .sky {
+    height: 110px;
+    background: linear-gradient(160deg, var(--c1), var(--c2));
+    margin: -14px -18px 0;
+    position: relative;
+    border-radius: 0 0 28px 28px;
+    color: var(--c3);
+    padding: 14px 18px;
+  }
+  .t5 .star { position: absolute; color: #fff; opacity: 0.85; font-size: 10px; }
+  .t5 .body { background: var(--c3); padding-top: 0; }
+  .t5 .status { color: var(--c5); }
+  .t5 .card { background: #fff; box-shadow: 0 6px 18px rgba(27,25,54,0.08); }
+  .t5 .card-insight { background: var(--c4); }
+  .t5 .btn { background: var(--c5); color: var(--c3); font-family: 'Cormorant Garamond'; font-style: italic; font-weight: 600; font-size: 12px; }
+  .t5 .insight { font-family: 'Cormorant Garamond', serif; font-size: 13px; }
+  .t5 .tabbar { background: #fff; color: var(--c5); border-top: 1px solid rgba(27,25,54,0.08); }
+
+  /* ========== THEME 6: Warm Conversational ========== */
+  .t6 {
+    --c1: #D97757; --c2: #F4E4D1; --c3: #FBF8F4; --c4: #7A9A82; --c5: #2E2A26;
+    background: var(--c3);
+    color: var(--c5);
+    font-family: 'Inter', sans-serif;
+  }
+  .t6.boy   { --c1:#6A8AA8; --c2:#F4E4D1; --c3:#FBF8F4; --c4:#7A9A82; --c5:#2E2A26; }
+  .t6.twins { --c1:#D97757; --c2:#6A8AA8; --c3:#F4E4D1; --c4:#FBF8F4; --c5:#2E2A26; }
+  .t6 .greet { font-family: 'Source Serif Pro', serif; font-weight: 600; font-size: 19px; }
+  .t6 .body { background: var(--c3); padding: 18px 20px 0; gap: 14px; }
+  .t6 .status { color: var(--c5); }
+  .t6 .greet-row { display: flex; align-items: center; gap: 8px; }
+  .t6 .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c1); flex-shrink: 0; }
+  .t6 .card {
+    background: #fff;
+    box-shadow: 0 1px 0 rgba(46,42,38,0.06);
+    border: 1px solid rgba(46,42,38,0.06);
+    padding: 14px 16px;
+  }
+  .t6 .card-title { font-family: 'Source Serif Pro', serif; text-transform: none; letter-spacing: 0; font-size: 13px; font-weight: 600; opacity: 0.85; }
+  .t6 .btn { background: var(--c1); color: #fff; }
+  .t6 .insight { color: var(--c5); opacity: 0.78; }
+  .t6 .tabbar { background: var(--c3); border-top: 1px solid rgba(46,42,38,0.08); color: var(--c5); }
+
+</style>
+</head>
+<body>
+<main class="page">
+
+  <header class="site-hero">
+    <div style="display:flex;justify-content:center;gap:14px;margin-bottom:24px;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;">
+      <a href="index.html" style="color:#1c1c1c;text-decoration:none;padding:6px 12px;border-radius:999px;border:1px solid #1c1c1c;background:#f4efe9;">Light Mode</a>
+      <a href="dark.html" style="color:#777;text-decoration:none;padding:6px 12px;border-radius:999px;border:1px solid #ddd;">Dark Mode →</a>
+    </div>
+    <h1>LittleNest UI Lookbook</h1>
+    <p>Tap a theme to see the home / sleep / nursing screens with that variant's colors and copy. Six directions, three babies each — pick the feeling that matches LittleNest.</p>
+  </header>
+
+  <!-- ================== THEME 1 ================== -->
+  <section class="theme-section">
+    <div class="theme-header">
+      <div class="theme-num">Theme 01</div>
+      <h2 class="theme-name">Soft Pastel Watercolor</h2>
+      <p class="theme-vibe">quiet nursery, hand-painted</p>
+    </div>
+    <div class="phones">
+
+      <!-- Girl -->
+      <div class="variant">
+        <div class="variant-label">Girl · Maya</div>
+        <div class="phone t1 girl">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div>
+              <div class="greet">still painting the picture…</div>
+              <div class="sub">Maya's little story is 1 day in</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep</div>
+              <div class="card-main">Maya is sleeping · 42 min</div>
+              <span class="btn">finish a nap</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing today</div>
+              <div class="card-main">left 11 min · right 2:10</div>
+            </div>
+            <div class="card insight-card">
+              <div class="card-title">Insight</div>
+              <div class="insight">She might be ready for a longer stretch tonight.</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">⌂</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">↗</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">✦</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">◐</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#F6D9D2"></div>F6D9D2</div>
+          <div class="sw"><div class="sw-dot" style="background:#E8A6A0"></div>E8A6A0</div>
+          <div class="sw"><div class="sw-dot" style="background:#FBF6F0"></div>FBF6F0</div>
+          <div class="sw"><div class="sw-dot" style="background:#A7BFA3"></div>A7BFA3</div>
+          <div class="sw"><div class="sw-dot" style="background:#3F3A3A"></div>3F3A3A</div>
+        </div>
+      </div>
+
+      <!-- Boy -->
+      <div class="variant">
+        <div class="variant-label">Boy · Daniel</div>
+        <div class="phone t1 boy">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div>
+              <div class="greet">still painting the picture…</div>
+              <div class="sub">Daniel's little story is 1 day in</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep</div>
+              <div class="card-main">Last nap: 1h 24min</div>
+              <span class="btn">begin a nap</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing today</div>
+              <div class="card-main">left 11 min · right 2:10</div>
+            </div>
+            <div class="card insight-card">
+              <div class="card-title">Insight</div>
+              <div class="insight">He might be ready for a longer stretch tonight.</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">⌂</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">↗</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">✦</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">◐</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#CFE0EE"></div>CFE0EE</div>
+          <div class="sw"><div class="sw-dot" style="background:#7FA6C9"></div>7FA6C9</div>
+          <div class="sw"><div class="sw-dot" style="background:#FBF6F0"></div>FBF6F0</div>
+          <div class="sw"><div class="sw-dot" style="background:#A7BFA3"></div>A7BFA3</div>
+          <div class="sw"><div class="sw-dot" style="background:#3F3A3A"></div>3F3A3A</div>
+        </div>
+      </div>
+
+      <!-- Twins -->
+      <div class="variant">
+        <div class="variant-label">Twins · Maya &amp; Daniel</div>
+        <div class="phone t1 twins">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div>
+              <div class="greet">still painting the picture…</div>
+              <div class="sub">Maya &amp; Daniel's little story is 1 day in</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep</div>
+              <div class="card-main">Maya sleeping · Daniel awake</div>
+              <span class="btn">finish a nap</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing today</div>
+              <div class="card-main">M: 13 min · D: 9 min</div>
+            </div>
+            <div class="card insight-card">
+              <div class="card-title">Insight</div>
+              <div class="insight">Their naps are syncing — maybe a longer evening stretch tonight.</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">⌂</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">↗</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">✦</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">◐</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#F6D9D2"></div>F6D9D2</div>
+          <div class="sw"><div class="sw-dot" style="background:#CFE0EE"></div>CFE0EE</div>
+          <div class="sw"><div class="sw-dot" style="background:#FBF6F0"></div>FBF6F0</div>
+          <div class="sw"><div class="sw-dot" style="background:#C9BBD9"></div>C9BBD9</div>
+          <div class="sw"><div class="sw-dot" style="background:#3F3A3A"></div>3F3A3A</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================== THEME 2 ================== -->
+  <section class="theme-section">
+    <div class="theme-header">
+      <div class="theme-num">Theme 02</div>
+      <h2 class="theme-name">Sticker Pop</h2>
+      <p class="theme-vibe">kawaii sticker, bright cheerful</p>
+    </div>
+    <div class="phones">
+
+      <div class="variant">
+        <div class="variant-label">Girl · Maya</div>
+        <div class="phone t2 girl">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div>
+              <div class="greet">Brain loading… 🧠✨</div>
+              <div class="sub">Day 1 in the books for Maya!</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep</div>
+              <div class="card-main">Maya is snoozing 💤</div>
+              <span class="btn">tap to wake up</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing</div>
+              <div class="card-main">left 11 · right 2:10</div>
+            </div>
+            <div class="card card-insight">
+              <div class="card-title">AI tip</div>
+              <div class="insight">She might be ready for a longer stretch tonight!</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">🏠</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">📈</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">✨</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">🍲</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#FF8FB1"></div>FF8FB1</div>
+          <div class="sw"><div class="sw-dot" style="background:#FFC36B"></div>FFC36B</div>
+          <div class="sw"><div class="sw-dot" style="background:#7EE3C1"></div>7EE3C1</div>
+          <div class="sw"><div class="sw-dot" style="background:#FFF8F2"></div>FFF8F2</div>
+          <div class="sw"><div class="sw-dot" style="background:#2B2B3A"></div>2B2B3A</div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">Boy · Daniel</div>
+        <div class="phone t2 boy">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div>
+              <div class="greet">Brain loading… 🧠✨</div>
+              <div class="sub">Day 1 in the books for Daniel!</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep</div>
+              <div class="card-main">Last nap: 1h 24min</div>
+              <span class="btn">tap to start a snooze</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing</div>
+              <div class="card-main">left 11 · right 2:10</div>
+            </div>
+            <div class="card card-insight">
+              <div class="card-title">AI tip</div>
+              <div class="insight">He might be ready for a longer stretch tonight!</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">🏠</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">📈</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">✨</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">🍲</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#5EC0FF"></div>5EC0FF</div>
+          <div class="sw"><div class="sw-dot" style="background:#FFC36B"></div>FFC36B</div>
+          <div class="sw"><div class="sw-dot" style="background:#B6E36A"></div>B6E36A</div>
+          <div class="sw"><div class="sw-dot" style="background:#FFF8F2"></div>FFF8F2</div>
+          <div class="sw"><div class="sw-dot" style="background:#2B2B3A"></div>2B2B3A</div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">Twins · Maya &amp; Daniel</div>
+        <div class="phone t2 twins">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div>
+              <div class="greet">Brain loading… 🧠✨</div>
+              <div class="sub">Day 1 in the books for Maya &amp; Daniel!</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep</div>
+              <div class="card-main">Maya 💤 · Daniel 👀</div>
+              <span class="btn">tap to wake up</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing</div>
+              <div class="card-main">M: 13 · D: 9 min</div>
+            </div>
+            <div class="card card-insight">
+              <div class="card-title">AI tip</div>
+              <div class="insight">Their naps are syncing — try a long stretch tonight!</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">🏠</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">📈</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">✨</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">🍲</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#FF8FB1"></div>FF8FB1</div>
+          <div class="sw"><div class="sw-dot" style="background:#5EC0FF"></div>5EC0FF</div>
+          <div class="sw"><div class="sw-dot" style="background:#FFC36B"></div>FFC36B</div>
+          <div class="sw"><div class="sw-dot" style="background:#FFF8F2"></div>FFF8F2</div>
+          <div class="sw"><div class="sw-dot" style="background:#2B2B3A"></div>2B2B3A</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================== THEME 3 ================== -->
+  <section class="theme-section">
+    <div class="theme-header">
+      <div class="theme-num">Theme 03</div>
+      <h2 class="theme-name">Cozy Paper-Craft</h2>
+      <p class="theme-vibe">scrapbook keepsake</p>
+    </div>
+    <div class="phones">
+
+      <div class="variant">
+        <div class="variant-label">Girl · Maya</div>
+        <div class="phone t3 girl">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div>
+              <div class="greet">Gathering memories…</div>
+              <div class="sub handwrite" style="font-size:15px">Maya's scrapbook: page 1 ✎</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep page</div>
+              <div class="card-main">Maya is sleeping · 42 min</div>
+              <span class="btn">close the page</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing log</div>
+              <div class="card-main">left 11 min · right 2:10</div>
+            </div>
+            <div class="card card-insight">
+              <div class="card-title">Whisper</div>
+              <div class="insight">She might be ready for a longer stretch tonight.</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">⌂</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">↗</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">✶</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">◐</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#E7D4B5"></div>E7D4B5</div>
+          <div class="sw"><div class="sw-dot" style="background:#D98C8C"></div>D98C8C</div>
+          <div class="sw"><div class="sw-dot" style="background:#FAF3E7"></div>FAF3E7</div>
+          <div class="sw"><div class="sw-dot" style="background:#7C8A5B"></div>7C8A5B</div>
+          <div class="sw"><div class="sw-dot" style="background:#3A2A1F"></div>3A2A1F</div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">Boy · Daniel</div>
+        <div class="phone t3 boy">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div>
+              <div class="greet">Gathering memories…</div>
+              <div class="sub handwrite" style="font-size:15px">Daniel's scrapbook: page 1 ✎</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep page</div>
+              <div class="card-main">Last nap: 1h 24min</div>
+              <span class="btn">open a sleep page</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing log</div>
+              <div class="card-main">left 11 min · right 2:10</div>
+            </div>
+            <div class="card card-insight">
+              <div class="card-title">Whisper</div>
+              <div class="insight">He might be ready for a longer stretch tonight.</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">⌂</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">↗</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">✶</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">◐</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#E7D4B5"></div>E7D4B5</div>
+          <div class="sw"><div class="sw-dot" style="background:#5C82A4"></div>5C82A4</div>
+          <div class="sw"><div class="sw-dot" style="background:#FAF3E7"></div>FAF3E7</div>
+          <div class="sw"><div class="sw-dot" style="background:#7C8A5B"></div>7C8A5B</div>
+          <div class="sw"><div class="sw-dot" style="background:#3A2A1F"></div>3A2A1F</div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">Twins · Maya &amp; Daniel</div>
+        <div class="phone t3 twins">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div>
+              <div class="greet">Gathering memories…</div>
+              <div class="sub handwrite" style="font-size:15px">Maya &amp; Daniel's scrapbook: page 1 ✎</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep page</div>
+              <div class="card-main">Maya sleeping · Daniel awake</div>
+              <span class="btn">close the page</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing log</div>
+              <div class="card-main">M: 13 min · D: 9 min</div>
+            </div>
+            <div class="card card-insight">
+              <div class="card-title">Whisper</div>
+              <div class="insight">Their naps are starting to rhyme — try a long stretch tonight.</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">⌂</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">↗</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">✶</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">◐</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#E7D4B5"></div>E7D4B5</div>
+          <div class="sw"><div class="sw-dot" style="background:#D98C8C"></div>D98C8C</div>
+          <div class="sw"><div class="sw-dot" style="background:#5C82A4"></div>5C82A4</div>
+          <div class="sw"><div class="sw-dot" style="background:#FAF3E7"></div>FAF3E7</div>
+          <div class="sw"><div class="sw-dot" style="background:#3A2A1F"></div>3A2A1F</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================== THEME 4 ================== -->
+  <section class="theme-section">
+    <div class="theme-header">
+      <div class="theme-num">Theme 04</div>
+      <h2 class="theme-name">Minimalist Scandi</h2>
+      <p class="theme-vibe">parent-first calm, 3am-friendly</p>
+    </div>
+    <div class="phones">
+
+      <div class="variant">
+        <div class="variant-label">Girl · Maya</div>
+        <div class="phone t4 girl">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div>
+              <div class="greet">Learning quietly.</div>
+              <div class="sub">Day 1 with Maya.</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep</div>
+              <div class="card-main">Sleeping · 42 min</div>
+              <span class="btn">End sleep</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing</div>
+              <div class="card-main">L 11 min · R 2:10</div>
+            </div>
+            <div class="card card-insight">
+              <div class="card-title">Note</div>
+              <div class="insight">She might be ready for a longer stretch tonight.</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">⌂</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">↗</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">○</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">◐</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#F4F1ED"></div>F4F1ED</div>
+          <div class="sw"><div class="sw-dot" style="background:#C97B63"></div>C97B63</div>
+          <div class="sw"><div class="sw-dot" style="background:#9A938A"></div>9A938A</div>
+          <div class="sw"><div class="sw-dot" style="background:#1F1E1B"></div>1F1E1B</div>
+          <div class="sw"><div class="sw-dot" style="background:#E3E0DB"></div>E3E0DB</div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">Boy · Daniel</div>
+        <div class="phone t4 boy">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div>
+              <div class="greet">Learning quietly.</div>
+              <div class="sub">Day 1 with Daniel.</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep</div>
+              <div class="card-main">Last nap · 1h 24min</div>
+              <span class="btn">Start sleep</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing</div>
+              <div class="card-main">L 11 min · R 2:10</div>
+            </div>
+            <div class="card card-insight">
+              <div class="card-title">Note</div>
+              <div class="insight">He might be ready for a longer stretch tonight.</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">⌂</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">↗</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">○</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">◐</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#F4F1ED"></div>F4F1ED</div>
+          <div class="sw"><div class="sw-dot" style="background:#586C7E"></div>586C7E</div>
+          <div class="sw"><div class="sw-dot" style="background:#9A938A"></div>9A938A</div>
+          <div class="sw"><div class="sw-dot" style="background:#1F1E1B"></div>1F1E1B</div>
+          <div class="sw"><div class="sw-dot" style="background:#E3E0DB"></div>E3E0DB</div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">Twins · Maya &amp; Daniel</div>
+        <div class="phone t4 twins">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div>
+              <div class="greet">Learning quietly.</div>
+              <div class="sub">Day 1 with Maya &amp; Daniel.</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep</div>
+              <div class="card-main">M sleeping · D awake</div>
+              <span class="btn">End sleep</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing</div>
+              <div class="card-main">M 13 min · D 9 min</div>
+            </div>
+            <div class="card card-insight">
+              <div class="card-title">Note</div>
+              <div class="insight">Their naps are syncing — a longer stretch tonight is likely.</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">⌂</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">↗</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">○</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">◐</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#F4F1ED"></div>F4F1ED</div>
+          <div class="sw"><div class="sw-dot" style="background:#C97B63"></div>C97B63</div>
+          <div class="sw"><div class="sw-dot" style="background:#586C7E"></div>586C7E</div>
+          <div class="sw"><div class="sw-dot" style="background:#9A938A"></div>9A938A</div>
+          <div class="sw"><div class="sw-dot" style="background:#1F1E1B"></div>1F1E1B</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================== THEME 5 ================== -->
+  <section class="theme-section">
+    <div class="theme-header">
+      <div class="theme-num">Theme 05</div>
+      <h2 class="theme-name">Magical Storybook</h2>
+      <p class="theme-vibe">dreamy bedtime tale</p>
+    </div>
+    <div class="phones">
+
+      <div class="variant">
+        <div class="variant-label">Girl · Maya</div>
+        <div class="phone t5 girl">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="sky">
+              <span class="star" style="top:18px;left:30px">⋆</span>
+              <span class="star" style="top:34px;left:120px">⋆</span>
+              <span class="star" style="top:50px;left:200px">⋆</span>
+              <span class="star" style="top:72px;left:80px">⋆</span>
+              <span class="star" style="top:88px;left:170px">⋆</span>
+              <div class="greet">Once upon a routine…</div>
+              <div class="sub" style="opacity:0.85">Chapter one: Maya, day one ⋆</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep</div>
+              <div class="card-main">Maya is dreaming · 42 min</div>
+              <span class="btn">close the dream</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing</div>
+              <div class="card-main">left 11 min · right 2:10</div>
+            </div>
+            <div class="card card-insight">
+              <div class="card-title">Whisper</div>
+              <div class="insight">She might be ready for a longer dream tonight.</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">⌂</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">↗</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">⋆</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">◐</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#6A4A7A"></div>6A4A7A</div>
+          <div class="sw"><div class="sw-dot" style="background:#E7B7A6"></div>E7B7A6</div>
+          <div class="sw"><div class="sw-dot" style="background:#FFF4E2"></div>FFF4E2</div>
+          <div class="sw"><div class="sw-dot" style="background:#B9E2D7"></div>B9E2D7</div>
+          <div class="sw"><div class="sw-dot" style="background:#1B1936"></div>1B1936</div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">Boy · Daniel</div>
+        <div class="phone t5 boy">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="sky">
+              <span class="star" style="top:18px;left:30px">⋆</span>
+              <span class="star" style="top:34px;left:120px">⋆</span>
+              <span class="star" style="top:50px;left:200px">⋆</span>
+              <span class="star" style="top:72px;left:80px">⋆</span>
+              <span class="star" style="top:88px;left:170px">⋆</span>
+              <div class="greet">Once upon a routine…</div>
+              <div class="sub" style="opacity:0.85">Chapter one: Daniel, day one ⋆</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep</div>
+              <div class="card-main">Last dream: 1h 24min</div>
+              <span class="btn">begin a dream</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing</div>
+              <div class="card-main">left 11 min · right 2:10</div>
+            </div>
+            <div class="card card-insight">
+              <div class="card-title">Whisper</div>
+              <div class="insight">He might be ready for a longer dream tonight.</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">⌂</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">↗</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">⋆</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">◐</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#2B3A6B"></div>2B3A6B</div>
+          <div class="sw"><div class="sw-dot" style="background:#4DB6A7"></div>4DB6A7</div>
+          <div class="sw"><div class="sw-dot" style="background:#FFF4E2"></div>FFF4E2</div>
+          <div class="sw"><div class="sw-dot" style="background:#F2C66B"></div>F2C66B</div>
+          <div class="sw"><div class="sw-dot" style="background:#1B1936"></div>1B1936</div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">Twins · Maya &amp; Daniel</div>
+        <div class="phone t5 twins">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="sky">
+              <span class="star" style="top:18px;left:30px">⋆</span>
+              <span class="star" style="top:34px;left:120px">⋆</span>
+              <span class="star" style="top:50px;left:200px">⋆</span>
+              <span class="star" style="top:72px;left:80px">⋆</span>
+              <span class="star" style="top:88px;left:170px">⋆</span>
+              <div class="greet">Once upon a routine…</div>
+              <div class="sub" style="opacity:0.85">Chapter one: Maya &amp; Daniel, day one ⋆</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep</div>
+              <div class="card-main">Maya dreaming · Daniel awake</div>
+              <span class="btn">close the dream</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing</div>
+              <div class="card-main">M: 13 min · D: 9 min</div>
+            </div>
+            <div class="card card-insight">
+              <div class="card-title">Whisper</div>
+              <div class="insight">Their dreams are weaving together — a longer stretch is near.</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">⌂</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">↗</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">⋆</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">◐</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#6A4A7A"></div>6A4A7A</div>
+          <div class="sw"><div class="sw-dot" style="background:#2B3A6B"></div>2B3A6B</div>
+          <div class="sw"><div class="sw-dot" style="background:#F2C66B"></div>F2C66B</div>
+          <div class="sw"><div class="sw-dot" style="background:#FFF4E2"></div>FFF4E2</div>
+          <div class="sw"><div class="sw-dot" style="background:#1B1936"></div>1B1936</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================== THEME 6 ================== -->
+  <section class="theme-section">
+    <div class="theme-header">
+      <div class="theme-num">Theme 06</div>
+      <h2 class="theme-name">Warm Conversational (Claude-inspired)</h2>
+      <p class="theme-vibe">friendly, warm, simple</p>
+    </div>
+    <div class="phones">
+
+      <div class="variant">
+        <div class="variant-label">Girl · Maya</div>
+        <div class="phone t6 girl">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div>
+              <div class="greet-row"><span class="dot"></span><div class="greet">Morning. How's Maya today?</div></div>
+              <div class="sub">Getting to know Maya… we've spent 1 day together so far.</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep</div>
+              <div class="card-main">Maya is sleeping · 42 min</div>
+              <div class="sub" style="margin-bottom:10px">Tap when sleep starts — tap again when it ends.</div>
+              <span class="btn">End sleep</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing today</div>
+              <div class="card-main">left 11 min · right 2:10</div>
+            </div>
+            <div class="card card-insight">
+              <div class="card-title">A small thought</div>
+              <div class="insight">She might be ready for a longer stretch tonight.</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">⌂</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">↗</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">✦</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">◐</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#D97757"></div>D97757</div>
+          <div class="sw"><div class="sw-dot" style="background:#F4E4D1"></div>F4E4D1</div>
+          <div class="sw"><div class="sw-dot" style="background:#FBF8F4"></div>FBF8F4</div>
+          <div class="sw"><div class="sw-dot" style="background:#7A9A82"></div>7A9A82</div>
+          <div class="sw"><div class="sw-dot" style="background:#2E2A26"></div>2E2A26</div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">Boy · Daniel</div>
+        <div class="phone t6 boy">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div>
+              <div class="greet-row"><span class="dot"></span><div class="greet">Morning. How's Daniel today?</div></div>
+              <div class="sub">Getting to know Daniel… we've spent 1 day together so far.</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep</div>
+              <div class="card-main">Last nap: 1h 24min</div>
+              <div class="sub" style="margin-bottom:10px">Tap when sleep starts — tap again when it ends.</div>
+              <span class="btn">Start sleep</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing today</div>
+              <div class="card-main">left 11 min · right 2:10</div>
+            </div>
+            <div class="card card-insight">
+              <div class="card-title">A small thought</div>
+              <div class="insight">He might be ready for a longer stretch tonight.</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">⌂</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">↗</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">✦</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">◐</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#6A8AA8"></div>6A8AA8</div>
+          <div class="sw"><div class="sw-dot" style="background:#F4E4D1"></div>F4E4D1</div>
+          <div class="sw"><div class="sw-dot" style="background:#FBF8F4"></div>FBF8F4</div>
+          <div class="sw"><div class="sw-dot" style="background:#7A9A82"></div>7A9A82</div>
+          <div class="sw"><div class="sw-dot" style="background:#2E2A26"></div>2E2A26</div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">Twins · Maya &amp; Daniel</div>
+        <div class="phone t6 twins">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div>
+              <div class="greet-row"><span class="dot"></span><div class="greet">Morning. How are Maya &amp; Daniel?</div></div>
+              <div class="sub">Getting to know them… we've spent 1 day together so far.</div>
+            </div>
+            <div class="card card-sleep">
+              <div class="card-title">Sleep</div>
+              <div class="card-main">Maya sleeping · Daniel awake</div>
+              <div class="sub" style="margin-bottom:10px">Tap when sleep starts — tap again when it ends.</div>
+              <span class="btn">End sleep</span>
+            </div>
+            <div class="card card-nurse">
+              <div class="card-title">Nursing today</div>
+              <div class="card-main">M: 13 min · D: 9 min</div>
+            </div>
+            <div class="card card-insight">
+              <div class="card-title">A small thought</div>
+              <div class="insight">Their naps are starting to sync — tonight could be a longer stretch.</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><div class="tab-dot">⌂</div><div class="tab-label">home</div></div>
+            <div class="tab"><div class="tab-dot">↗</div><div class="tab-label">growth</div></div>
+            <div class="tab"><div class="tab-dot">✦</div><div class="tab-label">ai</div></div>
+            <div class="tab"><div class="tab-dot">◐</div><div class="tab-label">recipes</div></div>
+            <div class="tab"><div class="tab-dot">⚙</div><div class="tab-label">settings</div></div>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="sw"><div class="sw-dot" style="background:#D97757"></div>D97757</div>
+          <div class="sw"><div class="sw-dot" style="background:#6A8AA8"></div>6A8AA8</div>
+          <div class="sw"><div class="sw-dot" style="background:#F4E4D1"></div>F4E4D1</div>
+          <div class="sw"><div class="sw-dot" style="background:#FBF8F4"></div>FBF8F4</div>
+          <div class="sw"><div class="sw-dot" style="background:#2E2A26"></div>2E2A26</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+</body>
+</html>
