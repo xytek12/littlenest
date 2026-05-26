@@ -11,6 +11,30 @@ export const en = {
     settings: 'Chapter: Your nest ⋆',
     foodTasting: 'Chapter: First nibbles ⋆',
     bothTwins: 'Both',
+    kickers: {
+      sleep: 'sleep',
+      nursing: 'nursing',
+      bottle: 'bottle',
+      whisper: 'whisper',
+      allergen: 'tasting',
+    },
+    actions: {
+      beginDream: 'begin a dream',
+      closeDream: 'close the dream',
+      openTimer: 'open timer',
+      logFeast: 'log a feast',
+      finishFeast: 'finish the feast',
+    },
+    status: {
+      sleepIdleSingle: (name: string) => `${name}'s nest is quiet — start a dream when sleep begins.`,
+      sleepIdleTwins: 'Both nests are quiet — start a dream when sleep begins.',
+      sleepRunning: (name: string, duration: string) => `${name} is dreaming · ${duration}`,
+      feedIdle: (name: string) => `${name}'s last feast is a tap away.`,
+      feedNursingRunning: (left: string, right: string) =>
+        `nursing now · left ${left} · right ${right}`,
+      allergenIntro: (name: string) =>
+        `Each new flavour gets three small tastes for ${name}. Tick them off as you go.`,
+    },
   },
   confidence: { low: 'Low', medium: 'Medium', high: 'High' },
   actions: {
@@ -25,6 +49,13 @@ export const en = {
     viewAll: 'View all',
     empty24h: 'No entries in the last 24 hours.',
     emptyAll: 'No history yet.',
+  },
+  groupedHistory: {
+    lastWeek: 'Last 7 days',
+    last2Years: 'Last 2 years',
+    emptyWeek: 'No entries in the last 7 days.',
+    emptyYears: 'No measurements in the last 2 years.',
+    entriesCount: (n: number) => `${n} ${n === 1 ? 'entry' : 'entries'}`,
   },
   common: {
     backHome: '← Home',
@@ -153,6 +184,10 @@ export const en = {
         `${date}, ${time}  ·  Height  ·  ${value}`,
       headRow: (date: string, time: string, value: string, child: string) =>
         `${date}, ${time}  ·  Head  ·  ${value}  ·  ${child}`,
+      weightRowInDay: (time: string, value: string) => `${time}  ·  Weight  ·  ${value}`,
+      heightRowInDay: (time: string, value: string) => `${time}  ·  Height  ·  ${value}`,
+      headRowInDay: (time: string, value: string, child: string) =>
+        `${time}  ·  Head  ·  ${value}${child ? `  ·  ${child}` : ''}`,
     },
   },
   sleep: {
@@ -189,6 +224,8 @@ export const en = {
         `${date}, ${time}  ·  ${duration}`,
       rowWakes: (wakeCount: number) =>
         `${wakeCount} ${wakeCount === 1 ? 'wake' : 'wakes'}`,
+      rowInDay: (time: string, duration: string, wakeCount: number) =>
+        `${time}  ·  ${duration}  ·  ${wakeCount} ${wakeCount === 1 ? 'wake' : 'wakes'}`,
     },
   },
   feed: {
@@ -226,6 +263,10 @@ export const en = {
       nursingRowSides: (left: string, right: string) => `left: ${left}   right: ${right}`,
       bottleRowPrimary: (date: string, time: string) => `${date}, ${time}  ·  Bottle`,
       bottleRowAmount: (amount: number, unit: string) => `${amount} ${unit}`,
+      bottleRowInDay: (time: string, amount: number, unit: string) =>
+        `${time}  ·  Bottle  ·  ${amount} ${unit}`,
+      nursingRowInDay: (time: string, total: string, left: string, right: string) =>
+        `${time}  ·  Nursing  ·  ${total} (L ${left} / R ${right})`,
     },
   },
   foodTasting: {

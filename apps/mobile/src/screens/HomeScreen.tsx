@@ -156,12 +156,15 @@ const styles = StyleSheet.create({
   },
   learningBody: {
     fontFamily: typography.body,
+    fontSize: 15,
     lineHeight: 22,
     marginTop: 10,
   },
+  // Match parent body font size so the digit baseline aligns with the
+  // surrounding Hebrew glyphs (iOS otherwise substitutes a bigger fallback).
   learningBodyNumber: {
     fontFamily: typography.bodyBlack,
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: '800',
   },
   rtlText: { textAlign: 'right', writingDirection: 'rtl' },

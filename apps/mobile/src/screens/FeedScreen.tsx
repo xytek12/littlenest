@@ -2,10 +2,13 @@ import { useMemo, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { ActionCard } from '../components/ActionCard';
 import { FlowHeader } from '../components/FlowHeader';
-import { InlineHistoryCard, type InlineHistoryRow } from '../components/InlineHistoryCard';
+import {
+  GroupedHistoryCard,
+  type GroupedHistoryDay,
+} from '../components/GroupedHistoryCard';
 import { Screen } from '../components/Screen';
+import { StorybookCard } from '../components/StorybookCard';
 import { TwinPickerCards } from '../components/TwinPickerCards';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import type { FeedStackParamList } from '../navigation/RootNavigator';
@@ -14,8 +17,8 @@ import { getChildAccent, getPalette } from '../theme';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 import { formatDurationSeconds } from '../utils/formatDuration';
-import { formatHistoryDate, formatHistoryTime } from '../utils/formatHistoryDate';
-import { entriesInLast24h } from '../utils/historyFilters';
+import { formatHistoryTime } from '../utils/formatHistoryDate';
+import { entriesInLastDays, groupEntriesByDay } from '../utils/historyFilters';
 import { useTickEverySecond } from '../utils/useTickEverySecond';
 
 const bottlePresets = [30, 60, 90, 120, 160, 180, 210, 220, 240, 310, 330];
@@ -83,38 +86,42 @@ export function FeedScreen() {
     return feedEntries.filter((entry) => entry.childId === activeChild.id);
   }, [activeChild.id, feedEntries, isTwins]);
 
-  const inlineRows = useMemo<InlineHistoryRow[]>(
-    () =>
-      entriesInLast24h(filteredFeedEntries, (entry) => entry.timestamp)
-        .slice(0, 5)
-        .map((entry) => {
-          const date = formatHistoryDate(entry.timestamp, family.language);
-          const time = formatHistoryTime(entry.timestamp, family.language);
-          const child = childById.get(entry.childId);
-          const secondary = isTwins ? child?.displayName : undefined;
-          const childIndex = family.children.findIndex((c) => c.id === entry.childId);
-          const accentForTwin = child
-            ? getChildAccent(child, Math.max(0, childIndex), palette).primary
-            : palette.primary;
-          const accentColor = isTwins
-            ? accentForTwin
-            : entry.kind === 'bottle'
-              ? colors.pink
-              : colors.sage;
-          const primary =
-            entry.kind === 'bottle'
-              ? labels.history.bottleRow(date, time, entry.amount, entry.unit)
-              : labels.history.nursingRow(
-                  date,
-                  time,
-                  formatDurationSeconds(entry.totalSeconds),
-                  formatDurationSeconds(entry.leftSeconds),
-                  formatDurationSeconds(entry.rightSeconds),
-                );
-          return { key: entry.id, primary, secondary, accentColor };
-        }),
-    [childById, family.children, family.language, filteredFeedEntries, isTwins, labels.history, palette],
-  );
+  const grouped = dictionary.groupedHistory;
+  const historyDays = useMemo<GroupedHistoryDay[]>(() => {
+    const windowed = entriesInLastDays(
+      filteredFeedEntries,
+      (entry) => entry.timestamp,
+      7,
+    );
+    return groupEntriesByDay(windowed, (entry) => entry.timestamp).map((day) => ({
+      dayKey: day.dayKey,
+      representativeIso: day.representativeIso,
+      rows: day.entries.map((entry) => {
+        const time = formatHistoryTime(entry.timestamp, family.language);
+        const child = childById.get(entry.childId);
+        const secondary = isTwins ? child?.displayName : undefined;
+        const childIndex = family.children.findIndex((c) => c.id === entry.childId);
+        const accentForTwin = child
+          ? getChildAccent(child, Math.max(0, childIndex), palette).primary
+          : palette.primary;
+        const accentColor = isTwins
+          ? accentForTwin
+          : entry.kind === 'bottle'
+            ? colors.pink
+            : colors.sage;
+        const primary =
+          entry.kind === 'bottle'
+            ? labels.history.bottleRowInDay(time, entry.amount, entry.unit)
+            : labels.history.nursingRowInDay(
+                time,
+                formatDurationSeconds(entry.totalSeconds),
+                formatDurationSeconds(entry.leftSeconds),
+                formatDurationSeconds(entry.rightSeconds),
+              );
+        return { key: entry.id, primary, secondary, accentColor };
+      }),
+    }));
+  }, [childById, family.children, family.language, filteredFeedEntries, isTwins, labels.history, palette]);
 
   function handleSaveBottle() {
     recordBottleFeed({ amount: bottleAmount });
@@ -137,11 +144,28 @@ export function FeedScreen() {
 
       <TwinPickerCards compact />
 
-      <ActionCard
-        title={labels.actionTitle}
+      <StorybookCard
+        kicker={story.kickers.nursing}
+        title={
+          isNursingActive
+            ? story.status.feedNursingRunning(
+                formatDurationSeconds(
+                  getLiveSideSeconds('left', activeNursingSession),
+                ),
+                formatDurationSeconds(
+                  getLiveSideSeconds('right', activeNursingSession),
+                ),
+              )
+            : story.status.feedIdle(activeChild.displayName)
+        }
         subtitle={labels.actionSubtitle}
-        accent={activeAccent.primary}
-        onPress={() => setShowComposer(true)}
+        primaryAction={{
+          label: isNursingActive
+            ? story.actions.finishFeast
+            : story.actions.logFeast,
+          accessibilityLabel: labels.actionTitle,
+          onPress: () => setShowComposer(true),
+        }}
       />
 
       <Modal
@@ -287,8 +311,10 @@ export function FeedScreen() {
         </View>
       </Modal>
 
-      <InlineHistoryCard
-        rows={inlineRows}
+      <GroupedHistoryCard
+        days={historyDays}
+        windowLabel={grouped.lastWeek}
+        emptyLabel={grouped.emptyWeek}
         onPress={() => navigation.navigate('FeedHistory')}
         testID="feed-inline-history"
       />

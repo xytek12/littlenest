@@ -46,8 +46,8 @@ describe('FeedHistoryScreen', () => {
   it('shows the empty inline card and empty history before any feed', () => {
     const { getByTestId, getByText, queryAllByText } = renderFeedFlow();
 
-    expect(getByText('Last 24 hours')).toBeTruthy();
-    expect(getByText('No entries in the last 24 hours.')).toBeTruthy();
+    expect(getByText('Last 7 days')).toBeTruthy();
+    expect(getByText('No entries in the last 7 days.')).toBeTruthy();
 
     fireEvent.press(getByTestId('feed-inline-history'));
 
@@ -56,9 +56,9 @@ describe('FeedHistoryScreen', () => {
   });
 
   it('saves a bottle feed and lists it on the history screen', () => {
-    const { getByTestId, getByText, queryAllByText } = renderFeedFlow();
+    const { getByLabelText, getByTestId, getByText, queryAllByText } = renderFeedFlow();
 
-    fireEvent.press(getByText('Bottle / nursing'));
+    fireEvent.press(getByLabelText('Bottle / nursing'));
     fireEvent.press(getByText('Bottle'));
     fireEvent.press(getByText('120'));
     fireEvent.press(getByText('Save bottle feed'));

@@ -113,7 +113,9 @@ describe('app shell', () => {
 
     fireEvent.press(getByText(he.home.feedTitle));
     expect(getByText(he.feed.title)).toBeTruthy();
-    expect(getByText(he.feed.actionTitle)).toBeTruthy();
+    // The primary feed action is now a Storybook pill ("רישום סעודה") with
+    // the legacy actionTitle exposed via accessibilityLabel for tests / SR.
+    expect(getByLabelText(he.feed.actionTitle)).toBeTruthy();
 
     fireEvent.press(getByLabelText(he.common.backHomeLabel));
     fireEvent.press(getByLabelText(`${he.tabs.growth} tab`));
