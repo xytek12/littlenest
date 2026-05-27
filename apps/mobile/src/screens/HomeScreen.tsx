@@ -1,13 +1,14 @@
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { ActionCard } from '../components/ActionCard';
+import { StyleSheet, Text, View } from 'react-native';
 import { Screen } from '../components/Screen';
+import { StorybookCard } from '../components/StorybookCard';
+import { TwinPickerCards } from '../components/TwinPickerCards';
 import { WatercolorHeader } from '../components/WatercolorHeader';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import type { RootTabParamList } from '../navigation/RootNavigator';
 import { usePrototypeState } from '../state/PrototypeState';
-import { getChildAccent, getPalette, paletteBase, typography } from '../theme';
+import { getPalette, typography } from '../theme';
 import { useAppTheme } from '../theme/useAppTheme';
 import { getAgeLabel } from '../utils/age';
 
@@ -43,9 +44,9 @@ export function HomeScreen() {
   const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
   const {
     activeChild,
+    activeSleepStartedAt,
     family,
     feedEntries,
-    selectChild,
     sleepSessions,
   } = usePrototypeState();
   const dictionary = getDictionary(family.language);
@@ -65,11 +66,22 @@ export function HomeScreen() {
     ? story.homeTwins(family.children[0].displayName, family.children[1].displayName)
     : story.homeSingle(activeChild.displayName);
 
+  // When a sleep session is currently running, swap the subtitle for a
+  // gender-aware "sleeping peacefully" line (Hebrew: ישן / ישנה). The active
+  // sleep is global (not per-child) so in twin mode the sleeping child is
+  // whichever child is currently active.
+  const sleepingChild = activeSleepStartedAt ? activeChild : null;
+  const subtitle = sleepingChild
+    ? labels.sleepingStatus(sleepingChild.displayName, sleepingChild.sex)
+    : isTwins
+      ? undefined
+      : getAgeLabel(activeChild.dateOfBirth, new Date(), family.language);
+
   return (
     <Screen testID="screen-home" scroll>
       <WatercolorHeader
         title={storybookTitle}
-        subtitle={isTwins ? undefined : getAgeLabel(activeChild.dateOfBirth, new Date(), family.language)}
+        subtitle={subtitle}
         accent={palette.primary}
         accentSoft={palette.primarySoft}
       />
@@ -84,7 +96,9 @@ export function HomeScreen() {
           {learningReady ? labels.suggestionKicker : labels.learningKicker}
         </Text>
         <Text style={[styles.learningTitle, rtlText, { color: theme.text }]}>
-          {learningReady ? labels.suggestionTitle : labels.learningTitle}
+          {learningReady
+            ? labels.suggestionTitle
+            : renderWithStyledDigits(labels.learningTitle, styles.learningTitleNumber)}
         </Text>
         <Text style={[styles.learningBody, rtlText, { color: theme.mutedText }]}>
           {learningReady
@@ -96,73 +110,47 @@ export function HomeScreen() {
         </Text>
       </View>
 
-      {isTwins ? (
-        <View style={styles.twinRow}>
-          {family.children.map((child, index) => {
-            const accent = getChildAccent(child, index, palette);
-            return (
-              <Pressable
-                key={child.id}
-                accessibilityRole="button"
-                onPress={() => selectChild(child.id)}
-                style={[
-                  styles.twinCard,
-                  {
-                    backgroundColor: theme.surface,
-                    borderColor: accent.primary,
-                  },
-                ]}
-              >
-                <Text style={[styles.twinName, { color: accent.primaryDeep }]}>
-                  {child.displayName}
-                </Text>
-                <Text style={[styles.twinAge, { color: theme.mutedText }]}>
-                  {getAgeLabel(child.dateOfBirth, new Date(), family.language)}
-                </Text>
-                <View style={styles.twinQuickList}>
-                  <Text style={[styles.twinQuickRow, { color: theme.text }]}>
-                    🛏️ {labels.sleepTitle}
-                  </Text>
-                  <Text style={[styles.twinQuickRow, { color: theme.text }]}>
-                    🍼 {labels.feedTitle}
-                  </Text>
-                  <Text style={[styles.twinQuickRow, { color: theme.text }]}>
-                    📏 {dictionary.growth.title}
-                  </Text>
-                </View>
-                <View
-                  style={[
-                    styles.twinChip,
-                    { backgroundColor: accent.primarySoft, borderColor: accent.primary },
-                  ]}
-                >
-                  <Text style={[styles.twinChipText, { color: accent.primaryDeep }]}>
-                    {activeChild.id === child.id ? '★ Active' : 'Tap to focus'}
-                  </Text>
-                </View>
-              </Pressable>
-            );
-          })}
-        </View>
-      ) : null}
+      <TwinPickerCards />
 
-      <ActionCard
-        title={labels.sleepTitle}
+
+      <StorybookCard
+        sectionTitle={labels.sleepTitle}
+        kicker={story.kickers.sleep}
+        title={
+          activeSleepStartedAt
+            ? story.status.sleepRunning(activeChild.displayName, labels.sleepTitle)
+            : isTwins
+              ? story.status.sleepIdleTwins
+              : story.status.sleepIdleSingle(activeChild.displayName)
+        }
         subtitle={labels.sleepSubtitle}
-        accent={palette.primary}
-        onPress={() => navigation.navigate('SleepFlow')}
+        primaryAction={{
+          label: story.actions.beginDream,
+          accessibilityLabel: labels.sleepTitle,
+          onPress: () => navigation.navigate('SleepFlow'),
+        }}
       />
-      <ActionCard
-        title={labels.feedTitle}
+      <StorybookCard
+        sectionTitle={labels.feedTitle}
+        kicker={story.kickers.nursing}
+        title={story.status.feedIdle(activeChild.displayName)}
         subtitle={labels.feedSubtitle}
-        accent={palette.secondary ?? paletteBase.sage}
-        onPress={() => navigation.navigate('FeedFlow')}
+        primaryAction={{
+          label: story.actions.logFeast,
+          accessibilityLabel: labels.feedTitle,
+          onPress: () => navigation.navigate('FeedFlow'),
+        }}
       />
-      <ActionCard
-        title={labels.foodTastingTitle}
+      <StorybookCard
+        sectionTitle={labels.foodTastingTitle}
+        kicker={story.kickers.allergen}
+        title={story.status.foodTastingIdle(activeChild.displayName)}
         subtitle={labels.foodTastingSubtitle}
-        accent={palette.bridge ?? palette.primary}
-        onPress={() => navigation.navigate('FoodTastingFlow')}
+        primaryAction={{
+          label: story.actions.startTasting,
+          accessibilityLabel: labels.foodTastingTitle,
+          onPress: () => navigation.navigate('FoodTastingFlow'),
+        }}
       />
     </Screen>
   );
@@ -191,55 +179,20 @@ const styles = StyleSheet.create({
   },
   learningBody: {
     fontFamily: typography.body,
+    fontSize: 15,
     lineHeight: 22,
     marginTop: 10,
   },
+  // Match parent body font size so the digit baseline aligns with the
+  // surrounding Hebrew glyphs (iOS otherwise substitutes a bigger fallback).
   learningBodyNumber: {
     fontFamily: typography.bodyBlack,
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: '800',
   },
-  twinRow: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 14,
-  },
-  twinCard: {
-    borderRadius: 22,
-    borderWidth: 2,
-    flex: 1,
-    padding: 14,
-  },
-  twinName: {
+  learningTitleNumber: {
     fontFamily: typography.displayBold,
-    fontSize: 20,
-    fontWeight: '900',
-  },
-  twinAge: {
-    fontFamily: typography.body,
-    fontSize: 12,
-    marginTop: 2,
-  },
-  twinQuickList: {
-    gap: 4,
-    marginTop: 10,
-  },
-  twinQuickRow: {
-    fontFamily: typography.body,
-    fontSize: 13,
-    lineHeight: 18,
-  },
-  twinChip: {
-    alignSelf: 'flex-start',
-    borderRadius: 999,
-    borderWidth: 1,
-    marginTop: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-  },
-  twinChipText: {
-    fontFamily: typography.bodyBlack,
-    fontSize: 11,
+    fontSize: 24,
     fontWeight: '900',
   },
   rtlText: { textAlign: 'right', writingDirection: 'rtl' },

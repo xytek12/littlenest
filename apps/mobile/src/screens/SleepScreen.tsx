@@ -2,11 +2,14 @@ import { useMemo, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { ActionCard } from '../components/ActionCard';
 import { FlowHeader } from '../components/FlowHeader';
-import { InlineHistoryCard, type InlineHistoryRow } from '../components/InlineHistoryCard';
+import {
+  GroupedHistoryCard,
+  type GroupedHistoryDay,
+} from '../components/GroupedHistoryCard';
 import { Screen } from '../components/Screen';
-import { TwinSelector } from '../components/TwinSelector';
+import { StorybookCard } from '../components/StorybookCard';
+import { TwinPickerCards } from '../components/TwinPickerCards';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import type { SleepStackParamList } from '../navigation/RootNavigator';
 import { usePrototypeState } from '../state/PrototypeState';
@@ -14,8 +17,8 @@ import { getChildAccent, getPalette } from '../theme';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 import { formatDurationHuman, formatDurationSeconds } from '../utils/formatDuration';
-import { formatHistoryDate, formatHistoryTime } from '../utils/formatHistoryDate';
-import { entriesInLast24h } from '../utils/historyFilters';
+import { formatHistoryTime } from '../utils/formatHistoryDate';
+import { entriesInLastDays, groupEntriesByDay } from '../utils/historyFilters';
 import { useTickEverySecond } from '../utils/useTickEverySecond';
 
 function formatTimestamp(value: string) {
@@ -38,7 +41,6 @@ export function SleepScreen() {
     activeSleepStartedAt,
     endSleep,
     family,
-    selectChild,
     sleepSessions,
     startSleep,
   } = usePrototypeState();
@@ -55,7 +57,6 @@ export function SleepScreen() {
   );
   const activeIndex = family.children.findIndex((child) => child.id === activeChild.id);
   const activeAccent = getChildAccent(activeChild, Math.max(0, activeIndex), palette);
-  const [twinFilter, setTwinFilter] = useState<string | null>(isTwins ? activeChild.id : null);
   const [wakeCountDraft, setWakeCountDraft] = useState('0');
   const [showTimerSheet, setShowTimerSheet] = useState(false);
   const [showWakePrompt, setShowWakePrompt] = useState(false);
@@ -68,34 +69,39 @@ export function SleepScreen() {
     return map;
   }, [family.children]);
   const filteredSessions = useMemo(() => {
-    if (!isTwins || twinFilter == null) return sleepSessions;
-    return sleepSessions.filter((session) => session.childId === twinFilter);
-  }, [isTwins, sleepSessions, twinFilter]);
+    if (!isTwins) return sleepSessions;
+    return sleepSessions.filter((session) => session.childId === activeChild.id);
+  }, [activeChild.id, isTwins, sleepSessions]);
 
-  const inlineRows = useMemo<InlineHistoryRow[]>(
-    () =>
-      entriesInLast24h(filteredSessions, (session) => session.startedAt)
-        .slice(0, 5)
-        .map((session) => {
-          const child = childById.get(session.childId);
-          const childIndex = family.children.findIndex((c) => c.id === session.childId);
-          const accent = child
-            ? getChildAccent(child, Math.max(0, childIndex), palette)
-            : { primary: palette.primary };
-          return {
-            key: session.id,
-            primary: labels.history.row(
-              formatHistoryDate(session.startedAt, family.language),
-              formatHistoryTime(session.startedAt, family.language),
-              formatDurationHuman(session.durationSeconds, family.language),
-              session.wakeCount,
-            ),
-            secondary: isTwins ? child?.displayName : undefined,
-            accentColor: isTwins ? accent.primary : colors.blue,
-          };
-        }),
-    [childById, family.children, family.language, filteredSessions, isTwins, labels.history, palette],
-  );
+  const grouped = dictionary.groupedHistory;
+  const historyDays = useMemo<GroupedHistoryDay[]>(() => {
+    const windowed = entriesInLastDays(
+      filteredSessions,
+      (session) => session.startedAt,
+      7,
+    );
+    return groupEntriesByDay(windowed, (session) => session.startedAt).map((day) => ({
+      dayKey: day.dayKey,
+      representativeIso: day.representativeIso,
+      rows: day.entries.map((session) => {
+        const child = childById.get(session.childId);
+        const childIndex = family.children.findIndex((c) => c.id === session.childId);
+        const accent = child
+          ? getChildAccent(child, Math.max(0, childIndex), palette)
+          : { primary: palette.primary };
+        return {
+          key: session.id,
+          primary: labels.history.rowInDay(
+            formatHistoryTime(session.startedAt, family.language),
+            formatDurationHuman(session.durationSeconds, family.language),
+            session.wakeCount,
+          ),
+          secondary: isTwins ? child?.displayName : undefined,
+          accentColor: isTwins ? accent.primary : colors.blue,
+        };
+      }),
+    }));
+  }, [childById, family.children, family.language, filteredSessions, isTwins, labels.history, palette]);
   const canEnd = Boolean(activeSleepStartedAt);
 
   function handleStartSleep() {
@@ -131,34 +137,45 @@ export function SleepScreen() {
         storybookTitle={story.sleep}
       />
 
-      {isTwins ? (
-        <TwinSelector
-          selectedChildId={twinFilter}
-          onSelect={(id) => {
-            setTwinFilter(id);
-            if (id) selectChild(id);
-          }}
-        />
-      ) : null}
+      <TwinPickerCards compact />
 
-      <ActionCard
-        title={activeSleepStartedAt ? labels.running : labels.start}
+      <StorybookCard
+        kicker={story.kickers.sleep}
+        title={
+          activeSleepStartedAt
+            ? story.status.sleepRunning(
+                activeChild.displayName,
+                getRunningDuration(activeSleepStartedAt, family.language),
+              )
+            : isTwins
+              ? story.status.sleepIdleTwins
+              : story.status.sleepIdleSingle(activeChild.displayName)
+        }
         subtitle={
           activeSleepStartedAt
             ? labels.runningSubtitle(
                 formatTimestamp(activeSleepStartedAt),
                 getRunningDuration(activeSleepStartedAt, family.language),
               )
-            : labels.startSubtitle
+            : undefined
         }
-        accent={activeAccent.primary}
-        onPress={activeSleepStartedAt ? () => setShowTimerSheet(true) : handleStartSleep}
-      />
-      <ActionCard
-        title={labels.end}
-        subtitle={labels.endSubtitle}
-        accent={activeAccent.primary}
-        onPress={canEnd ? handleEndSleep : undefined}
+        primaryAction={{
+          label: activeSleepStartedAt
+            ? story.actions.closeDream
+            : story.actions.beginDream,
+          accessibilityLabel: activeSleepStartedAt
+            ? labels.end
+            : labels.start,
+          onPress: activeSleepStartedAt ? handleEndSleep : handleStartSleep,
+        }}
+        secondaryAction={
+          activeSleepStartedAt
+            ? {
+                label: story.actions.openTimer,
+                onPress: () => setShowTimerSheet(true),
+              }
+            : undefined
+        }
       />
 
       <Modal
@@ -233,8 +250,10 @@ export function SleepScreen() {
         </View>
       </Modal>
 
-      <InlineHistoryCard
-        rows={inlineRows}
+      <GroupedHistoryCard
+        days={historyDays}
+        windowLabel={grouped.lastWeek}
+        emptyLabel={grouped.emptyWeek}
         onPress={() => navigation.navigate('SleepHistory')}
         testID="sleep-inline-history"
       />

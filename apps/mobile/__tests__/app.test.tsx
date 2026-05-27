@@ -42,7 +42,7 @@ describe('app shell', () => {
     completeFamilySetup(getByText);
     expect(queryByRole('button', { name: /Sleep, tab/i })).toBeNull();
 
-    fireEvent.press(getByText('Sleep'));
+    fireEvent.press(getByLabelText('Sleep'));
 
     expect(getByTestId('screen-sleep')).toBeTruthy();
     expect(getByLabelText('Home tab')).toBeTruthy();
@@ -52,10 +52,10 @@ describe('app shell', () => {
   });
 
   it('routes from home actions into the food tasting flow', () => {
-    const { getByText, getByTestId } = render(<App />);
+    const { getByLabelText, getByText, getByTestId } = render(<App />);
 
     completeFamilySetup(getByText);
-    fireEvent.press(getByText('Food tasting'));
+    fireEvent.press(getByLabelText('Food tasting'));
 
     expect(getByTestId('screen-food-tasting')).toBeTruthy();
   });
@@ -111,9 +111,11 @@ describe('app shell', () => {
     fireEvent.press(getByText('HE'));
     fireEvent.press(getByLabelText(`${he.tabs.home} tab`));
 
-    fireEvent.press(getByText(he.home.feedTitle));
+    fireEvent.press(getByLabelText(he.home.feedTitle));
     expect(getByText(he.feed.title)).toBeTruthy();
-    expect(getByText(he.feed.actionTitle)).toBeTruthy();
+    // The primary feed action is now a Storybook pill ("רישום סעודה") with
+    // the legacy actionTitle exposed via accessibilityLabel for tests / SR.
+    expect(getByLabelText(he.feed.actionTitle)).toBeTruthy();
 
     fireEvent.press(getByLabelText(he.common.backHomeLabel));
     fireEvent.press(getByLabelText(`${he.tabs.growth} tab`));

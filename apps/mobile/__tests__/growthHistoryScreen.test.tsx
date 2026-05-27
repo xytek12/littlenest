@@ -42,8 +42,8 @@ describe('GrowthHistoryScreen', () => {
   it('shows an empty inline card and empty history when there are no entries', () => {
     const { getByTestId, getByText, queryAllByText } = renderGrowthFlow();
 
-    expect(getByText('Last 24 hours')).toBeTruthy();
-    expect(getByText('No entries in the last 24 hours.')).toBeTruthy();
+    expect(getByText('Last 2 years')).toBeTruthy();
+    expect(getByText('No measurements in the last 2 years.')).toBeTruthy();
 
     fireEvent.press(getByTestId('growth-inline-history'));
 
@@ -52,9 +52,9 @@ describe('GrowthHistoryScreen', () => {
   });
 
   it('records a measurement, surfaces it inline, and lists it on the history screen', () => {
-    const { getByPlaceholderText, getByTestId, getByText, queryAllByText } = renderGrowthFlow();
+    const { getByLabelText, getByPlaceholderText, getByTestId, getByText, queryAllByText } = renderGrowthFlow();
 
-    fireEvent.press(getByText('Weight'));
+    fireEvent.press(getByLabelText('Weight'));
     fireEvent.changeText(getByPlaceholderText('0'), '8.2');
     fireEvent.press(getByText('Save measurement'));
 

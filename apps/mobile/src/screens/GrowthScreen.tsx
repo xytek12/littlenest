@@ -2,10 +2,13 @@ import { useMemo, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { ActionCard } from '../components/ActionCard';
-import { InlineHistoryCard, type InlineHistoryRow } from '../components/InlineHistoryCard';
+import {
+  GroupedHistoryCard,
+  type GroupedHistoryDay,
+} from '../components/GroupedHistoryCard';
 import { Screen } from '../components/Screen';
-import { TwinSelector } from '../components/TwinSelector';
+import { StorybookCard } from '../components/StorybookCard';
+import { TwinPickerCards } from '../components/TwinPickerCards';
 import { WatercolorHeader } from '../components/WatercolorHeader';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import type { GrowthStackParamList } from '../navigation/RootNavigator';
@@ -19,8 +22,8 @@ import { getChildAccent, getPalette } from '../theme';
 import { colors } from '../theme/colors';
 import { getAccentTheme } from '../theme/theme';
 import { useAppTheme } from '../theme/useAppTheme';
-import { formatHistoryDate, formatHistoryTime } from '../utils/formatHistoryDate';
-import { entriesInLast24h } from '../utils/historyFilters';
+import { formatHistoryTime } from '../utils/formatHistoryDate';
+import { entriesInLastDays, groupEntriesByDay } from '../utils/historyFilters';
 
 type LocalizedGrowthKind = {
   key: PrototypeGrowthKind;
@@ -62,7 +65,6 @@ export function GrowthScreen() {
   const [unitSystem, setUnitSystem] = useState<PrototypeGrowthUnitSystem>('metric');
   const [selectedKind, setSelectedKind] = useState<PrototypeGrowthKind | null>(null);
   const [valueDraft, setValueDraft] = useState('');
-  const [twinFilter, setTwinFilter] = useState<string | null>(isTwins ? activeChild.id : null);
   const units = unitSystem === 'metric' ? metricUnits : imperialUnits;
   const selectedUnit = selectedKind ? units[selectedKind] : '';
   const baseAccent = palette.primary;
@@ -78,15 +80,23 @@ export function GrowthScreen() {
   }, [family.children]);
 
   const filteredGrowthEntries = useMemo(() => {
-    if (!isTwins || twinFilter == null) return growthEntries;
-    return growthEntries.filter((entry) => entry.childId === twinFilter);
-  }, [growthEntries, isTwins, twinFilter]);
+    if (!isTwins) return growthEntries;
+    return growthEntries.filter((entry) => entry.childId === activeChild.id);
+  }, [activeChild.id, growthEntries, isTwins]);
 
-  const inlineRows = useMemo<InlineHistoryRow[]>(() => {
-    return entriesInLast24h(filteredGrowthEntries, (entry) => entry.recordedAt)
-      .slice(0, 5)
-      .map((entry) => {
-        const date = formatHistoryDate(entry.recordedAt, family.language);
+  const grouped = dictionary.groupedHistory;
+  // Growth changes slowly — show the last 2 years (730 days) so parents can
+  // scroll way back instead of being clipped to 24 hours like sleep/feed.
+  const historyDays = useMemo<GroupedHistoryDay[]>(() => {
+    const windowed = entriesInLastDays(
+      filteredGrowthEntries,
+      (entry) => entry.recordedAt,
+      730,
+    );
+    return groupEntriesByDay(windowed, (entry) => entry.recordedAt).map((day) => ({
+      dayKey: day.dayKey,
+      representativeIso: day.representativeIso,
+      rows: day.entries.map((entry) => {
         const time = formatHistoryTime(entry.recordedAt, family.language);
         const value = `${entry.value} ${entry.unit}`;
         const child = childById.get(entry.childId);
@@ -98,7 +108,7 @@ export function GrowthScreen() {
         if (entry.kind === 'weight') {
           return {
             key: entry.id,
-            primary: labels.history.weightRow(date, time, value),
+            primary: labels.history.weightRowInDay(time, value),
             secondary: isTwins ? child?.displayName : undefined,
             accentColor: isTwins ? twinAccent : colors.blue,
           };
@@ -107,7 +117,7 @@ export function GrowthScreen() {
         if (entry.kind === 'height') {
           return {
             key: entry.id,
-            primary: labels.history.heightRow(date, time, value),
+            primary: labels.history.heightRowInDay(time, value),
             secondary: isTwins ? child?.displayName : undefined,
             accentColor: isTwins ? twinAccent : colors.blue,
           };
@@ -115,10 +125,13 @@ export function GrowthScreen() {
 
         return {
           key: entry.id,
-          primary: labels.history.headRow(date, time, value, child?.displayName ?? ''),
+          // Head row always carries the child name (unlike weight/height where
+          // it's redundant for single-child families).
+          primary: labels.history.headRowInDay(time, value, child?.displayName ?? ''),
           accentColor: isTwins ? twinAccent : child ? accentForSex(child.sex) : colors.pink,
         };
-      });
+      }),
+    }));
   }, [childById, family.children, family.language, filteredGrowthEntries, isTwins, labels.history, palette]);
 
   function openComposer(kind: PrototypeGrowthKind) {
@@ -156,15 +169,7 @@ export function GrowthScreen() {
         accentSoft={palette.primarySoft}
       />
 
-      {isTwins ? (
-        <TwinSelector
-          selectedChildId={twinFilter}
-          onSelect={(id) => {
-            setTwinFilter(id);
-            if (id) selectChild(id);
-          }}
-        />
-      ) : null}
+      <TwinPickerCards compact />
 
       <View style={[styles.segmentRow, { borderColor: theme.border }]}>
         {(['metric', 'imperial'] as const).map((nextSystem) => {
@@ -190,12 +195,16 @@ export function GrowthScreen() {
       </View>
 
       {baseKinds.map((kind) => (
-        <ActionCard
+        <StorybookCard
           key={kind.key}
+          kicker={story.kickers.growth}
           title={kind.label}
           subtitle={kind.subtitle}
-          accent={kind.accent}
-          onPress={() => openComposer(kind.key)}
+          primaryAction={{
+            label: story.actions.addMeasurement,
+            accessibilityLabel: kind.label,
+            onPress: () => openComposer(kind.key),
+          }}
         />
       ))}
 
@@ -203,25 +212,32 @@ export function GrowthScreen() {
         family.children.map((child, index) => {
           const accent = getChildAccent(child, index, palette);
           return (
-            <ActionCard
+            <StorybookCard
               key={`head-${child.id}`}
+              kicker={story.kickers.growth}
               title={`${labels.head} · ${child.displayName}`}
               subtitle={labels.headSubtitle}
-              accent={accent.primary}
-              onPress={() => {
-                selectChild(child.id);
-                setTwinFilter(child.id);
-                openComposer('head');
+              primaryAction={{
+                label: story.actions.addMeasurement,
+                accessibilityLabel: `${labels.head} · ${child.displayName}`,
+                onPress: () => {
+                  selectChild(child.id);
+                  openComposer('head');
+                },
               }}
             />
           );
         })
       ) : (
-        <ActionCard
+        <StorybookCard
+          kicker={story.kickers.growth}
           title={labels.head}
           subtitle={labels.headSubtitle}
-          accent={accentForSex(family.children[0]?.sex ?? 'girl')}
-          onPress={() => openComposer('head')}
+          primaryAction={{
+            label: story.actions.addMeasurement,
+            accessibilityLabel: labels.head,
+            onPress: () => openComposer('head'),
+          }}
         />
       )}
 
@@ -251,8 +267,10 @@ export function GrowthScreen() {
         </View>
       ) : null}
 
-      <InlineHistoryCard
-        rows={inlineRows}
+      <GroupedHistoryCard
+        days={historyDays}
+        windowLabel={grouped.last2Years}
+        emptyLabel={grouped.emptyYears}
         onPress={() => navigation.navigate('GrowthHistory')}
         testID="growth-inline-history"
       />

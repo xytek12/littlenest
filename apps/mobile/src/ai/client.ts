@@ -17,6 +17,15 @@ export type StructuredRecipe = {
   url: string;
   ageRangeMonths: string;
   category: string;
+  // Optional: the edge function derives a per-recipe Unsplash image URL.
+  // Older cached responses won't include it, so callers must tolerate undefined.
+  imageUrl?: string;
+  /**
+   * Short 2-3 keyword search phrase from the AI. Used to build the recipe-site
+   * search URL — much better hit rate than the full title on WordPress `?s=`.
+   * Older cached payloads won't have this, so callers must fall back to title.
+   */
+  searchQuery?: string;
 };
 
 export type RecipeSearchInput = {
@@ -49,13 +58,64 @@ export function isoDate(date = new Date()) {
   return date.toISOString().slice(0, 10);
 }
 
+// Bump this version any time we change recipe url normalization or the cached
+// payload shape so older client caches do not surface stale (possibly 404)
+// AI-fabricated direct URLs. v2 (2026-05-26): force search-url normalization
+// on cached responses.
+const RECIPE_CACHE_VERSION = 'v2';
+
 export function recipeCacheKey(input: {
   childId: string;
   date: string;
   language: string;
   refreshNonce: number;
 }) {
-  return `recipes:${input.childId}:${input.date}:${input.language}:${input.refreshNonce}`;
+  return `recipes:${RECIPE_CACHE_VERSION}:${input.childId}:${input.date}:${input.language}:${input.refreshNonce}`;
+}
+
+/**
+ * Defensive: trim a query down to the first 2-3 meaningful tokens. Mirrors
+ * `shortenSearchQuery` in the edge function. matkonia.co.il `?s=` is keyword
+ * search; long phrases return 0-1 matches and look like a dead end to users.
+ */
+function shortenSearchQuery(value: string): string {
+  const cleaned = (value ?? '')
+    .replace(/[.,!?:;"'()\[\]{}<>\\/|]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!cleaned) return '';
+  return cleaned.split(' ').slice(0, 3).join(' ');
+}
+
+/**
+ * Build a guaranteed-working search URL for the given language and a SHORT
+ * search query (2-3 keywords). Long titles are auto-trimmed.
+ *
+ * Mirrors the server-side helper in `supabase/functions/_shared/recipePrompt.ts`.
+ * Defensive duplicate so old cached payloads (which may still hold direct
+ * AI-fabricated 404 URLs) get rewritten on the client too.
+ */
+export function buildClientSearchUrl(
+  language: 'en' | 'he' | 'ru',
+  query: string,
+): string {
+  const encoded = encodeURIComponent(shortenSearchQuery(query));
+  if (language === 'he') {
+    return `https://matkonia.co.il/?s=${encoded}`;
+  }
+  return `https://solidstarts.com/?s=${encoded}`;
+}
+
+function normalizeRecipeUrls(
+  recipes: StructuredRecipe[],
+  language: 'en' | 'he' | 'ru',
+): StructuredRecipe[] {
+  return recipes.map((r) => ({
+    ...r,
+    // Prefer the model's short `searchQuery` (real hits); fall back to title
+    // (auto-shortened by buildClientSearchUrl) for older cached payloads.
+    url: buildClientSearchUrl(language, r.searchQuery || r.title),
+  }));
 }
 
 export function recipeFetchCountKey(childId: string, date = isoDate()) {
@@ -102,7 +162,9 @@ export async function searchRecipes(input: RecipeSearchInput): Promise<Structure
     try {
       const parsed = JSON.parse(cached) as StructuredRecipe[];
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+        // Defensive: even cached responses get url-normalized so any direct
+        // AI-fabricated 404 paths get rewritten to a search URL on read.
+        return normalizeRecipeUrls(parsed, input.language);
       }
     } catch {
       // Ignore corrupt cache and fall through to a fresh fetch.
@@ -134,8 +196,11 @@ export async function searchRecipes(input: RecipeSearchInput): Promise<Structure
     throw new Error(data?.error ?? 'Recipe search returned no results');
   }
 
-  await AsyncStorage.setItem(cacheKey, JSON.stringify(recipes));
+  // Normalize URLs before caching so even cache reads stay safe across
+  // future client/server schema drift.
+  const normalized = normalizeRecipeUrls(recipes, input.language);
+  await AsyncStorage.setItem(cacheKey, JSON.stringify(normalized));
   await incrementFetchCount(input.childId, date);
 
-  return recipes;
+  return normalized;
 }

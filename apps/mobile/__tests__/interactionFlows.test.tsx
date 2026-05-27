@@ -69,7 +69,7 @@ describe('interaction flows', () => {
     const { getByLabelText, getByText, getByPlaceholderText, queryAllByText, queryByText } =
       renderSleep();
 
-    fireEvent.press(getByText('Start sleep'));
+    fireEvent.press(getByLabelText('Start sleep'));
     expect(getByText('Sleep timer')).toBeTruthy();
 
     fireEvent.press(getByText('Pause'));
@@ -91,9 +91,9 @@ describe('interaction flows', () => {
   });
 
   it('records growth measurements with metric and imperial units', () => {
-    const { getByPlaceholderText, getByText, queryAllByText } = renderGrowth();
+    const { getByLabelText, getByPlaceholderText, getByText, queryAllByText } = renderGrowth();
 
-    fireEvent.press(getByText('Weight'));
+    fireEvent.press(getByLabelText('Weight'));
     fireEvent.changeText(getByPlaceholderText('0'), '8.2');
     fireEvent.press(getByText('Save measurement'));
 
@@ -102,13 +102,13 @@ describe('interaction flows', () => {
     expect(queryAllByText(/Weight · 8.2 kg/).length).toBeGreaterThan(0);
 
     fireEvent.press(getByText('Imperial'));
-    fireEvent.press(getByText('Height'));
+    fireEvent.press(getByLabelText('Height'));
     fireEvent.changeText(getByPlaceholderText('0'), '27.5');
     fireEvent.press(getByText('Save measurement'));
 
     expect(queryAllByText(/Height · 27.5 in/).length).toBeGreaterThan(0);
 
-    fireEvent.press(getByText('Head circumference'));
+    fireEvent.press(getByLabelText('Head circumference'));
     fireEvent.changeText(getByPlaceholderText('0'), '16.2');
     fireEvent.press(getByText('Save measurement'));
 
@@ -117,9 +117,9 @@ describe('interaction flows', () => {
   });
 
   it('opens bottle mode with presets and saves the chosen amount', () => {
-    const { getByText, queryAllByText } = renderFeed();
+    const { getByLabelText, getByText, queryAllByText } = renderFeed();
 
-    fireEvent.press(getByText('Bottle / nursing'));
+    fireEvent.press(getByLabelText('Bottle / nursing'));
     fireEvent.press(getByText('Bottle'));
     fireEvent.press(getByText('120'));
     fireEvent.press(getByText('Save bottle feed'));
@@ -130,9 +130,9 @@ describe('interaction flows', () => {
   });
 
   it('opens nursing mode with left and right controls', () => {
-    const { getByText } = renderFeed();
+    const { getByLabelText, getByText } = renderFeed();
 
-    fireEvent.press(getByText('Bottle / nursing'));
+    fireEvent.press(getByLabelText('Bottle / nursing'));
     fireEvent.press(getByText('Nursing'));
 
     expect(getByText('Start left')).toBeTruthy();
@@ -140,9 +140,9 @@ describe('interaction flows', () => {
   });
 
   it('ticks the sleep timer display every second while a session is active', () => {
-    const { getByText, queryAllByText } = renderSleep();
+    const { getByLabelText, queryAllByText } = renderSleep();
 
-    fireEvent.press(getByText('Start sleep'));
+    fireEvent.press(getByLabelText('Start sleep'));
 
     // advanceTimersByTime also advances the mocked system clock, so Date.now()
     // moves forward by the same amount and getRunningDuration reports it.
@@ -160,9 +160,9 @@ describe('interaction flows', () => {
   });
 
   it('ticks the nursing left side display every second while running', () => {
-    const { getByText, queryAllByText } = renderFeed();
+    const { getByLabelText, getByText, queryAllByText } = renderFeed();
 
-    fireEvent.press(getByText('Bottle / nursing'));
+    fireEvent.press(getByLabelText('Bottle / nursing'));
     fireEvent.press(getByText('Nursing'));
     fireEvent.press(getByText('Start left'));
 
@@ -180,9 +180,9 @@ describe('interaction flows', () => {
   });
 
   it('saves nursing history with seconds for each side and the total duration', () => {
-    const { getByText, queryAllByText } = renderFeed();
+    const { getByLabelText, getByText, queryAllByText } = renderFeed();
 
-    fireEvent.press(getByText('Bottle / nursing'));
+    fireEvent.press(getByLabelText('Bottle / nursing'));
     fireEvent.press(getByText('Nursing'));
 
     fireEvent.press(getByText('Start left'));
@@ -194,8 +194,9 @@ describe('interaction flows', () => {
     fireEvent.press(getByText('Stop right'));
     fireEvent.press(getByText('Finish nursing session'));
 
-    // New inline history card format: "Nursing · {total} (L {left} / R {right})".
+    // Inline history uses human-readable durations (minutes only, seconds dropped).
+    // formatDurationHuman: 770s→"12 minutes", 455s→"7 minutes", 315s→"5 minutes".
     // (Testing Library normalizes runs of whitespace to a single space.)
-    expect(queryAllByText(/Nursing · 12:50 \(L 07:35 \/ R 05:15\)/).length).toBeGreaterThan(0);
+    expect(queryAllByText(/Nursing · 12 minutes \(L 7 minutes \/ R 5 minutes\)/).length).toBeGreaterThan(0);
   });
 });

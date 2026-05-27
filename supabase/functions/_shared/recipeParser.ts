@@ -4,6 +4,12 @@ export type StructuredRecipe = {
   url: string;
   ageRangeMonths: string;
   category: string;
+  /**
+   * Short 2-3 keyword search phrase. Used to build the recipe-site search URL
+   * (matkonia.co.il / solidstarts.com `?s=` param). Falls back to title when
+   * absent (older cached responses).
+   */
+  searchQuery?: string;
 };
 
 function stripCodeFence(text: string) {
@@ -54,12 +60,14 @@ function normalizeRecipe(value: unknown): StructuredRecipe | null {
     return null;
   }
 
+  const searchQuery = asString(candidate.searchQuery);
   return {
     title,
     description: asString(candidate.description),
     url,
     ageRangeMonths: asString(candidate.ageRangeMonths),
     category: asString(candidate.category),
+    searchQuery: searchQuery || undefined,
   };
 }
 

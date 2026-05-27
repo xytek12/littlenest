@@ -11,6 +11,37 @@ export const he = {
     settings: 'פרק: הקן שלכם ⋆',
     foodTasting: 'פרק: ביסים ראשונים ⋆',
     bothTwins: 'שניהם',
+    kickers: {
+      sleep: 'שינה',
+      nursing: 'הנקה',
+      bottle: 'בקבוק',
+      whisper: 'לחישה',
+      allergen: 'טעימה',
+      growth: 'צמיחה',
+      ai: 'AI',
+    },
+    actions: {
+      beginDream: 'מתחילים חלום',
+      closeDream: 'סוגרים את החלום',
+      openTimer: 'פתיחת טיימר',
+      logFeast: 'רישום סעודה',
+      finishFeast: 'סיום הסעודה',
+      startTasting: 'נלך לטעום',
+      addMeasurement: 'הוספת מדידה',
+      runComparison: 'הפעלת השוואה',
+    },
+    status: {
+      sleepIdleSingle: (name: string) => `הקן של ${name} שקט — התחילו חלום כשהשינה מתחילה.`,
+      sleepIdleTwins: 'שני הקנים שקטים — התחילו חלום כשהשינה מתחילה.',
+      sleepRunning: (name: string, duration: string) => `${name} בחלום · ${duration}`,
+      feedIdle: (name: string) => `הסעודה האחרונה של ${name} במרחק לחיצה.`,
+      feedNursingRunning: (left: string, right: string) =>
+        `הנקה פעילה · שמאל ${left} · ימין ${right}`,
+      allergenIntro: (name: string) =>
+        `כל טעם חדש מקבל שלוש טעימות קטנות עבור ${name}. סמנו כל אחת כשנעשתה.`,
+      foodTastingIdle: (name: string) =>
+        `טעמים חדשים מחכים לגילוי עבור ${name}.`,
+    },
   },
   confidence: { low: 'נמוך', medium: 'בינוני', high: 'גבוה' },
   actions: {
@@ -25,6 +56,13 @@ export const he = {
     viewAll: 'הצגת הכול',
     empty24h: 'אין רישומים ב-24 השעות האחרונות.',
     emptyAll: 'עדיין אין היסטוריה.',
+  },
+  groupedHistory: {
+    lastWeek: '7 הימים האחרונים',
+    last2Years: 'השנתיים האחרונות',
+    emptyWeek: 'אין רישומים בשבוע האחרון.',
+    emptyYears: 'אין מדידות בשנתיים האחרונות.',
+    entriesCount: (n: number) => (n === 1 ? 'רישום אחד' : `${n} רישומים`),
   },
   common: {
     backHome: 'בית ←',
@@ -61,6 +99,10 @@ export const he = {
     foodTastingTitle: 'טעימות',
     foodTastingSubtitle: 'עקבו אחרי טעימות ראשונות, בדיקות אלרגיה ומה עוד צריך לבדוק.',
     openSettings: 'פתיחת הגדרות',
+    sleepingStatus: (name: string, sex: 'boy' | 'girl') =>
+      `בוקר טוב, ${name} ${sex === 'boy' ? 'ישן' : 'ישנה'} בשקט`,
+    twinActive: '★ פעיל',
+    twinTapToFocus: 'לחצו לבחירה',
   },
   settings: {
     title: 'הגדרות',
@@ -144,6 +186,10 @@ export const he = {
         `${date}, ${time}  ·  גובה  ·  ${value}`,
       headRow: (date: string, time: string, value: string, child: string) =>
         `${date}, ${time}  ·  היקף ראש  ·  ${value}  ·  ${child}`,
+      weightRowInDay: (time: string, value: string) => `${time}  ·  משקל  ·  ${value}`,
+      heightRowInDay: (time: string, value: string) => `${time}  ·  גובה  ·  ${value}`,
+      headRowInDay: (time: string, value: string, child: string) =>
+        `${time}  ·  היקף ראש  ·  ${value}${child ? `  ·  ${child}` : ''}`,
     },
   },
   sleep: {
@@ -179,6 +225,8 @@ export const he = {
         `${date}, ${time}  ·  ${duration}`,
       rowWakes: (wakeCount: number) =>
         `${wakeCount} ${wakeCount === 1 ? 'התעוררות' : 'התעוררויות'}`,
+      rowInDay: (time: string, duration: string, wakeCount: number) =>
+        `${time}  ·  ${duration}  ·  ${wakeCount === 1 ? 'התעוררות אחת' : `${wakeCount} התעוררויות`}`,
     },
   },
   feed: {
@@ -216,6 +264,10 @@ export const he = {
       nursingRowSides: (left: string, right: string) => `שמאל: ${left}   ימין: ${right}`,
       bottleRowPrimary: (date: string, time: string) => `${date}, ${time}  ·  בקבוק`,
       bottleRowAmount: (amount: number, unit: string) => `${amount} ${unit}`,
+      bottleRowInDay: (time: string, amount: number, unit: string) =>
+        `${time}  ·  בקבוק  ·  ${amount} ${unit}`,
+      nursingRowInDay: (time: string, total: string, left: string, right: string) =>
+        `${time}  ·  הנקה  ·  ${total} (שמאל ${left} / ימין ${right})`,
     },
   },
   foodTasting: {

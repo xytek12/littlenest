@@ -46,8 +46,8 @@ describe('SleepHistoryScreen', () => {
   it('shows the empty inline card and empty history before any session', () => {
     const { getByTestId, getByText, queryAllByText } = renderSleepFlow();
 
-    expect(getByText('Last 24 hours')).toBeTruthy();
-    expect(getByText('No entries in the last 24 hours.')).toBeTruthy();
+    expect(getByText('Last 7 days')).toBeTruthy();
+    expect(getByText('No entries in the last 7 days.')).toBeTruthy();
 
     fireEvent.press(getByTestId('sleep-inline-history'));
 
@@ -59,7 +59,7 @@ describe('SleepHistoryScreen', () => {
     const { getByLabelText, getByPlaceholderText, getByTestId, getByText, queryAllByText } =
       renderSleepFlow();
 
-    fireEvent.press(getByText('Start sleep'));
+    fireEvent.press(getByLabelText('Start sleep'));
     fireEvent.press(getByLabelText('End sleep session'));
     fireEvent.changeText(getByPlaceholderText('0'), '2');
     jest.setSystemTime(new Date('2026-05-24T11:35:27.000Z'));

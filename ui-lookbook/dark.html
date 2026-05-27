@@ -1,0 +1,1337 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LittleNest — Dark Mode Lookbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@400;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Inter:wght@300;400;500;600;700&family=Heebo:wght@300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after { box-sizing: border-box; }
+  html,body { margin: 0; padding: 0; }
+  body {
+    background: #0a0a0c;
+    color: #e8e3dc;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    min-height: 100vh;
+  }
+  .page {
+    max-width: 1340px;
+    margin: 0 auto;
+    padding: 56px 24px 120px;
+  }
+  .site-hero {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+  .site-hero .topnav {
+    display:flex; justify-content:center; gap:14px; margin-bottom:24px;
+    font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
+  }
+  .site-hero .topnav a {
+    color:#8a8580; text-decoration:none; padding:6px 12px; border-radius:999px;
+    border:1px solid #2a2825;
+  }
+  .site-hero .topnav a.active { color:#f4efe9; border-color:#54483f; background:#1a1614; }
+  .site-hero h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(36px, 5vw, 56px);
+    letter-spacing: -0.02em;
+    margin: 0 0 12px;
+    color: #f4efe9;
+  }
+  .site-hero p {
+    color: #968d83;
+    font-size: 16px;
+    max-width: 720px;
+    margin: 0 auto;
+    line-height: 1.55;
+  }
+  .theme-section {
+    margin-bottom: 96px;
+    padding-top: 28px;
+  }
+  .theme-header {
+    margin-bottom: 28px;
+    border-top: 1px solid #1f1d1c;
+    padding-top: 36px;
+    display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap;
+  }
+  .theme-header-left { max-width: 720px; }
+  .theme-num {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: #7a716a;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .theme-name {
+    font-family: 'Fraunces', serif;
+    font-size: 34px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    color: #f4efe9;
+  }
+  .theme-vibe {
+    color: #a39a90;
+    font-size: 15px;
+    font-style: italic;
+    margin: 0;
+    line-height:1.5;
+  }
+  .pick-btn {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:11px 20px; border-radius:999px;
+    font-family:'Nunito',sans-serif; font-weight:700; font-size:13px;
+    letter-spacing:0.05em; text-transform:uppercase;
+    cursor:pointer; border:none;
+    transition: transform 0.15s;
+  }
+  .pick-btn:hover { transform: translateY(-1px); }
+  .phones {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px;
+    align-items: start;
+    margin-top: 12px;
+  }
+  @media (max-width: 1100px) {
+    .phones { grid-template-columns: 1fr; justify-items: center; }
+  }
+  .variant {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .variant-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #8a8077;
+    margin-bottom: 14px;
+  }
+  /* phone shell */
+  .phone {
+    width: 320px;
+    height: 690px;
+    border-radius: 44px;
+    box-shadow:
+      0 40px 80px -30px rgba(0,0,0,0.7),
+      0 16px 32px -16px rgba(0,0,0,0.5),
+      0 0 0 1.5px rgba(255,255,255,0.04);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    direction: rtl;
+  }
+  .status {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: 'Nunito', sans-serif;
+    direction: ltr;
+  }
+  .status .right { display: flex; gap: 5px; align-items: center; }
+  .status .bat {
+    width: 20px; height: 10px; border-radius: 2.5px;
+    border: 1px solid currentColor; position: relative;
+  }
+  .status .bat::after {
+    content: ''; position: absolute; right: -3px; top: 2px;
+    width: 2px; height: 5px; background: currentColor; border-radius: 0 1px 1px 0;
+  }
+  .status .bat::before {
+    content: ''; position: absolute; left: 1px; top: 1px; bottom: 1px;
+    width: 78%; background: currentColor; border-radius: 1px;
+  }
+  .body {
+    flex: 1;
+    overflow: hidden;
+    padding: 0 0 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .scroll {
+    flex:1; overflow:hidden; padding: 0 16px;
+    display:flex; flex-direction:column; gap:12px;
+  }
+  /* Watercolor storybook header */
+  .wc-header {
+    margin: 0 -16px 6px;
+    padding: 22px 22px 26px;
+    position: relative;
+    overflow: hidden;
+  }
+  .wc-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 26px;
+    letter-spacing: 0.01em;
+    margin: 0;
+    line-height: 1.15;
+    text-align: right;
+    position: relative; z-index: 2;
+  }
+  .wc-sub {
+    font-family: 'Heebo', 'Nunito', sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    margin-top: 6px;
+    opacity: 0.78;
+    letter-spacing: 0.04em;
+    text-align: right;
+    position: relative; z-index: 2;
+  }
+  .wc-star {
+    position:absolute; font-size:13px; opacity:0.85;
+    font-family:'Cormorant Garamond',serif;
+  }
+  .wc-star.s1 { top: 16px; right: 28px; }
+  .wc-star.s2 { top: 38px; right: 56px; font-size:9px; }
+  .wc-star.s3 { top: 22px; left: 30px; font-size: 11px; }
+  .wc-star.s4 { top: 50px; left: 64px; font-size: 8px; }
+
+  /* Cards */
+  .card {
+    border-radius: 18px;
+    padding: 14px 16px;
+    font-family: 'Heebo', 'Nunito', sans-serif;
+  }
+  .card-title {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.65;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .card-body { font-size: 12px; line-height: 1.55; }
+  .card-h {
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600;
+    font-size:18px; margin: 0 0 4px;
+  }
+  .row { display:flex; gap:10px; align-items:center; }
+  .dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+
+  .pill-btn {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:7px 14px; border-radius: 999px;
+    font-family:'Nunito',sans-serif; font-weight:700; font-size:11px;
+    margin-top: 4px;
+  }
+
+  .flow-card {
+    display:flex; align-items:center; gap:12px;
+    padding: 14px 16px; border-radius:18px;
+  }
+  .flow-icon {
+    width:38px; height:38px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; flex-shrink:0;
+  }
+  .flow-text { flex:1; }
+  .flow-title { font-size:14px; font-weight:700; font-family:'Heebo',sans-serif; margin-bottom:2px; }
+  .flow-sub { font-size:10.5px; opacity:0.7; font-family:'Heebo',sans-serif; }
+
+  /* Sticker pop dock */
+  .dock {
+    flex-shrink: 0;
+    margin: 8px 14px 18px;
+    border-radius: 26px;
+    padding: 9px 8px;
+    display: flex; justify-content: space-around; align-items: center;
+    font-family:'Nunito',sans-serif;
+  }
+  .dock-tab {
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    padding: 6px 8px; border-radius: 16px; flex: 1;
+    font-size: 9px; letter-spacing: 0.04em;
+  }
+  .dock-tab .glyph { font-size: 17px; line-height: 1; }
+  .dock-tab.active {
+    transform: translateY(-1px);
+  }
+
+  /* Recipe-specific */
+  .search-input {
+    border-radius: 14px; padding: 11px 14px; font-size: 12px;
+    font-family:'Heebo',sans-serif;
+    display:flex; align-items:center; gap:8px;
+  }
+  .recipe-card {
+    border-radius: 18px; overflow: hidden;
+    display:flex; flex-direction:column;
+  }
+  .recipe-img {
+    height:78px; position:relative; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    font-size:28px; opacity:0.85;
+  }
+  .recipe-body { padding: 11px 14px 14px; }
+  .recipe-title {
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600;
+    font-size:16px; margin:0 0 4px;
+  }
+  .recipe-sum { font-size:10.5px; line-height:1.5; opacity:0.78; margin-bottom:8px; font-family:'Heebo',sans-serif; }
+  .chip { display:inline-block; padding:3px 9px; border-radius:999px; font-size:9px; font-weight:700; letter-spacing:0.06em; font-family:'Nunito',sans-serif; }
+
+  .badge {
+    display:inline-block; padding:3px 9px; border-radius:999px;
+    font-size:9.5px; font-weight:700; letter-spacing:0.06em; font-family:'Nunito',sans-serif;
+  }
+
+  /* ============== V1 Deep Midnight + Warm Cream ============== */
+  .v1 .phone { background: #0E1117; color: #F1E8DA; }
+  .v1 .status { color: #F1E8DA; }
+  .v1 .wc-header {
+    background: linear-gradient(180deg, #1B2333 0%, #141926 70%, #0E1117 100%);
+    border-bottom: 1px solid #1f2632;
+  }
+  .v1 .wc-title { color: #F1E8DA; text-shadow: 0 0 12px rgba(232,166,160,0.18); }
+  .v1 .wc-sub { color: #C9BBD9; }
+  .v1 .wc-star { color: #E8A6A0; }
+  .v1 .card { background: #171B22; border: 1px solid #1f2632; color: #F1E8DA; }
+  .v1 .flow-card.sleep { background: linear-gradient(135deg, #1d1d2c 0%, #171B22 100%); border:1px solid #2a2640; }
+  .v1 .flow-card.feed  { background: linear-gradient(135deg, #2a1c1d 0%, #171B22 100%); border:1px solid #3a2226; }
+  .v1 .flow-card.food  { background: linear-gradient(135deg, #1c2a26 0%, #171B22 100%); border:1px solid #233a31; }
+  .v1 .flow-card .dot.sleep { background:#C9BBD9; }
+  .v1 .flow-card .dot.feed  { background:#E8A6A0; }
+  .v1 .flow-card .dot.food  { background:#A7BFA3; }
+  .v1 .pill-btn { background:#E8A6A0; color:#0E1117; }
+  .v1 .badge { background: rgba(127,166,201,0.22); color:#7FA6C9; }
+  .v1 .chip { background: rgba(232,166,160,0.18); color:#F1B7B1; }
+  .v1 .search-input { background:#171B22; color:#F1E8DA; border:1px solid #2a2f3a; }
+  .v1 .recipe-card { background:#171B22; border:1px solid #1f2632; }
+  .v1 .recipe-img.r1 { background: linear-gradient(135deg, #2a1c1d, #1c2532); }
+  .v1 .recipe-img.r2 { background: linear-gradient(135deg, #1c2a26, #1d1d2c); }
+  .v1 .dock { background:#1B1F28; border:1.5px solid #2a2f3a; box-shadow: 0 4px 0 #07090d; color:#A8A095; }
+  .v1 .dock-tab.active { background:#E8A6A0; color:#0E1117; box-shadow: 0 2px 0 #B47b76; }
+  .v1 .pick-this { background:#E8A6A0; color:#0E1117; }
+
+  /* ============== V2 Soft Charcoal Storybook (boosted) ============== */
+  .v2 .phone { background: #1A1517; color: #F4EFE9; position:relative; }
+  .v2 .status { color: #F4EFE9; }
+  .v2 .wc-header {
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(232,166,160,0.55) 0%, rgba(232,166,160,0) 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(201,187,217,0.40) 0%, rgba(201,187,217,0) 60%),
+      linear-gradient(180deg, #2a1f24 0%, #1A1517 100%);
+    border-bottom: 1px solid #3a2f33;
+  }
+  .v2 .wc-title { color: #FAEFE7; }
+  .v2 .wc-sub { color: #D7C7C7; }
+  .v2 .wc-star { color: #F6D9D2; }
+  .v2 .card, .v2 .flow-card, .v2 .recipe-card, .v2 .search-input {
+    background: #26201F;
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(255,255,255,0.025) 0px, transparent 1.5px),
+      radial-gradient(circle at 78% 62%, rgba(255,255,255,0.02) 0px, transparent 1.5px),
+      radial-gradient(circle at 38% 84%, rgba(0,0,0,0.06) 0px, transparent 2px);
+    border: 1px solid #3A3232;
+    color: #F4EFE9;
+  }
+  .v2 .flow-card .dot.sleep { background:#C9BBD9; }
+  .v2 .flow-card .dot.feed  { background:#E8A6A0; }
+  .v2 .flow-card .dot.food  { background:#A7BFA3; }
+  .v2 .pill-btn { background:#E8A6A0; color:#1A1517; }
+  .v2 .badge { background: rgba(127,166,201,0.28); color:#9FBCD9; }
+  .v2 .chip  { background: rgba(232,166,160,0.22); color:#F1B7B1; }
+  .v2 .recipe-img.r1 { background: linear-gradient(135deg, #3a2226 0%, #26201F 100%); }
+  .v2 .recipe-img.r2 { background: linear-gradient(135deg, #2a322a 0%, #26201F 100%); }
+  .v2 .dock { background:#26201F; border:2px solid #3A3232; box-shadow: 0 4px 0 #100b0d; color:#A39A90; }
+  .v2 .dock-tab.active { background:#E8A6A0; color:#1A1517; box-shadow: 0 2px 0 #9c6862; }
+  .v2 .pick-this { background:#E8A6A0; color:#1A1517; }
+
+  /* ============== V3 Rosy Dusk ============== */
+  .v3 .phone { background: linear-gradient(180deg, #1F1719 0%, #28181D 100%); color: #F7E8E4; }
+  .v3 .status { color: #F7E8E4; }
+  .v3 .wc-header {
+    background: linear-gradient(180deg, #3a1f28 0%, #28181D 100%);
+    border-bottom: 1px solid #422432;
+  }
+  .v3 .wc-title { color: #FBE3DD; text-shadow: 0 0 20px rgba(232,166,160,0.35); }
+  .v3 .wc-sub { color: #E4C5C5; }
+  .v3 .wc-star { color: #F6D9D2; }
+  .v3 .card, .v3 .flow-card, .v3 .recipe-card, .v3 .search-input {
+    background: #2B2024; border: 1px solid #3b2a30; color:#F7E8E4;
+  }
+  .v3 .flow-card.sleep { background: linear-gradient(135deg, #2e2236 0%, #2B2024 100%); }
+  .v3 .flow-card.feed  { background: linear-gradient(135deg, #3a212a 0%, #2B2024 100%); }
+  .v3 .flow-card.food  { background: linear-gradient(135deg, #232b25 0%, #2B2024 100%); }
+  .v3 .flow-card .dot.sleep { background:#C9BBD9; }
+  .v3 .flow-card .dot.feed  { background:#F1B7B1; }
+  .v3 .flow-card .dot.food  { background:#B0C9AB; }
+  .v3 .pill-btn { background:#F1B7B1; color:#28181D; }
+  .v3 .badge { background: rgba(232,166,160,0.32); color:#FBD0CB; }
+  .v3 .chip  { background: rgba(201,187,217,0.25); color:#DECDE8; }
+  .v3 .recipe-img.r1 { background: linear-gradient(135deg, #3a212a, #2e2236); }
+  .v3 .recipe-img.r2 { background: linear-gradient(135deg, #232b25, #3a2128); }
+  .v3 .dock { background:#2B2024; border:1.5px solid #3b2a30; box-shadow: 0 4px 0 #160b10; color:#A8978F; }
+  .v3 .dock-tab.active { background:#F1B7B1; color:#28181D; box-shadow: 0 2px 0 #a07772; }
+  .v3 .pick-this { background:#F1B7B1; color:#28181D; }
+
+  /* ============== V4 Forest Night ============== */
+  .v4 .phone { background: #141A17; color: #E8EDE2; }
+  .v4 .status { color: #E8EDE2; }
+  .v4 .wc-header {
+    background:
+      radial-gradient(ellipse at 70% 30%, rgba(157,190,217,0.35) 0%, rgba(157,190,217,0) 60%),
+      linear-gradient(180deg, #1f2a23 0%, #141A17 100%);
+    border-bottom: 1px solid #243027;
+  }
+  .v4 .wc-title { color: #EEF1E6; }
+  .v4 .wc-sub { color: #BFCFB7; }
+  .v4 .wc-star { color: #D2C5DE; }
+  .v4 .card, .v4 .flow-card, .v4 .recipe-card, .v4 .search-input {
+    background: #1C231F; border: 1px solid #243027; color:#E8EDE2;
+  }
+  .v4 .flow-card .dot.sleep { background:#D2C5DE; }
+  .v4 .flow-card .dot.feed  { background:#F1B0AB; }
+  .v4 .flow-card .dot.food  { background:#A7BFA3; }
+  .v4 .pill-btn { background:#F1B0AB; color:#141A17; }
+  .v4 .badge { background: rgba(157,190,217,0.28); color:#B6D0E6; }
+  .v4 .chip  { background: rgba(167,191,163,0.28); color:#BDD3B7; }
+  .v4 .recipe-img.r1 { background: linear-gradient(135deg, #2a3326, #1c231f); }
+  .v4 .recipe-img.r2 { background: linear-gradient(135deg, #2c2c3a, #1c231f); }
+  .v4 .dock { background:#1C231F; border:1.5px solid #2a352d; box-shadow: 0 4px 0 #0a0f0c; color:#8d9c87; }
+  .v4 .dock-tab.active { background:#F1B0AB; color:#141A17; box-shadow: 0 2px 0 #a0726f; }
+  .v4 .pick-this { background:#F1B0AB; color:#141A17; }
+
+  /* ============== V5 OLED High-Contrast ============== */
+  .v5 .phone { background: #000000; color: #FFFFFF; }
+  .v5 .status { color: #FFFFFF; }
+  .v5 .wc-header {
+    background: linear-gradient(180deg, #0e0e12 0%, #000 100%);
+    border-bottom: 1px solid #1c1c20;
+  }
+  .v5 .wc-title { color: #FFFFFF; font-style: italic; font-weight:700; }
+  .v5 .wc-sub { color: #c4c4cc; }
+  .v5 .wc-star { color: #FFB3AE; }
+  .v5 .card, .v5 .flow-card, .v5 .recipe-card, .v5 .search-input {
+    background: #0C0C0E; border: 1.5px solid #1f1f24; color:#FFFFFF;
+  }
+  .v5 .flow-card .dot.sleep { background:#C9BBD9; }
+  .v5 .flow-card .dot.feed  { background:#FFB3AE; }
+  .v5 .flow-card .dot.food  { background:#9AC3E8; }
+  .v5 .pill-btn { background:#FFB3AE; color:#000000; }
+  .v5 .badge { background: rgba(154,195,232,0.18); color:#9AC3E8; border:1px solid rgba(154,195,232,0.35); }
+  .v5 .chip  { background: rgba(255,179,174,0.16); color:#FFB3AE; border:1px solid rgba(255,179,174,0.35); }
+  .v5 .recipe-img.r1 { background: linear-gradient(135deg, #1a0e0e, #000); }
+  .v5 .recipe-img.r2 { background: linear-gradient(135deg, #0e1620, #000); }
+  .v5 .dock { background:#0C0C0E; border:1.5px solid #1f1f24; box-shadow: 0 4px 0 #000; color:#7a7a82; }
+  .v5 .dock-tab.active { background:#FFB3AE; color:#000; box-shadow: 0 2px 0 #a87672; }
+  .v5 .pick-this { background:#FFB3AE; color:#000000; }
+
+  /* ============== V6 Indigo Dream ============== */
+  .v6 .phone { background: #161629; color: #EFEAFF; }
+  .v6 .status { color: #EFEAFF; }
+  .v6 .wc-header {
+    background:
+      radial-gradient(ellipse at 35% 30%, rgba(240,181,212,0.40) 0%, rgba(240,181,212,0) 65%),
+      radial-gradient(ellipse at 80% 70%, rgba(159,183,232,0.35) 0%, rgba(159,183,232,0) 65%),
+      linear-gradient(180deg, #232348 0%, #161629 100%);
+    border-bottom: 1px solid #2b2b4a;
+  }
+  .v6 .wc-title { color: #F4EEFF; text-shadow: 0 0 18px rgba(240,181,212,0.25); }
+  .v6 .wc-sub { color: #C9BFE6; }
+  .v6 .wc-star { color: #F0B5D4; }
+  .v6 .card, .v6 .flow-card, .v6 .recipe-card, .v6 .search-input {
+    background: #1F1F38; border: 1px solid #2b2b4a; color:#EFEAFF;
+  }
+  .v6 .flow-card.sleep { background: linear-gradient(135deg, #29254a 0%, #1F1F38 100%); }
+  .v6 .flow-card.feed  { background: linear-gradient(135deg, #3a2540 0%, #1F1F38 100%); }
+  .v6 .flow-card.food  { background: linear-gradient(135deg, #24314a 0%, #1F1F38 100%); }
+  .v6 .flow-card .dot.sleep { background:#D6C7EE; }
+  .v6 .flow-card .dot.feed  { background:#F0B5D4; }
+  .v6 .flow-card .dot.food  { background:#9FB7E8; }
+  .v6 .pill-btn { background:#F0B5D4; color:#161629; }
+  .v6 .badge { background: rgba(159,183,232,0.30); color:#BFD0F1; }
+  .v6 .chip  { background: rgba(240,181,212,0.25); color:#F4C8DE; }
+  .v6 .recipe-img.r1 { background: linear-gradient(135deg, #3a2540, #1F1F38); }
+  .v6 .recipe-img.r2 { background: linear-gradient(135deg, #24314a, #29254a); }
+  .v6 .dock { background:#1F1F38; border:1.5px solid #2b2b4a; box-shadow: 0 4px 0 #08081a; color:#8e88b0; }
+  .v6 .dock-tab.active { background:#F0B5D4; color:#161629; box-shadow: 0 2px 0 #a07692; }
+  .v6 .pick-this { background:#F0B5D4; color:#161629; }
+
+  /* AI screen helpers */
+  .compare-card {
+    border-radius:18px; padding:14px 16px;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .compare-cta {
+    border-radius: 14px; padding: 12px 14px;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .v1 .compare-cta { background:#1d1d2c; border:1px solid #2a2640; }
+  .v2 .compare-cta { background:#2a232a; border:1px solid #3a3038; }
+  .v3 .compare-cta { background:#2e2236; border:1px solid #3d2e44; }
+  .v4 .compare-cta { background:#212d27; border:1px solid #2a3a31; }
+  .v5 .compare-cta { background:#0c0c0e; border:1.5px solid #1f1f24; }
+  .v6 .compare-cta { background:#29254a; border:1px solid #34315c; }
+
+  /* palette swatches */
+  .palette {
+    display:flex; gap:8px; margin-top:18px; flex-wrap:wrap; justify-content:center; max-width:320px;
+  }
+  .sw { display:flex; flex-direction:column; align-items:center; font-size:9px; color:#8a8077; font-family:'Inter',sans-serif; }
+  .sw-dot { width:24px; height:24px; border-radius:50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06); margin-bottom:3px; }
+
+  .footer-spacer { height: 80px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="site-hero">
+    <div class="topnav">
+      <a href="index.html">Light Mode</a>
+      <a href="dark.html" class="active">Dark Mode</a>
+    </div>
+    <h1>Dark Mode Lookbook</h1>
+    <p>Six dark-mode directions for LittleNest — keeping the watercolor storybook soul, but built for nighttime use by tired parents. Same three screens for each: Home, AI advice, Recipes. Hebrew RTL throughout.</p>
+  </header>
+
+  <!-- ============ V1 Deep Midnight + Warm Cream ============ -->
+  <section class="theme-section v1">
+    <div class="theme-header">
+      <div class="theme-header-left">
+        <div class="theme-num">Variant 01</div>
+        <h2 class="theme-name">Deep Midnight + Warm Cream</h2>
+        <p class="theme-vibe">A children's storybook read by lamplight — deep blue-black with warm cream text, accents at full saturation.</p>
+      </div>
+      <button class="pick-btn pick-this">בחר את זה</button>
+    </div>
+    <div class="phones">
+
+      <!-- Home -->
+      <div class="variant">
+        <div class="variant-label">Home — בית הקן</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span>
+                <span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: בית הקן ⋆</h1>
+                <div class="wc-sub">בוקר טוב, ענר ישנה בשקט</div>
+              </div>
+              <div class="card">
+                <div class="card-title">לומדים את ענר</div>
+                <h3 class="card-h">קן קטן עוקב</h3>
+                <p class="card-body">עקבו אחר שינה והאכלות במשך 14 ימים כדי לקבל תובנות מותאמות אישית.</p>
+              </div>
+              <div class="flow-card sleep">
+                <span class="flow-icon" style="background:rgba(201,187,217,0.18);color:#D6C7EE;">☾</span>
+                <div class="flow-text">
+                  <div class="flow-title">שינה</div>
+                  <div class="flow-sub">תנומה אחרונה לפני 42 דק'</div>
+                </div>
+                <span class="dot sleep"></span>
+              </div>
+              <div class="flow-card feed">
+                <span class="flow-icon" style="background:rgba(232,166,160,0.18);color:#F1B7B1;">♡</span>
+                <div class="flow-text">
+                  <div class="flow-title">האכלה</div>
+                  <div class="flow-sub">שמאל 13 דק' · ימין 11 דק'</div>
+                </div>
+                <span class="dot feed"></span>
+              </div>
+              <div class="flow-card food">
+                <span class="flow-icon" style="background:rgba(167,191,163,0.18);color:#B0C9AB;">✿</span>
+                <div class="flow-text">
+                  <div class="flow-title">טעימת מזון</div>
+                  <div class="flow-sub">היום: אבוקדו 🥑</div>
+                </div>
+                <span class="dot food"></span>
+              </div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab active"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI -->
+      <div class="variant">
+        <div class="variant-label">AI — עצות חכמות</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span>
+                <span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: עצות חכמות ⋆</h1>
+                <div class="wc-sub">השוו תשובות מ-Gemini ו-OpenAI</div>
+              </div>
+              <div class="compare-cta">
+                <div>
+                  <div class="flow-title" style="font-size:13px;">השוואת מודלים</div>
+                  <div class="flow-sub" style="margin-top:2px;">קבל תשובות משניים</div>
+                </div>
+                <span class="pill-btn">השווה ✦</span>
+              </div>
+              <div class="card">
+                <div class="row" style="justify-content:space-between; margin-bottom:8px;">
+                  <h3 class="card-h" style="margin:0;">Gemini</h3>
+                  <span class="badge">ביטחון 87%</span>
+                </div>
+                <p class="card-body">בגיל 18 חודשים מומלץ להעניק לענר מסגרת שינה קבועה — אמבטיה, סיפור, אור עמום. הימנעו ממסכים שעה לפני השינה. שעות שינה אופטימליות: 19:00–19:30.</p>
+                <div class="row" style="gap:6px; margin-top:10px;">
+                  <span class="chip">שינה</span>
+                  <span class="chip">שגרה</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab active"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recipes -->
+      <div class="variant">
+        <div class="variant-label">Recipes — מתכונים</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span>
+                <span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: מתכונים טעימים ⋆</h1>
+                <div class="wc-sub">מתאים לגיל 18 חודשים</div>
+              </div>
+              <div class="row" style="gap:8px;">
+                <div class="search-input" style="flex:1;">⌕ חפש מתכון…</div>
+                <span class="pill-btn">↻ רענן</span>
+              </div>
+              <div class="recipe-card">
+                <div class="recipe-img r1">🥣</div>
+                <div class="recipe-body">
+                  <h3 class="recipe-title">פנקייק בננה</h3>
+                  <p class="recipe-sum">פנקייק רך ללא סוכר, מבננה ובצק שיבולת שועל. מושלם לארוחת בוקר.</p>
+                  <span class="chip">matkonia</span>
+                </div>
+              </div>
+              <div class="recipe-card">
+                <div class="recipe-img r2">🍠</div>
+                <div class="recipe-body">
+                  <h3 class="recipe-title">בטטה אפויה</h3>
+                  <p class="recipe-sum">פרוסות בטטה רכות עם קמצוץ קינמון, מתאימות לאצבעות קטנות.</p>
+                  <span class="chip">matkonia</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab active"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="palette" style="margin-left:auto;margin-right:auto;">
+      <div class="sw"><div class="sw-dot" style="background:#0E1117"></div>0E1117</div>
+      <div class="sw"><div class="sw-dot" style="background:#171B22"></div>171B22</div>
+      <div class="sw"><div class="sw-dot" style="background:#F1E8DA"></div>F1E8DA</div>
+      <div class="sw"><div class="sw-dot" style="background:#E8A6A0"></div>E8A6A0</div>
+      <div class="sw"><div class="sw-dot" style="background:#7FA6C9"></div>7FA6C9</div>
+      <div class="sw"><div class="sw-dot" style="background:#C9BBD9"></div>C9BBD9</div>
+    </div>
+  </section>
+
+  <!-- ============ V2 Soft Charcoal Storybook ============ -->
+  <section class="theme-section v2">
+    <div class="theme-header">
+      <div class="theme-header-left">
+        <div class="theme-num">Variant 02</div>
+        <h2 class="theme-name">Soft Charcoal Storybook (boosted)</h2>
+        <p class="theme-vibe">Same charcoal base as today, but the watercolor wash on headers and cards is dialed up — paper-grain texture brings the storybook feel back.</p>
+      </div>
+      <button class="pick-btn pick-this">בחר את זה</button>
+    </div>
+    <div class="phones">
+
+      <div class="variant">
+        <div class="variant-label">Home — בית הקן</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span>
+                <span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: בית הקן ⋆</h1>
+                <div class="wc-sub">בוקר טוב, ענר ישנה בשקט</div>
+              </div>
+              <div class="card">
+                <div class="card-title">לומדים את ענר</div>
+                <h3 class="card-h">קן קטן עוקב</h3>
+                <p class="card-body">עקבו אחר שינה והאכלות במשך 14 ימים כדי לקבל תובנות מותאמות אישית.</p>
+              </div>
+              <div class="flow-card sleep"><span class="flow-icon" style="background:rgba(201,187,217,0.20);color:#D6C7EE;">☾</span><div class="flow-text"><div class="flow-title">שינה</div><div class="flow-sub">תנומה אחרונה לפני 42 דק'</div></div><span class="dot sleep"></span></div>
+              <div class="flow-card feed"><span class="flow-icon" style="background:rgba(232,166,160,0.22);color:#F1B7B1;">♡</span><div class="flow-text"><div class="flow-title">האכלה</div><div class="flow-sub">שמאל 13 דק' · ימין 11 דק'</div></div><span class="dot feed"></span></div>
+              <div class="flow-card food"><span class="flow-icon" style="background:rgba(167,191,163,0.20);color:#B0C9AB;">✿</span><div class="flow-text"><div class="flow-title">טעימת מזון</div><div class="flow-sub">היום: אבוקדו 🥑</div></div><span class="dot food"></span></div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab active"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">AI — עצות חכמות</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span>
+                <span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: עצות חכמות ⋆</h1>
+                <div class="wc-sub">השוו תשובות מ-Gemini ו-OpenAI</div>
+              </div>
+              <div class="compare-cta">
+                <div><div class="flow-title" style="font-size:13px;">השוואת מודלים</div><div class="flow-sub" style="margin-top:2px;">קבל תשובות משניים</div></div>
+                <span class="pill-btn">השווה ✦</span>
+              </div>
+              <div class="card">
+                <div class="row" style="justify-content:space-between; margin-bottom:8px;">
+                  <h3 class="card-h" style="margin:0;">Gemini</h3>
+                  <span class="badge">ביטחון 87%</span>
+                </div>
+                <p class="card-body">בגיל 18 חודשים מומלץ להעניק לענר מסגרת שינה קבועה — אמבטיה, סיפור, אור עמום. הימנעו ממסכים שעה לפני השינה. שעות שינה אופטימליות: 19:00–19:30.</p>
+                <div class="row" style="gap:6px; margin-top:10px;"><span class="chip">שינה</span><span class="chip">שגרה</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab active"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">Recipes — מתכונים</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span>
+                <span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: מתכונים טעימים ⋆</h1>
+                <div class="wc-sub">מתאים לגיל 18 חודשים</div>
+              </div>
+              <div class="row" style="gap:8px;">
+                <div class="search-input" style="flex:1;">⌕ חפש מתכון…</div>
+                <span class="pill-btn">↻ רענן</span>
+              </div>
+              <div class="recipe-card">
+                <div class="recipe-img r1">🥣</div>
+                <div class="recipe-body">
+                  <h3 class="recipe-title">פנקייק בננה</h3>
+                  <p class="recipe-sum">פנקייק רך ללא סוכר, מבננה ובצק שיבולת שועל. מושלם לארוחת בוקר.</p>
+                  <span class="chip">matkonia</span>
+                </div>
+              </div>
+              <div class="recipe-card">
+                <div class="recipe-img r2">🍠</div>
+                <div class="recipe-body">
+                  <h3 class="recipe-title">בטטה אפויה</h3>
+                  <p class="recipe-sum">פרוסות בטטה רכות עם קמצוץ קינמון, מתאימות לאצבעות קטנות.</p>
+                  <span class="chip">matkonia</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab active"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="palette" style="margin-left:auto;margin-right:auto;">
+      <div class="sw"><div class="sw-dot" style="background:#1A1517"></div>1A1517</div>
+      <div class="sw"><div class="sw-dot" style="background:#26201F"></div>26201F</div>
+      <div class="sw"><div class="sw-dot" style="background:#F4EFE9"></div>F4EFE9</div>
+      <div class="sw"><div class="sw-dot" style="background:#E8A6A0"></div>E8A6A0</div>
+      <div class="sw"><div class="sw-dot" style="background:#F6D9D2"></div>F6D9D2</div>
+      <div class="sw"><div class="sw-dot" style="background:#C9BBD9"></div>C9BBD9</div>
+    </div>
+  </section>
+
+  <!-- ============ V3 Rosy Dusk ============ -->
+  <section class="theme-section v3">
+    <div class="theme-header">
+      <div class="theme-header-left">
+        <div class="theme-num">Variant 03</div>
+        <h2 class="theme-name">Rosy Dusk</h2>
+        <p class="theme-vibe">Background carries a faint warm hue, deepening to pink-black at the bottom. Petal-pink accents glow stronger — emotionally suited to baby/parent.</p>
+      </div>
+      <button class="pick-btn pick-this">בחר את זה</button>
+    </div>
+    <div class="phones">
+
+      <div class="variant">
+        <div class="variant-label">Home — בית הקן</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span><span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: בית הקן ⋆</h1>
+                <div class="wc-sub">בוקר טוב, ענר ישנה בשקט</div>
+              </div>
+              <div class="card">
+                <div class="card-title">לומדים את ענר</div>
+                <h3 class="card-h">קן קטן עוקב</h3>
+                <p class="card-body">עקבו אחר שינה והאכלות במשך 14 ימים כדי לקבל תובנות מותאמות אישית.</p>
+              </div>
+              <div class="flow-card sleep"><span class="flow-icon" style="background:rgba(201,187,217,0.22);color:#D6C7EE;">☾</span><div class="flow-text"><div class="flow-title">שינה</div><div class="flow-sub">תנומה אחרונה לפני 42 דק'</div></div><span class="dot sleep"></span></div>
+              <div class="flow-card feed"><span class="flow-icon" style="background:rgba(241,183,177,0.22);color:#FBD0CB;">♡</span><div class="flow-text"><div class="flow-title">האכלה</div><div class="flow-sub">שמאל 13 דק' · ימין 11 דק'</div></div><span class="dot feed"></span></div>
+              <div class="flow-card food"><span class="flow-icon" style="background:rgba(176,201,171,0.20);color:#BDD3B7;">✿</span><div class="flow-text"><div class="flow-title">טעימת מזון</div><div class="flow-sub">היום: אבוקדו 🥑</div></div><span class="dot food"></span></div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab active"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">AI — עצות חכמות</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span><span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: עצות חכמות ⋆</h1>
+                <div class="wc-sub">השוו תשובות מ-Gemini ו-OpenAI</div>
+              </div>
+              <div class="compare-cta">
+                <div><div class="flow-title" style="font-size:13px;">השוואת מודלים</div><div class="flow-sub" style="margin-top:2px;">קבל תשובות משניים</div></div>
+                <span class="pill-btn">השווה ✦</span>
+              </div>
+              <div class="card">
+                <div class="row" style="justify-content:space-between; margin-bottom:8px;">
+                  <h3 class="card-h" style="margin:0;">Gemini</h3>
+                  <span class="badge">ביטחון 87%</span>
+                </div>
+                <p class="card-body">בגיל 18 חודשים מומלץ להעניק לענר מסגרת שינה קבועה — אמבטיה, סיפור, אור עמום. הימנעו ממסכים שעה לפני השינה. שעות שינה אופטימליות: 19:00–19:30.</p>
+                <div class="row" style="gap:6px; margin-top:10px;"><span class="chip">שינה</span><span class="chip">שגרה</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab active"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">Recipes — מתכונים</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span><span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: מתכונים טעימים ⋆</h1>
+                <div class="wc-sub">מתאים לגיל 18 חודשים</div>
+              </div>
+              <div class="row" style="gap:8px;">
+                <div class="search-input" style="flex:1;">⌕ חפש מתכון…</div>
+                <span class="pill-btn">↻ רענן</span>
+              </div>
+              <div class="recipe-card">
+                <div class="recipe-img r1">🥣</div>
+                <div class="recipe-body">
+                  <h3 class="recipe-title">פנקייק בננה</h3>
+                  <p class="recipe-sum">פנקייק רך ללא סוכר, מבננה ובצק שיבולת שועל. מושלם לארוחת בוקר.</p>
+                  <span class="chip">matkonia</span>
+                </div>
+              </div>
+              <div class="recipe-card">
+                <div class="recipe-img r2">🍠</div>
+                <div class="recipe-body">
+                  <h3 class="recipe-title">בטטה אפויה</h3>
+                  <p class="recipe-sum">פרוסות בטטה רכות עם קמצוץ קינמון, מתאימות לאצבעות קטנות.</p>
+                  <span class="chip">matkonia</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab active"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="palette" style="margin-left:auto;margin-right:auto;">
+      <div class="sw"><div class="sw-dot" style="background:#1F1719"></div>1F1719</div>
+      <div class="sw"><div class="sw-dot" style="background:#28181D"></div>28181D</div>
+      <div class="sw"><div class="sw-dot" style="background:#2B2024"></div>2B2024</div>
+      <div class="sw"><div class="sw-dot" style="background:#F7E8E4"></div>F7E8E4</div>
+      <div class="sw"><div class="sw-dot" style="background:#F1B7B1"></div>F1B7B1</div>
+      <div class="sw"><div class="sw-dot" style="background:#C9BBD9"></div>C9BBD9</div>
+    </div>
+  </section>
+
+  <!-- ============ V4 Forest Night ============ -->
+  <section class="theme-section v4">
+    <div class="theme-header">
+      <div class="theme-header-left">
+        <div class="theme-num">Variant 04</div>
+        <h2 class="theme-name">Forest Night</h2>
+        <p class="theme-vibe">Cool green-tinged background with sage-cream text — calm and spa-like, ideal for the 3am feed scroll.</p>
+      </div>
+      <button class="pick-btn pick-this">בחר את זה</button>
+    </div>
+    <div class="phones">
+
+      <div class="variant">
+        <div class="variant-label">Home — בית הקן</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span><span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: בית הקן ⋆</h1>
+                <div class="wc-sub">בוקר טוב, ענר ישנה בשקט</div>
+              </div>
+              <div class="card">
+                <div class="card-title">לומדים את ענר</div>
+                <h3 class="card-h">קן קטן עוקב</h3>
+                <p class="card-body">עקבו אחר שינה והאכלות במשך 14 ימים כדי לקבל תובנות מותאמות אישית.</p>
+              </div>
+              <div class="flow-card"><span class="flow-icon" style="background:rgba(210,197,222,0.22);color:#D2C5DE;">☾</span><div class="flow-text"><div class="flow-title">שינה</div><div class="flow-sub">תנומה אחרונה לפני 42 דק'</div></div><span class="dot sleep"></span></div>
+              <div class="flow-card"><span class="flow-icon" style="background:rgba(241,176,171,0.22);color:#F1B0AB;">♡</span><div class="flow-text"><div class="flow-title">האכלה</div><div class="flow-sub">שמאל 13 דק' · ימין 11 דק'</div></div><span class="dot feed"></span></div>
+              <div class="flow-card"><span class="flow-icon" style="background:rgba(167,191,163,0.24);color:#A7BFA3;">✿</span><div class="flow-text"><div class="flow-title">טעימת מזון</div><div class="flow-sub">היום: אבוקדו 🥑</div></div><span class="dot food"></span></div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab active"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">AI — עצות חכמות</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span><span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: עצות חכמות ⋆</h1>
+                <div class="wc-sub">השוו תשובות מ-Gemini ו-OpenAI</div>
+              </div>
+              <div class="compare-cta">
+                <div><div class="flow-title" style="font-size:13px;">השוואת מודלים</div><div class="flow-sub" style="margin-top:2px;">קבל תשובות משניים</div></div>
+                <span class="pill-btn">השווה ✦</span>
+              </div>
+              <div class="card">
+                <div class="row" style="justify-content:space-between; margin-bottom:8px;">
+                  <h3 class="card-h" style="margin:0;">Gemini</h3>
+                  <span class="badge">ביטחון 87%</span>
+                </div>
+                <p class="card-body">בגיל 18 חודשים מומלץ להעניק לענר מסגרת שינה קבועה — אמבטיה, סיפור, אור עמום. הימנעו ממסכים שעה לפני השינה. שעות שינה אופטימליות: 19:00–19:30.</p>
+                <div class="row" style="gap:6px; margin-top:10px;"><span class="chip">שינה</span><span class="chip">שגרה</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab active"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">Recipes — מתכונים</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span><span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: מתכונים טעימים ⋆</h1>
+                <div class="wc-sub">מתאים לגיל 18 חודשים</div>
+              </div>
+              <div class="row" style="gap:8px;">
+                <div class="search-input" style="flex:1;">⌕ חפש מתכון…</div>
+                <span class="pill-btn">↻ רענן</span>
+              </div>
+              <div class="recipe-card">
+                <div class="recipe-img r1">🥣</div>
+                <div class="recipe-body">
+                  <h3 class="recipe-title">פנקייק בננה</h3>
+                  <p class="recipe-sum">פנקייק רך ללא סוכר, מבננה ובצק שיבולת שועל. מושלם לארוחת בוקר.</p>
+                  <span class="chip">matkonia</span>
+                </div>
+              </div>
+              <div class="recipe-card">
+                <div class="recipe-img r2">🍠</div>
+                <div class="recipe-body">
+                  <h3 class="recipe-title">בטטה אפויה</h3>
+                  <p class="recipe-sum">פרוסות בטטה רכות עם קמצוץ קינמון, מתאימות לאצבעות קטנות.</p>
+                  <span class="chip">matkonia</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab active"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="palette" style="margin-left:auto;margin-right:auto;">
+      <div class="sw"><div class="sw-dot" style="background:#141A17"></div>141A17</div>
+      <div class="sw"><div class="sw-dot" style="background:#1C231F"></div>1C231F</div>
+      <div class="sw"><div class="sw-dot" style="background:#E8EDE2"></div>E8EDE2</div>
+      <div class="sw"><div class="sw-dot" style="background:#F1B0AB"></div>F1B0AB</div>
+      <div class="sw"><div class="sw-dot" style="background:#9DBED9"></div>9DBED9</div>
+      <div class="sw"><div class="sw-dot" style="background:#D2C5DE"></div>D2C5DE</div>
+    </div>
+  </section>
+
+  <!-- ============ V5 OLED High-Contrast ============ -->
+  <section class="theme-section v5">
+    <div class="theme-header">
+      <div class="theme-header-left">
+        <div class="theme-num">Variant 05</div>
+        <h2 class="theme-name">OLED High-Contrast</h2>
+        <p class="theme-vibe">True-black background, sharp borders, neon-soft accents — battery-friendly and crisp. Less storybook, more app.</p>
+      </div>
+      <button class="pick-btn pick-this">בחר את זה</button>
+    </div>
+    <div class="phones">
+
+      <div class="variant">
+        <div class="variant-label">Home — בית הקן</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span><span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: בית הקן ⋆</h1>
+                <div class="wc-sub">בוקר טוב, ענר ישנה בשקט</div>
+              </div>
+              <div class="card">
+                <div class="card-title">לומדים את ענר</div>
+                <h3 class="card-h">קן קטן עוקב</h3>
+                <p class="card-body">עקבו אחר שינה והאכלות במשך 14 ימים כדי לקבל תובנות מותאמות אישית.</p>
+              </div>
+              <div class="flow-card"><span class="flow-icon" style="background:rgba(201,187,217,0.18);color:#C9BBD9;">☾</span><div class="flow-text"><div class="flow-title">שינה</div><div class="flow-sub">תנומה אחרונה לפני 42 דק'</div></div><span class="dot sleep"></span></div>
+              <div class="flow-card"><span class="flow-icon" style="background:rgba(255,179,174,0.20);color:#FFB3AE;">♡</span><div class="flow-text"><div class="flow-title">האכלה</div><div class="flow-sub">שמאל 13 דק' · ימין 11 דק'</div></div><span class="dot feed"></span></div>
+              <div class="flow-card"><span class="flow-icon" style="background:rgba(154,195,232,0.18);color:#9AC3E8;">✿</span><div class="flow-text"><div class="flow-title">טעימת מזון</div><div class="flow-sub">היום: אבוקדו 🥑</div></div><span class="dot food"></span></div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab active"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">AI — עצות חכמות</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span><span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: עצות חכמות ⋆</h1>
+                <div class="wc-sub">השוו תשובות מ-Gemini ו-OpenAI</div>
+              </div>
+              <div class="compare-cta">
+                <div><div class="flow-title" style="font-size:13px;">השוואת מודלים</div><div class="flow-sub" style="margin-top:2px;">קבל תשובות משניים</div></div>
+                <span class="pill-btn">השווה ✦</span>
+              </div>
+              <div class="card">
+                <div class="row" style="justify-content:space-between; margin-bottom:8px;">
+                  <h3 class="card-h" style="margin:0;">Gemini</h3>
+                  <span class="badge">ביטחון 87%</span>
+                </div>
+                <p class="card-body">בגיל 18 חודשים מומלץ להעניק לענר מסגרת שינה קבועה — אמבטיה, סיפור, אור עמום. הימנעו ממסכים שעה לפני השינה. שעות שינה אופטימליות: 19:00–19:30.</p>
+                <div class="row" style="gap:6px; margin-top:10px;"><span class="chip">שינה</span><span class="chip">שגרה</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab active"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">Recipes — מתכונים</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span><span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: מתכונים טעימים ⋆</h1>
+                <div class="wc-sub">מתאים לגיל 18 חודשים</div>
+              </div>
+              <div class="row" style="gap:8px;">
+                <div class="search-input" style="flex:1;">⌕ חפש מתכון…</div>
+                <span class="pill-btn">↻ רענן</span>
+              </div>
+              <div class="recipe-card">
+                <div class="recipe-img r1">🥣</div>
+                <div class="recipe-body">
+                  <h3 class="recipe-title">פנקייק בננה</h3>
+                  <p class="recipe-sum">פנקייק רך ללא סוכר, מבננה ובצק שיבולת שועל. מושלם לארוחת בוקר.</p>
+                  <span class="chip">matkonia</span>
+                </div>
+              </div>
+              <div class="recipe-card">
+                <div class="recipe-img r2">🍠</div>
+                <div class="recipe-body">
+                  <h3 class="recipe-title">בטטה אפויה</h3>
+                  <p class="recipe-sum">פרוסות בטטה רכות עם קמצוץ קינמון, מתאימות לאצבעות קטנות.</p>
+                  <span class="chip">matkonia</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab active"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="palette" style="margin-left:auto;margin-right:auto;">
+      <div class="sw"><div class="sw-dot" style="background:#000000"></div>000000</div>
+      <div class="sw"><div class="sw-dot" style="background:#0C0C0E"></div>0C0C0E</div>
+      <div class="sw"><div class="sw-dot" style="background:#FFFFFF"></div>FFFFFF</div>
+      <div class="sw"><div class="sw-dot" style="background:#FFB3AE"></div>FFB3AE</div>
+      <div class="sw"><div class="sw-dot" style="background:#9AC3E8"></div>9AC3E8</div>
+      <div class="sw"><div class="sw-dot" style="background:#C9BBD9"></div>C9BBD9</div>
+    </div>
+  </section>
+
+  <!-- ============ V6 Indigo Dream ============ -->
+  <section class="theme-section v6">
+    <div class="theme-header">
+      <div class="theme-header-left">
+        <div class="theme-num">Variant 06</div>
+        <h2 class="theme-name">Indigo Dream</h2>
+        <p class="theme-vibe">A twilight nursery — deep indigo with pastel-lilac highlights. Lavender becomes the hero accent. Dreamy and soft.</p>
+      </div>
+      <button class="pick-btn pick-this">בחר את זה</button>
+    </div>
+    <div class="phones">
+
+      <div class="variant">
+        <div class="variant-label">Home — בית הקן</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span><span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: בית הקן ⋆</h1>
+                <div class="wc-sub">בוקר טוב, ענר ישנה בשקט</div>
+              </div>
+              <div class="card">
+                <div class="card-title">לומדים את ענר</div>
+                <h3 class="card-h">קן קטן עוקב</h3>
+                <p class="card-body">עקבו אחר שינה והאכלות במשך 14 ימים כדי לקבל תובנות מותאמות אישית.</p>
+              </div>
+              <div class="flow-card sleep"><span class="flow-icon" style="background:rgba(214,199,238,0.22);color:#D6C7EE;">☾</span><div class="flow-text"><div class="flow-title">שינה</div><div class="flow-sub">תנומה אחרונה לפני 42 דק'</div></div><span class="dot sleep"></span></div>
+              <div class="flow-card feed"><span class="flow-icon" style="background:rgba(240,181,212,0.22);color:#F4C8DE;">♡</span><div class="flow-text"><div class="flow-title">האכלה</div><div class="flow-sub">שמאל 13 דק' · ימין 11 דק'</div></div><span class="dot feed"></span></div>
+              <div class="flow-card food"><span class="flow-icon" style="background:rgba(159,183,232,0.22);color:#BFD0F1;">✿</span><div class="flow-text"><div class="flow-title">טעימת מזון</div><div class="flow-sub">היום: אבוקדו 🥑</div></div><span class="dot food"></span></div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab active"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">AI — עצות חכמות</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span><span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: עצות חכמות ⋆</h1>
+                <div class="wc-sub">השוו תשובות מ-Gemini ו-OpenAI</div>
+              </div>
+              <div class="compare-cta">
+                <div><div class="flow-title" style="font-size:13px;">השוואת מודלים</div><div class="flow-sub" style="margin-top:2px;">קבל תשובות משניים</div></div>
+                <span class="pill-btn">השווה ✦</span>
+              </div>
+              <div class="card">
+                <div class="row" style="justify-content:space-between; margin-bottom:8px;">
+                  <h3 class="card-h" style="margin:0;">Gemini</h3>
+                  <span class="badge">ביטחון 87%</span>
+                </div>
+                <p class="card-body">בגיל 18 חודשים מומלץ להעניק לענר מסגרת שינה קבועה — אמבטיה, סיפור, אור עמום. הימנעו ממסכים שעה לפני השינה. שעות שינה אופטימליות: 19:00–19:30.</p>
+                <div class="row" style="gap:6px; margin-top:10px;"><span class="chip">שינה</span><span class="chip">שגרה</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab active"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant-label">Recipes — מתכונים</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="right"><span class="bat"></span></span></div>
+          <div class="body">
+            <div class="scroll">
+              <div class="wc-header">
+                <span class="wc-star s1">⋆</span><span class="wc-star s2">⋆</span><span class="wc-star s3">⋆</span><span class="wc-star s4">⋆</span>
+                <h1 class="wc-title">פרק: מתכונים טעימים ⋆</h1>
+                <div class="wc-sub">מתאים לגיל 18 חודשים</div>
+              </div>
+              <div class="row" style="gap:8px;">
+                <div class="search-input" style="flex:1;">⌕ חפש מתכון…</div>
+                <span class="pill-btn">↻ רענן</span>
+              </div>
+              <div class="recipe-card">
+                <div class="recipe-img r1">🥣</div>
+                <div class="recipe-body">
+                  <h3 class="recipe-title">פנקייק בננה</h3>
+                  <p class="recipe-sum">פנקייק רך ללא סוכר, מבננה ובצק שיבולת שועל. מושלם לארוחת בוקר.</p>
+                  <span class="chip">matkonia</span>
+                </div>
+              </div>
+              <div class="recipe-card">
+                <div class="recipe-img r2">🍠</div>
+                <div class="recipe-body">
+                  <h3 class="recipe-title">בטטה אפויה</h3>
+                  <p class="recipe-sum">פרוסות בטטה רכות עם קמצוץ קינמון, מתאימות לאצבעות קטנות.</p>
+                  <span class="chip">matkonia</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="dock-tab"><span class="glyph">⌂</span><span>בית</span></div>
+            <div class="dock-tab"><span class="glyph">↗</span><span>גדילה</span></div>
+            <div class="dock-tab"><span class="glyph">✦</span><span>AI</span></div>
+            <div class="dock-tab active"><span class="glyph">◐</span><span>מתכונים</span></div>
+            <div class="dock-tab"><span class="glyph">⚙</span><span>הגדרות</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="palette" style="margin-left:auto;margin-right:auto;">
+      <div class="sw"><div class="sw-dot" style="background:#161629"></div>161629</div>
+      <div class="sw"><div class="sw-dot" style="background:#1F1F38"></div>1F1F38</div>
+      <div class="sw"><div class="sw-dot" style="background:#EFEAFF"></div>EFEAFF</div>
+      <div class="sw"><div class="sw-dot" style="background:#F0B5D4"></div>F0B5D4</div>
+      <div class="sw"><div class="sw-dot" style="background:#9FB7E8"></div>9FB7E8</div>
+      <div class="sw"><div class="sw-dot" style="background:#D6C7EE"></div>D6C7EE</div>
+    </div>
+  </section>
+
+  <div class="footer-spacer"></div>
+</div>
+</body>
+</html>

@@ -14,6 +14,142 @@ A running log of every change made to this project so we (and any Claude session
 
 ---
 
+## 2026-05-27 — Round 3-5 icon iterations + UI polish + recipe-search end-to-end + Gemini fix (Mac session, PR #2)
+
+**Branch:** `codex/littlenest-ai-prototype` → PR #2 against `master`
+**Commits:** `2a21d1b`, `91a25ae`, `2877cb1`, `bd7be03`, plus this MEMORY/secrets commit
+
+### What changed
+
+1. **"14" digit font fix in Hebrew learning title** — `HomeScreen.tsx` applies `renderWithStyledDigits` to `labels.learningTitle` now (previously only to `learningBody`). New `learningTitleNumber` style (`displayBold`, 24px, weight 900). The `14` in "רשמו שינה והאכלות במשך 14 ימים…" finally renders in the same display font instead of iOS substituting a smaller fallback.
+
+2. **Bigger section labels on Home cards** — new `sectionTitle?: string` prop on `StorybookCard` renders a 20px bold header above the kicker. Home Sleep / Feed / FoodTasting cards now show prominent "שינה" / "הנקה" / "טעימות" labels (uses existing `labels.sleepTitle` / `feedTitle` / `foodTastingTitle` from i18n).
+
+3. **Human-readable nursing history** — `FeedScreen.tsx` inline history rows switched from `formatDurationSeconds` (MM:SS like "00:14") → `formatDurationHuman` (e.g. "12 minutes"). Live timer + sheet still uses MM:SS since that's a real-time clock. `interactionFlows.test.tsx` regex updated to match the new format.
+
+4. **Recipe search end-to-end fix (matkonia.co.il returned 0 results)** — old code passed FULL recipe titles to `?s=` which is keyword search; WordPress returned nothing. Now the AI is prompted to emit a short `searchQuery` field per recipe, and the full chain consumes it:
+   - `_shared/recipePrompt.ts` — prompt asks for `searchQuery` (2-3 keywords). New `shortenSearchQuery()` helper clips any input to 3 tokens defensively. `buildSourceUrl()` takes a query (not a title).
+   - `_shared/recipeParser.ts` — `StructuredRecipe` type + `normalizeRecipe()` now extract `searchQuery`.
+   - `recipe-search/index.ts` — builds URL from `r.searchQuery || r.title` (fallback for older payloads).
+   - `apps/mobile/src/ai/client.ts` — mirrors `shortenSearchQuery()` on the client; `StructuredRecipe.searchQuery?` added; `normalizeRecipeUrls()` and `buildClientSearchUrl()` prefer `searchQuery` over `title`. Old cached payloads still get clipped to 3 keywords on read so they don't 404 either.
+   - **Critical gap caught during verification:** the first commit only updated the prompt — nothing actually read `searchQuery`. The full chain was wired in commit `91a25ae` after that gap was discovered.
+
+5. **Gemini model fix** — `aiProviders.ts` default model `gemini-2.5-flash` (non-existent on public API) → `gemini-2.0-flash`. Same change in `FUNCTION_SECRETS_EDIT_ME.txt`. Fixes "Gemini could not answer this request right now" on AI compare screen.
+
+6. **Icon iterations — Rounds 3, 4, 5 in `ui-lookbook/icons.html`** — six SVG concepts per round, hand-built inline SVGs on dark gallery page. All previous rounds (1-2) rejected before this session.
+   - **Round 3 (rejected):** Sleeping Fox / Watercolor Sketch / Liquid Glass / Sticker-Pop Crescent / Constellation Baby / Olive Branch Nest
+   - **Round 4 (rejected):** Hebrew Lamed monogram / Cross-Stitch Heart / Wooden Letter Block / Risograph Print / Parent-Baby Grip / Botanical Plate
+   - **Round 5 (latest):** Nestling Mascot / Cradle Loop (Apple Fitness style) / Holographic Infinity / Hanko Wax Seal / Tarot The Sun / Pixel Baby 8-bit
+   - Each round used a Sonnet 4.6 subagent for the heavy SVG work while Opus 4.7 orchestrated. Round 5 brief was informed by App Store research (Huckleberry's "Berry" mascot, BabyCenter's lettermark, Nara's vibrancy).
+   - A ChatGPT/nano-banana prompt was also handed to the user for parallel image-gen comparisons.
+
+### Files changed
+
+| File | Change |
+|------|--------|
+| `apps/mobile/src/screens/HomeScreen.tsx` | `renderWithStyledDigits` on `learningTitle`; `learningTitleNumber` style; `sectionTitle` prop passed to 3 Home cards |
+| `apps/mobile/src/components/StorybookCard.tsx` | NEW `sectionTitle?` prop renders a 20px bold header above the kicker |
+| `apps/mobile/src/screens/FeedScreen.tsx` | `formatDurationHuman` for nursing history rows (live timer still MM:SS) |
+| `apps/mobile/__tests__/interactionFlows.test.tsx` | Regex updated for "12 minutes (L 7 minutes / R 5 minutes)" format |
+| `apps/mobile/src/ai/client.ts` | `StructuredRecipe.searchQuery?`; mirror `shortenSearchQuery()`; `buildClientSearchUrl()` clips; `normalizeRecipeUrls()` prefers `searchQuery` |
+| `supabase/functions/_shared/recipePrompt.ts` | Prompt asks for `searchQuery`; `shortenSearchQuery()` helper; `buildSourceUrl()` takes query not title |
+| `supabase/functions/_shared/recipeParser.ts` | `StructuredRecipe.searchQuery?` + extracted in `normalizeRecipe` |
+| `supabase/functions/recipe-search/index.ts` | URL built from `r.searchQuery || r.title` |
+| `supabase/functions/_shared/aiProviders.ts` | Default `GEMINI_MODEL` → `gemini-2.0-flash` |
+| `supabase/functions/FUNCTION_SECRETS_EDIT_ME.txt` | `GEMINI_MODEL=gemini-2.0-flash` |
+| `ui-lookbook/icons.html` | Rebuilt 3 times (Round 3, 4, 5 concepts) |
+
+### Backend ops
+
+- **NOT deployed yet:** The `recipe-search` edge function changes are in the repo but not pushed to Supabase. User must run `supabase functions deploy recipe-search` for the `searchQuery` wiring to reach production.
+- **GEMINI_MODEL secret on Supabase** also needs updating from `gemini-2.5-flash` → `gemini-2.0-flash` on the project dashboard.
+
+### Tests
+
+- **All 69 Jest tests pass** ✅
+- **TypeScript clean** ✅ (`tsc --noEmit`)
+
+### Notes for next session
+
+- **Round 5 icons pending user review.** Six concepts in `ui-lookbook/icons.html` open in browser. User may want Round 6 in a specific direction, or want one of the 5 concepts implemented as the actual iOS app icon (`apps/mobile/assets/icon.png` + AppIcon set).
+- **PR #2 is open:** https://github.com/xytek12/littlenest/pull/2 — against `master`. All session work landed there.
+- **Sonnet 4.6 subagents** were used for icon design heavy-lift. Brief them with what's been rejected; rounds 1-5 are all documented above so future agents can avoid repeating rejected tropes.
+
+---
+
+## 2026-05-26 — Indigo Dream dark mode + gender-aware sleep verb + twin picker cards + per-recipe images (Mac session)
+
+**Branch:** `codex/littlenest-ai-prototype`
+
+### What changed
+
+1. **Indigo Dream dark mode applied (light mode untouched)**
+   - User picked variant 6 ("Indigo Dream") from the dark-mode lookbook (`ui-lookbook/dark.html`).
+   - `useAppTheme.ts`: replaced sepia-brown dark palette with indigo. New tokens: `background: #161629`, `surface: #1F1F38`, `text: #EFEAFF`, `mutedText: #A8A2C9`, `border: #363659`. Added derived dock tokens: `dockActiveBg: #9FB7E8`, `dockActiveText: #161629`, `dockInactiveText: rgba(239,234,255,0.7)`.
+   - `BottomEmojiTabBar.tsx`: kept Sticker Pop geometry (chunky border + hard offset shadow + active pill). Dark mode branch reads the new dock tokens; light mode code path is **byte-identical to before** (same `#FFFFFF` bg, same `stickerCharcoal` border + labels + sticker colors).
+   - `WatercolorHeader.tsx`: unchanged — existing 0.32/0.22 dark overlays harmonize with indigo bg.
+
+2. **Gender-aware Hebrew sleep status in Home header**
+   - User feedback: lookbook mockup showed "ענר ישנה בשקט" — feminine verb but ענר is a boy's name. Fix: verb must agree with `activeChild.sex`.
+   - Added i18n keys: `home.sleepingStatus(name, sex)` in `en.ts` ("${name} is sleeping peacefully"), `he.ts` ("בוקר טוב, ${name} ${sex === 'boy' ? 'ישן' : 'ישנה'} בשקט"). `ru.ts` re-exports `en.ts` so it picks up automatically.
+   - `HomeScreen.tsx` subtitle logic: if `activeSleepStartedAt` is set, show `sleepingStatus(name, sex)`; else age label (single mode) or `undefined` (twins). NOTE: `activeSleepStartedAt` is a single global value in `PrototypeState`, so the sleeping child is always `activeChild` — no per-child branch needed.
+
+3. **Twin picker cards on 5 screens (Home + 4 detail screens)**
+   - Created `apps/mobile/src/components/TwinPickerCards.tsx` — reusable two-card child picker (extracted from inline JSX in `HomeScreen`). Prop `compact?: boolean` omits the home-only quick list. Returns `null` for single-baby families.
+   - Added i18n keys `home.twinActive` / `home.twinTapToFocus` (en: "★ Active" / "Tap to focus", he: "★ פעיל" / "לחצו לבחירה") — replaces the hardcoded English literals.
+   - `HomeScreen.tsx`: replaced inline twin block with `<TwinPickerCards />`.
+   - `SleepScreen.tsx`, `FeedScreen.tsx`, `GrowthScreen.tsx`: **replaced** `<TwinSelector ... />` segmented control with `<TwinPickerCards compact />`. Removed unused `selectedChildId` local state — data now filters by global `activeChild.id`.
+   - `FoodTastingScreen.tsx`, `FoodScreen.tsx`: **added** `<TwinPickerCards compact />` near the top (they had no twin handling before).
+   - `TwinSelector.tsx` kept on disk in case re-needed; no longer imported anywhere.
+
+4. **Per-recipe Unsplash images + new fallback (from earlier same-day work)**
+   - `supabase/functions/_shared/recipePrompt.ts`: added `buildRecipeImageUrl(category)` — strips non-ASCII, takes up to 2 tokens from category, appends `baby,food`, returns `https://source.unsplash.com/600x400/?<keywords>`.
+   - `recipe-search/index.ts`: imports + sets `imageUrl` on every returned recipe. **Deployed to Supabase project `lolesbmajbrhbsmvxgos`.**
+   - `apps/mobile/src/ai/client.ts`: `StructuredRecipe.imageUrl?: string` added.
+   - `FoodScreen.tsx`: `aiRecipesToDisplay()` uses `recipe.imageUrl ?? FALLBACK_IMAGE`. New `FALLBACK_IMAGE` = baby-food bowl (`photo-1604908176997-125f25cc6f3d`), replaces the "guys-at-computers" photo.
+   - `data/recipeIdeas.ts`: 6 seed Unsplash URLs replaced with deterministic food themes (avocado, pancakes, oatmeal, sweet potato, salmon, baby-food bowl).
+
+### Files changed
+
+| File | Change |
+|------|--------|
+| `apps/mobile/src/theme/useAppTheme.ts` | Indigo Dream palette + 3 new dock tokens |
+| `apps/mobile/src/components/BottomEmojiTabBar.tsx` | `isDark` branch reads dock tokens (light path byte-identical) |
+| `apps/mobile/src/components/TwinPickerCards.tsx` | NEW component (extracted from HomeScreen) |
+| `apps/mobile/src/screens/HomeScreen.tsx` | Subtitle uses `sleepingStatus` when sleeping; uses `TwinPickerCards` |
+| `apps/mobile/src/screens/SleepScreen.tsx` | TwinSelector → TwinPickerCards, removed local selectedChildId |
+| `apps/mobile/src/screens/FeedScreen.tsx` | TwinSelector → TwinPickerCards |
+| `apps/mobile/src/screens/GrowthScreen.tsx` | TwinSelector → TwinPickerCards |
+| `apps/mobile/src/screens/FoodTastingScreen.tsx` | Added TwinPickerCards |
+| `apps/mobile/src/screens/FoodScreen.tsx` | Added TwinPickerCards + uses per-recipe imageUrl |
+| `apps/mobile/src/i18n/en.ts` | + `sleepingStatus`, `twinActive`, `twinTapToFocus` |
+| `apps/mobile/src/i18n/he.ts` | + Hebrew translations (gender-aware verb) |
+| `apps/mobile/src/ai/client.ts` | `StructuredRecipe.imageUrl?: string` |
+| `apps/mobile/src/data/recipeIdeas.ts` | Food-themed deterministic Unsplash URLs |
+| `supabase/functions/_shared/recipePrompt.ts` | `buildRecipeImageUrl(category)` helper |
+| `supabase/functions/recipe-search/index.ts` | Attaches `imageUrl` to every recipe |
+| `ui-lookbook/dark.html` | NEW — 6-variant dark-mode lookbook (Hebrew RTL, 3 phones each) |
+| `ui-lookbook/index.html` | Added nav link to dark.html |
+
+### Backend ops performed
+
+- **Deployed:** `recipe-search` edge function (per-recipe images live in production)
+- **Verified:** Supabase secrets `GEMINI_API_KEY`, `GEMINI_MODEL`, `OPENAI_API_KEY`, `OPENAI_MODEL` all set on project `lolesbmajbrhbsmvxgos`
+
+### Tests
+
+- **All 69 tests passing** ✅
+- TypeScript clean ✅
+
+### Notes for next session
+
+- **Light mode is intentionally unchanged.** User explicitly requested only dark mode shift to Indigo Dream. Any future dark-mode tweaks must continue gating on `theme.isDark`.
+- **Sleep status string assumes single active sleep session.** If `PrototypeState` ever supports per-child concurrent sleep sessions (e.g. both twins napping at once), `HomeScreen` subtitle logic needs to detect which child is sleeping rather than assuming `activeChild`.
+- **`TwinSelector.tsx` is dead code now** — left on disk for safety. Delete in a follow-up if not re-used in 1-2 sessions.
+- The "תזכורת" (reminder): the user runs `expo start --tunnel --clear` to get a QR scannable from anywhere (not just same Wi-Fi). Tunnel mode uses ngrok-style relay, so it's slower than LAN but works through corporate networks / cellular.
+
+---
+
 ## 2026-05-25 — Dark mode polish + Supabase env + recipe-page age + settings icon (Windows session, latest)
 
 **Branch:** `master` + `codex/littlenest-ai-prototype` (same fixes on both)
@@ -128,8 +264,7 @@ A running log of every change made to this project so we (and any Claude session
 
 ## 2026-05-25 — Bug fixes from device testing (Windows session)
 
-**Branch:** `master` (cherry-pick to `codex/littlenest-ai-prototype` if still active)
-**Commit:** `e210588`
+**Branch:** `master` + `codex/littlenest-ai-prototype` (same fixes on both)
 
 ### Issues fixed
 
@@ -258,6 +393,7 @@ supabase functions deploy recipe-search
 - **Theme discipline:** Never hardcode colors. Use `useAppTheme()` and `getChildAccent()`.
 - **State discipline:** Mutate via `usePrototypeState()` context methods only. No direct AsyncStorage writes.
 - **Windows host:** Node not on PATH. Prepend `export PATH="/c/Program Files/nodejs:$PATH"` (Bash) or `$env:Path = "C:\Program Files\nodejs;" + $env:Path` (PowerShell) before npm/npx.
+- **Mac host:** Node at `/opt/homebrew/bin/`. Use full paths in scripts.
 - **Hebrew RTL:** Watch text alignment. Use the `rtlText` style pattern from existing screens.
 - **Folder name quirk:** The host folder is literally `web desgin` (typo intentional). Quote paths.
 

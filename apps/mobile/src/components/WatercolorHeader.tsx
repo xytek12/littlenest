@@ -44,20 +44,21 @@ export function WatercolorHeader({
         pointerEvents="none"
         style={[
           styles.layerTop,
-          { backgroundColor: tintTop, opacity: theme.isDark ? 0.32 : 0.55 },
+          { backgroundColor: tintTop, opacity: theme.isDark ? 0.42 : 0.72 },
         ]}
       />
       <View
         pointerEvents="none"
         style={[
           styles.layerMid,
-          { backgroundColor: accent, opacity: theme.isDark ? 0.22 : 0.18 },
+          { backgroundColor: accent, opacity: theme.isDark ? 0.26 : 0.22 },
         ]}
       />
-      <View
-        pointerEvents="none"
-        style={[styles.layerBottom, { backgroundColor: theme.background }]}
-      />
+      {/* layerBottom (a strip of page background) was removed so the wash
+          continues all the way to the bottom of the wrapper. Previously the
+          last ~30px of the header reverted to the page background, which made
+          the colored area look like it stopped halfway behind a long
+          two-line title. */}
 
       <View style={styles.content}>
         <View style={styles.headerTopRow}>
@@ -71,7 +72,7 @@ export function WatercolorHeader({
         </View>
         <Text
           style={[styles.title, { color: theme.text }, rtlText]}
-          numberOfLines={2}
+          numberOfLines={3}
         >
           {title}
         </Text>
@@ -112,24 +113,17 @@ const styles = StyleSheet.create({
     top: 0,
   },
   layerMid: {
-    height: 70,
+    height: 90,
     left: -20,
     position: 'absolute',
     right: -20,
-    top: 30,
+    top: 24,
     transform: [{ rotate: '-2deg' }],
   },
-  layerBottom: {
-    bottom: 0,
-    height: 30,
-    left: 0,
-    opacity: 0.85,
-    position: 'absolute',
-    right: 0,
-  },
   content: {
+    paddingBottom: 22,
     paddingHorizontal: 18,
-    paddingVertical: 18,
+    paddingTop: 18,
   },
   headerTopRow: {
     alignItems: 'center',
