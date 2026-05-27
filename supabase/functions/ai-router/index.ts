@@ -11,7 +11,16 @@ const safetyNotes = {
 } as const;
 
 function providerErrorAnswer(provider: ProviderName, error: unknown): ProviderAnswer {
-  console.error(`${provider} provider failed`, error);
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  const errorStack = error instanceof Error ? error.stack : undefined;
+
+  // Verbatim rejection reason for log forensics (Supabase edge logs).
+  console.error(`[ai-router] ${provider} provider rejected`, {
+    provider,
+    errorMessage,
+    errorStack,
+    rawReason: error,
+  });
 
   return {
     provider,
@@ -19,7 +28,7 @@ function providerErrorAnswer(provider: ProviderName, error: unknown): ProviderAn
     body: `${provider === 'gemini' ? 'Gemini' : 'OpenAI'} could not answer this request right now. Try the comparison again later.`,
     confidenceLabel: 'Low',
     sources: [],
-    raw: null,
+    raw: { error: errorMessage },
   };
 }
 
