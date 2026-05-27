@@ -14,6 +14,69 @@ A running log of every change made to this project so we (and any Claude session
 
 ---
 
+## 2026-05-27 — Round 3-5 icon iterations + UI polish + recipe-search end-to-end + Gemini fix (Mac session, PR #2)
+
+**Branch:** `codex/littlenest-ai-prototype` → PR #2 against `master`
+**Commits:** `2a21d1b`, `91a25ae`, `2877cb1`, `bd7be03`, plus this MEMORY/secrets commit
+
+### What changed
+
+1. **"14" digit font fix in Hebrew learning title** — `HomeScreen.tsx` applies `renderWithStyledDigits` to `labels.learningTitle` now (previously only to `learningBody`). New `learningTitleNumber` style (`displayBold`, 24px, weight 900). The `14` in "רשמו שינה והאכלות במשך 14 ימים…" finally renders in the same display font instead of iOS substituting a smaller fallback.
+
+2. **Bigger section labels on Home cards** — new `sectionTitle?: string` prop on `StorybookCard` renders a 20px bold header above the kicker. Home Sleep / Feed / FoodTasting cards now show prominent "שינה" / "הנקה" / "טעימות" labels (uses existing `labels.sleepTitle` / `feedTitle` / `foodTastingTitle` from i18n).
+
+3. **Human-readable nursing history** — `FeedScreen.tsx` inline history rows switched from `formatDurationSeconds` (MM:SS like "00:14") → `formatDurationHuman` (e.g. "12 minutes"). Live timer + sheet still uses MM:SS since that's a real-time clock. `interactionFlows.test.tsx` regex updated to match the new format.
+
+4. **Recipe search end-to-end fix (matkonia.co.il returned 0 results)** — old code passed FULL recipe titles to `?s=` which is keyword search; WordPress returned nothing. Now the AI is prompted to emit a short `searchQuery` field per recipe, and the full chain consumes it:
+   - `_shared/recipePrompt.ts` — prompt asks for `searchQuery` (2-3 keywords). New `shortenSearchQuery()` helper clips any input to 3 tokens defensively. `buildSourceUrl()` takes a query (not a title).
+   - `_shared/recipeParser.ts` — `StructuredRecipe` type + `normalizeRecipe()` now extract `searchQuery`.
+   - `recipe-search/index.ts` — builds URL from `r.searchQuery || r.title` (fallback for older payloads).
+   - `apps/mobile/src/ai/client.ts` — mirrors `shortenSearchQuery()` on the client; `StructuredRecipe.searchQuery?` added; `normalizeRecipeUrls()` and `buildClientSearchUrl()` prefer `searchQuery` over `title`. Old cached payloads still get clipped to 3 keywords on read so they don't 404 either.
+   - **Critical gap caught during verification:** the first commit only updated the prompt — nothing actually read `searchQuery`. The full chain was wired in commit `91a25ae` after that gap was discovered.
+
+5. **Gemini model fix** — `aiProviders.ts` default model `gemini-2.5-flash` (non-existent on public API) → `gemini-2.0-flash`. Same change in `FUNCTION_SECRETS_EDIT_ME.txt`. Fixes "Gemini could not answer this request right now" on AI compare screen.
+
+6. **Icon iterations — Rounds 3, 4, 5 in `ui-lookbook/icons.html`** — six SVG concepts per round, hand-built inline SVGs on dark gallery page. All previous rounds (1-2) rejected before this session.
+   - **Round 3 (rejected):** Sleeping Fox / Watercolor Sketch / Liquid Glass / Sticker-Pop Crescent / Constellation Baby / Olive Branch Nest
+   - **Round 4 (rejected):** Hebrew Lamed monogram / Cross-Stitch Heart / Wooden Letter Block / Risograph Print / Parent-Baby Grip / Botanical Plate
+   - **Round 5 (latest):** Nestling Mascot / Cradle Loop (Apple Fitness style) / Holographic Infinity / Hanko Wax Seal / Tarot The Sun / Pixel Baby 8-bit
+   - Each round used a Sonnet 4.6 subagent for the heavy SVG work while Opus 4.7 orchestrated. Round 5 brief was informed by App Store research (Huckleberry's "Berry" mascot, BabyCenter's lettermark, Nara's vibrancy).
+   - A ChatGPT/nano-banana prompt was also handed to the user for parallel image-gen comparisons.
+
+### Files changed
+
+| File | Change |
+|------|--------|
+| `apps/mobile/src/screens/HomeScreen.tsx` | `renderWithStyledDigits` on `learningTitle`; `learningTitleNumber` style; `sectionTitle` prop passed to 3 Home cards |
+| `apps/mobile/src/components/StorybookCard.tsx` | NEW `sectionTitle?` prop renders a 20px bold header above the kicker |
+| `apps/mobile/src/screens/FeedScreen.tsx` | `formatDurationHuman` for nursing history rows (live timer still MM:SS) |
+| `apps/mobile/__tests__/interactionFlows.test.tsx` | Regex updated for "12 minutes (L 7 minutes / R 5 minutes)" format |
+| `apps/mobile/src/ai/client.ts` | `StructuredRecipe.searchQuery?`; mirror `shortenSearchQuery()`; `buildClientSearchUrl()` clips; `normalizeRecipeUrls()` prefers `searchQuery` |
+| `supabase/functions/_shared/recipePrompt.ts` | Prompt asks for `searchQuery`; `shortenSearchQuery()` helper; `buildSourceUrl()` takes query not title |
+| `supabase/functions/_shared/recipeParser.ts` | `StructuredRecipe.searchQuery?` + extracted in `normalizeRecipe` |
+| `supabase/functions/recipe-search/index.ts` | URL built from `r.searchQuery || r.title` |
+| `supabase/functions/_shared/aiProviders.ts` | Default `GEMINI_MODEL` → `gemini-2.0-flash` |
+| `supabase/functions/FUNCTION_SECRETS_EDIT_ME.txt` | `GEMINI_MODEL=gemini-2.0-flash` |
+| `ui-lookbook/icons.html` | Rebuilt 3 times (Round 3, 4, 5 concepts) |
+
+### Backend ops
+
+- **NOT deployed yet:** The `recipe-search` edge function changes are in the repo but not pushed to Supabase. User must run `supabase functions deploy recipe-search` for the `searchQuery` wiring to reach production.
+- **GEMINI_MODEL secret on Supabase** also needs updating from `gemini-2.5-flash` → `gemini-2.0-flash` on the project dashboard.
+
+### Tests
+
+- **All 69 Jest tests pass** ✅
+- **TypeScript clean** ✅ (`tsc --noEmit`)
+
+### Notes for next session
+
+- **Round 5 icons pending user review.** Six concepts in `ui-lookbook/icons.html` open in browser. User may want Round 6 in a specific direction, or want one of the 5 concepts implemented as the actual iOS app icon (`apps/mobile/assets/icon.png` + AppIcon set).
+- **PR #2 is open:** https://github.com/xytek12/littlenest/pull/2 — against `master`. All session work landed there.
+- **Sonnet 4.6 subagents** were used for icon design heavy-lift. Brief them with what's been rejected; rounds 1-5 are all documented above so future agents can avoid repeating rejected tropes.
+
+---
+
 ## 2026-05-26 — Indigo Dream dark mode + gender-aware sleep verb + twin picker cards + per-recipe images (Mac session)
 
 **Branch:** `codex/littlenest-ai-prototype`
