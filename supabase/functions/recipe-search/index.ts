@@ -43,13 +43,15 @@ Deno.serve(async (req) => {
       .slice(0, 6)
       // Replace AI-generated recipe URLs with guaranteed-working search URLs.
       // The model often fabricates or hallucinates specific recipe paths that
-      // return 404. Using the site's search endpoint with the recipe title as
-      // the query always resolves to a real page.
+      // return 404. We prefer the model's short `searchQuery` (2-3 keywords)
+      // because matkonia.co.il / solidstarts.com `?s=` returns very few or
+      // zero results for long full recipe titles. Fall back to the title when
+      // the model didn't provide a search query (older payloads).
       // Also derive a per-recipe image URL using Unsplash Source so each card
       // has a thematic photo instead of one shared fallback image.
       .map((r) => ({
         ...r,
-        url: buildSourceUrl(language, r.title),
+        url: buildSourceUrl(language, r.searchQuery || r.title),
         imageUrl: buildRecipeImageUrl(r.category),
       }));
 

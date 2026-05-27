@@ -20,6 +20,12 @@ export type StructuredRecipe = {
   // Optional: the edge function derives a per-recipe Unsplash image URL.
   // Older cached responses won't include it, so callers must tolerate undefined.
   imageUrl?: string;
+  /**
+   * Short 2-3 keyword search phrase from the AI. Used to build the recipe-site
+   * search URL — much better hit rate than the full title on WordPress `?s=`.
+   * Older cached payloads won't have this, so callers must fall back to title.
+   */
+  searchQuery?: string;
 };
 
 export type RecipeSearchInput = {
@@ -68,7 +74,22 @@ export function recipeCacheKey(input: {
 }
 
 /**
- * Build a guaranteed-working search URL for the given language and recipe title.
+ * Defensive: trim a query down to the first 2-3 meaningful tokens. Mirrors
+ * `shortenSearchQuery` in the edge function. matkonia.co.il `?s=` is keyword
+ * search; long phrases return 0-1 matches and look like a dead end to users.
+ */
+function shortenSearchQuery(value: string): string {
+  const cleaned = (value ?? '')
+    .replace(/[.,!?:;"'()\[\]{}<>\\/|]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!cleaned) return '';
+  return cleaned.split(' ').slice(0, 3).join(' ');
+}
+
+/**
+ * Build a guaranteed-working search URL for the given language and a SHORT
+ * search query (2-3 keywords). Long titles are auto-trimmed.
  *
  * Mirrors the server-side helper in `supabase/functions/_shared/recipePrompt.ts`.
  * Defensive duplicate so old cached payloads (which may still hold direct
@@ -76,9 +97,9 @@ export function recipeCacheKey(input: {
  */
 export function buildClientSearchUrl(
   language: 'en' | 'he' | 'ru',
-  title: string,
+  query: string,
 ): string {
-  const encoded = encodeURIComponent(title);
+  const encoded = encodeURIComponent(shortenSearchQuery(query));
   if (language === 'he') {
     return `https://matkonia.co.il/?s=${encoded}`;
   }
@@ -91,7 +112,9 @@ function normalizeRecipeUrls(
 ): StructuredRecipe[] {
   return recipes.map((r) => ({
     ...r,
-    url: buildClientSearchUrl(language, r.title),
+    // Prefer the model's short `searchQuery` (real hits); fall back to title
+    // (auto-shortened by buildClientSearchUrl) for older cached payloads.
+    url: buildClientSearchUrl(language, r.searchQuery || r.title),
   }));
 }
 

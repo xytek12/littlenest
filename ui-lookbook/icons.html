@@ -1,470 +1,794 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LittleNest — Icon Concepts</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: #1A1A2E;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    padding: 48px 40px 64px;
-    min-height: 100vh;
-  }
-  h1 {
-    font-size: 28px;
-    font-weight: 800;
-    color: #FFFCF7;
-    text-align: center;
-    margin-bottom: 6px;
-    letter-spacing: -0.5px;
-  }
-  .subtitle {
-    text-align: center;
-    color: #8888AA;
-    font-size: 14px;
-    margin-bottom: 52px;
-    letter-spacing: 0.2px;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
-    max-width: 860px;
-    margin: 0 auto;
-  }
-  .card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 18px;
-  }
-  .icon-wrap {
-    width: 180px;
-    height: 180px;
-    border-radius: 40px;
-    overflow: hidden;
-    box-shadow:
-      0 2px 4px rgba(0,0,0,0.15),
-      0 8px 24px rgba(0,0,0,0.35),
-      0 20px 48px rgba(0,0,0,0.25);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    cursor: pointer;
-  }
-  .icon-wrap:hover {
-    transform: scale(1.06) translateY(-4px);
-    box-shadow:
-      0 4px 8px rgba(0,0,0,0.2),
-      0 16px 40px rgba(0,0,0,0.45),
-      0 32px 64px rgba(0,0,0,0.3);
-  }
-  .icon-wrap svg { width: 180px; height: 180px; display: block; }
-  .name {
-    font-size: 16px;
-    font-weight: 700;
-    color: #FFFCF7;
-    text-align: center;
-    letter-spacing: -0.2px;
-  }
-  .tag {
-    font-size: 11px;
-    color: #6666AA;
-    text-align: center;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    margin-top: -10px;
-  }
-  .rec .name::after {
-    content: ' ✦';
-    color: #F5DFA0;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LittleNest Icons — Round 3</title>
+  <style>
+    body { background: #0F0F14; color: #F4ECE0; font-family: -apple-system, system-ui, sans-serif; padding: 40px; margin: 0; }
+    h1 { font-weight: 300; letter-spacing: 1px; margin-bottom: 8px; font-size: 26px; }
+    .subtitle { color: #8b8678; margin-bottom: 40px; font-size: 14px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; max-width: 1200px; margin: 0 auto; }
+    .tile { background: #1A1A22; border-radius: 16px; padding: 24px; }
+    .icon-wrap { aspect-ratio: 1 / 1; }
+    .icon-wrap svg { width: 100%; height: 100%; display: block; }
+    .name { font-weight: 600; margin-top: 16px; font-size: 15px; }
+    .note { color: #8b8678; font-size: 12px; line-height: 1.5; margin-top: 4px; }
+  </style>
 </head>
 <body>
+  <h1>LittleNest — Icon Concepts, Round 3</h1>
+  <p class="subtitle">Six fresh directions. Designer notes below each.</p>
+  <div class="grid">
 
-<h1>LittleNest — Icon Concepts</h1>
-<p class="subtitle">Hover to lift · click to inspect · ✦ marks the top pick</p>
-
-<div class="grid">
-
-  <!-- ① Moon & Nest — The signature icon -->
-  <div class="card rec">
-    <div class="icon-wrap">
-      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="g1bg" x1="0" y1="0" x2="0.6" y2="1">
-            <stop offset="0%" stop-color="#1C1B4B"/>
-            <stop offset="100%" stop-color="#0A0A1E"/>
-          </linearGradient>
-          <radialGradient id="g1moon" cx="45%" cy="40%" r="55%">
-            <stop offset="0%" stop-color="#FFF8D6"/>
-            <stop offset="60%" stop-color="#F5DFA0"/>
-            <stop offset="100%" stop-color="#D4A840"/>
-          </radialGradient>
-          <filter id="f1glow">
-            <feGaussianBlur stdDeviation="14" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-          <filter id="f1soft"><feGaussianBlur stdDeviation="6"/></filter>
-        </defs>
-        <!-- bg -->
-        <rect width="512" height="512" fill="url(#g1bg)"/>
-        <!-- moon glow halo -->
-        <circle cx="256" cy="196" r="110" fill="#F5DFA0" opacity="0.08" filter="url(#f1soft)"/>
-        <!-- crescent moon -->
-        <g filter="url(#f1glow)">
-          <circle cx="256" cy="196" r="96" fill="url(#g1moon)"/>
-          <circle cx="306" cy="170" r="80" fill="#0A0A1E"/>
-        </g>
-        <!-- moon craters -->
-        <circle cx="212" cy="182" r="9" fill="#E8C870" opacity="0.25"/>
-        <circle cx="228" cy="208" r="6" fill="#E8C870" opacity="0.18"/>
-        <circle cx="198" cy="210" r="5" fill="#E8C870" opacity="0.15"/>
-        <!-- stars -->
-        <circle cx="380" cy="100" r="3.5" fill="#FFFCF7" opacity="0.9"/>
-        <circle cx="340" cy="72" r="2.2" fill="#FFFCF7" opacity="0.7"/>
-        <circle cx="420" cy="145" r="2" fill="#FFFCF7" opacity="0.65"/>
-        <circle cx="110" cy="90" r="3" fill="#FFFCF7" opacity="0.8"/>
-        <circle cx="148" cy="130" r="1.8" fill="#FFFCF7" opacity="0.6"/>
-        <circle cx="80" cy="160" r="2.5" fill="#C9BBD9" opacity="0.65"/>
-        <circle cx="448" cy="200" r="1.8" fill="#C9BBD9" opacity="0.55"/>
-        <!-- nest body -->
-        <path d="M 136 370 Q 128 408 158 428 Q 196 450 256 452 Q 316 450 354 428 Q 384 408 376 370 Z"
-              fill="#7A5220" opacity="0.95"/>
-        <path d="M 152 373 Q 145 403 172 420 Q 206 440 256 442 Q 306 440 340 420 Q 367 403 360 373 Z"
-              fill="#B07838"/>
-        <path d="M 170 377 Q 165 400 186 414 Q 216 430 256 432 Q 296 430 326 414 Q 347 400 342 377 Z"
-              fill="#D4A050" opacity="0.85"/>
-        <!-- nest weave lines -->
-        <path d="M 142 388 Q 196 381 256 383 Q 316 381 370 388" stroke="#6A4418" stroke-width="3" fill="none" opacity="0.55" stroke-linecap="round"/>
-        <path d="M 140 400 Q 195 394 256 396 Q 317 394 372 400" stroke="#6A4418" stroke-width="2.5" fill="none" opacity="0.45" stroke-linecap="round"/>
-        <path d="M 145 412 Q 198 407 256 409 Q 314 407 367 412" stroke="#6A4418" stroke-width="2" fill="none" opacity="0.4" stroke-linecap="round"/>
-        <!-- nest rim -->
-        <path d="M 136 370 Q 166 353 204 362 Q 228 355 256 358 Q 284 355 308 362 Q 346 353 376 370"
-              stroke="#C49040" stroke-width="9" fill="none" stroke-linecap="round"/>
-        <path d="M 136 370 Q 166 353 204 362 Q 228 355 256 358 Q 284 355 308 362 Q 346 353 376 370"
-              stroke="#F0D080" stroke-width="4" fill="none" stroke-linecap="round"/>
-        <!-- small twig details -->
-        <path d="M 162 363 Q 150 342 168 326" stroke="#B07838" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.7"/>
-        <path d="M 350 363 Q 362 342 344 326" stroke="#B07838" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.7"/>
-        <!-- star accent -->
-        <text x="60" y="300" font-size="18" fill="#C9BBD9" opacity="0.5" font-family="Georgia,serif">⋆</text>
-        <text x="430" y="310" font-size="14" fill="#F5DFA0" opacity="0.4" font-family="Georgia,serif">⋆</text>
-      </svg>
+    <!-- ICON 1: Sleeping Fox Curled Into a Moon -->
+    <div class="tile">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Squircle clip -->
+            <clipPath id="squircle1">
+              <rect width="512" height="512" rx="115" ry="115"/>
+            </clipPath>
+            <!-- Background deep navy gradient -->
+            <linearGradient id="bg1" x1="0" y1="0" x2="0.4" y2="1">
+              <stop offset="0%" stop-color="#12182E"/>
+              <stop offset="55%" stop-color="#1C2540"/>
+              <stop offset="100%" stop-color="#0E1420"/>
+            </linearGradient>
+            <!-- Moon warm glow radial -->
+            <radialGradient id="moonGlow1" cx="48%" cy="52%" r="42%">
+              <stop offset="0%" stop-color="#F7D98B" stop-opacity="0.38"/>
+              <stop offset="60%" stop-color="#E8A84A" stop-opacity="0.10"/>
+              <stop offset="100%" stop-color="#E8A84A" stop-opacity="0"/>
+            </radialGradient>
+            <!-- Fox body gradient -->
+            <radialGradient id="foxBody" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#E8955A"/>
+              <stop offset="55%" stop-color="#C96E32"/>
+              <stop offset="100%" stop-color="#A3501C"/>
+            </radialGradient>
+            <!-- Fox belly cream -->
+            <radialGradient id="foxBelly" cx="50%" cy="50%" r="55%">
+              <stop offset="0%" stop-color="#F5E5C8"/>
+              <stop offset="100%" stop-color="#E8C98A"/>
+            </radialGradient>
+            <!-- Moon gradient warm ivory -->
+            <radialGradient id="moonColor" cx="38%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#FDF0C8"/>
+              <stop offset="50%" stop-color="#F5D97A"/>
+              <stop offset="100%" stop-color="#D9B84A"/>
+            </radialGradient>
+            <!-- Star glow filter -->
+            <filter id="starGlow1" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="5" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <!-- Soft ambient glow for moon -->
+            <filter id="moonGlowFilter" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="18" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <g clip-path="url(#squircle1)">
+            <!-- Background -->
+            <rect width="512" height="512" fill="url(#bg1)"/>
+            <!-- Tiny stars scattered -->
+            <circle cx="80" cy="60" r="1.5" fill="#FFFBE8" opacity="0.7"/>
+            <circle cx="140" cy="95" r="1" fill="#FFFBE8" opacity="0.5"/>
+            <circle cx="420" cy="75" r="2" fill="#FFFBE8" opacity="0.8"/>
+            <circle cx="460" cy="130" r="1.2" fill="#FFFBE8" opacity="0.5"/>
+            <circle cx="390" cy="45" r="1.5" fill="#FFFBE8" opacity="0.6"/>
+            <circle cx="60" cy="160" r="1" fill="#FFFBE8" opacity="0.4"/>
+            <circle cx="470" cy="200" r="1.2" fill="#FFFBE8" opacity="0.5"/>
+            <circle cx="50" cy="300" r="1.5" fill="#FFFBE8" opacity="0.3"/>
+            <circle cx="490" cy="380" r="1" fill="#FFFBE8" opacity="0.4"/>
+            <circle cx="100" cy="420" r="1.2" fill="#FFFBE8" opacity="0.35"/>
+            <circle cx="350" cy="460" r="1.5" fill="#FFFBE8" opacity="0.3"/>
+            <!-- Moon glow halo -->
+            <circle cx="256" cy="265" r="165" fill="url(#moonGlow1)"/>
+            <!-- MOON — crescent shape via two overlapping circles -->
+            <!-- Full moon disc -->
+            <circle cx="256" cy="265" r="148" fill="url(#moonColor)" filter="url(#moonGlowFilter)" opacity="0.92"/>
+            <!-- Bite-out to create crescent -->
+            <circle cx="320" cy="225" r="130" fill="url(#bg1)"/>
+            <!-- Subtle moon surface texture dots -->
+            <circle cx="192" cy="290" r="8" fill="#D4A83A" opacity="0.18"/>
+            <circle cx="175" cy="340" r="5" fill="#D4A83A" opacity="0.12"/>
+            <circle cx="210" cy="370" r="10" fill="#D4A83A" opacity="0.10"/>
+            <circle cx="155" cy="260" r="6" fill="#D4A83A" opacity="0.14"/>
+            <!-- FOX BODY — curled into the moon crescent -->
+            <!-- Tail sweeping arc -->
+            <path d="M 290 390 Q 180 440 155 370 Q 140 320 190 310 Q 230 305 250 340 Q 270 375 290 390 Z" fill="#C96E32" opacity="0.9"/>
+            <!-- Tail tip white -->
+            <ellipse cx="162" cy="372" rx="22" ry="16" fill="#F2E8D5" transform="rotate(-15,162,372)"/>
+            <!-- Fox body main mass -->
+            <ellipse cx="248" cy="335" rx="78" ry="62" fill="url(#foxBody)" transform="rotate(12,248,335)"/>
+            <!-- Belly/chest cream patch -->
+            <ellipse cx="248" cy="348" rx="42" ry="38" fill="url(#foxBelly)" opacity="0.85"/>
+            <!-- Head resting on crescent tip -->
+            <circle cx="205" cy="290" r="50" fill="url(#foxBody)"/>
+            <!-- Fox ear left (pointed) -->
+            <polygon points="175,260 155,210 200,248" fill="#C86830"/>
+            <!-- Ear inner -->
+            <polygon points="178,256 163,222 196,246" fill="#E8A898" opacity="0.7"/>
+            <!-- Fox ear right -->
+            <polygon points="225,255 215,205 245,248" fill="#C86830"/>
+            <polygon points="226,252 218,216 242,247" fill="#E8A898" opacity="0.7"/>
+            <!-- Fox face -->
+            <!-- Eyes closed (sleeping — curved lines) -->
+            <path d="M 190 292 Q 198 286 206 292" stroke="#6B3A1F" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M 212 290 Q 220 284 228 290" stroke="#6B3A1F" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <!-- Little cheek blush spots -->
+            <ellipse cx="186" cy="300" rx="9" ry="5" fill="#E8786A" opacity="0.35"/>
+            <ellipse cx="226" cy="298" rx="9" ry="5" fill="#E8786A" opacity="0.35"/>
+            <!-- Tiny nose -->
+            <ellipse cx="210" cy="302" rx="5" ry="3.5" fill="#6B3A1F"/>
+            <!-- SINGLE WHITE STAR above (prominent) -->
+            <g filter="url(#starGlow1)" transform="translate(390,100)">
+              <polygon points="0,-18 5,-7 17,-7 8,1 12,13 0,6 -12,13 -8,1 -17,-7 -5,-7" fill="#FFFDE0" opacity="0.95"/>
+            </g>
+            <!-- Two tiny stars -->
+            <polygon points="82,88 84,83 86,88 91,88 87,91 89,96 84,93 79,96 81,91 76,88" fill="#FFFDE0" opacity="0.55" transform="scale(0.7) translate(42,42)"/>
+            <polygon points="440,155 442,150 444,155 449,155 445,158 447,163 442,160 437,163 439,158 434,155" fill="#FFFDE0" opacity="0.45" transform="scale(0.6)"/>
+          </g>
+        </svg>
+      </div>
+      <div class="name">Sleeping Fox</div>
+      <div class="note">A storybook fox curled into the moon's crescent. Warm amber & deep navy — feels like an illustrated children's book cover at any size.</div>
     </div>
-    <div class="name">Moon & Nest</div>
-    <div class="tag">Sleep · Night · Home</div>
-  </div>
 
-  <!-- ② Sleeping Bear -->
-  <div class="card">
-    <div class="icon-wrap">
-      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="g2bg" x1="0" y1="0" x2="0.4" y2="1">
-            <stop offset="0%" stop-color="#5B4A8A"/>
-            <stop offset="100%" stop-color="#2C2252"/>
-          </linearGradient>
-          <radialGradient id="g2face" cx="50%" cy="42%" r="52%">
-            <stop offset="0%" stop-color="#FDECD8"/>
-            <stop offset="100%" stop-color="#F0C8A0"/>
-          </radialGradient>
-          <radialGradient id="g2ear" cx="40%" cy="35%" r="60%">
-            <stop offset="0%" stop-color="#FDECD8"/>
-            <stop offset="100%" stop-color="#E8B888"/>
-          </radialGradient>
-        </defs>
-        <rect width="512" height="512" fill="url(#g2bg)"/>
-        <!-- soft bg glow -->
-        <circle cx="256" cy="280" r="180" fill="#8068C0" opacity="0.12"/>
-        <!-- tiny stars -->
-        <circle cx="90" cy="100" r="2.5" fill="#FFFCF7" opacity="0.7"/>
-        <circle cx="420" cy="80" r="2" fill="#FFFCF7" opacity="0.6"/>
-        <circle cx="380" cy="140" r="1.5" fill="#C9BBD9" opacity="0.6"/>
-        <circle cx="130" cy="150" r="1.8" fill="#C9BBD9" opacity="0.55"/>
-        <circle cx="450" cy="180" r="2" fill="#FFFCF7" opacity="0.5"/>
-        <!-- tiny crescent above bear -->
-        <circle cx="340" cy="118" r="28" fill="#F5DFA0" opacity="0.9"/>
-        <circle cx="352" cy="110" r="23" fill="#2C2252"/>
-        <!-- ears -->
-        <circle cx="162" cy="192" r="58" fill="url(#g2ear)"/>
-        <circle cx="350" cy="192" r="58" fill="url(#g2ear)"/>
-        <!-- inner ears -->
-        <circle cx="162" cy="196" r="36" fill="#E8A090" opacity="0.55"/>
-        <circle cx="350" cy="196" r="36" fill="#E8A090" opacity="0.55"/>
-        <!-- face -->
-        <circle cx="256" cy="290" r="148" fill="url(#g2face)"/>
-        <!-- closed sleepy eyes -->
-        <path d="M 196 268 Q 214 257 232 268" stroke="#7A5030" stroke-width="7" fill="none" stroke-linecap="round"/>
-        <path d="M 280 268 Q 298 257 316 268" stroke="#7A5030" stroke-width="7" fill="none" stroke-linecap="round"/>
-        <!-- little lashes -->
-        <line x1="196" y1="268" x2="190" y2="258" stroke="#7A5030" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
-        <line x1="232" y1="268" x2="238" y2="258" stroke="#7A5030" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
-        <line x1="280" y1="268" x2="274" y2="258" stroke="#7A5030" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
-        <line x1="316" y1="268" x2="322" y2="258" stroke="#7A5030" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
-        <!-- nose -->
-        <ellipse cx="256" cy="308" rx="22" ry="15" fill="#C87050" opacity="0.85"/>
-        <!-- mouth -->
-        <path d="M 238 322 Q 256 336 274 322" stroke="#C87050" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.7"/>
-        <!-- blush cheeks -->
-        <ellipse cx="188" cy="318" rx="28" ry="18" fill="#F4A0A0" opacity="0.28"/>
-        <ellipse cx="324" cy="318" rx="28" ry="18" fill="#F4A0A0" opacity="0.28"/>
-        <!-- Z Z Z -->
-        <text x="370" y="210" font-size="26" fill="#C9BBD9" opacity="0.65" font-family="Georgia,serif" font-weight="bold">z</text>
-        <text x="396" y="182" font-size="20" fill="#C9BBD9" opacity="0.5" font-family="Georgia,serif" font-weight="bold">z</text>
-        <text x="416" y="158" font-size="15" fill="#C9BBD9" opacity="0.38" font-family="Georgia,serif" font-weight="bold">z</text>
-      </svg>
+    <!-- ICON 2: Hand-Painted Watercolor — spoon + moon ink sketch -->
+    <div class="tile">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <clipPath id="squircle2">
+              <rect width="512" height="512" rx="115" ry="115"/>
+            </clipPath>
+            <!-- Warm parchment background -->
+            <linearGradient id="bg2" x1="0" y1="0" x2="0.6" y2="1">
+              <stop offset="0%" stop-color="#FAF0E6"/>
+              <stop offset="40%" stop-color="#F5E6D8"/>
+              <stop offset="75%" stop-color="#EDD8C8"/>
+              <stop offset="100%" stop-color="#D8C4AC"/>
+            </linearGradient>
+            <!-- Watercolor wash blob 1 — pink -->
+            <radialGradient id="wash1" cx="40%" cy="35%" r="55%">
+              <stop offset="0%" stop-color="#F2AABB" stop-opacity="0.55"/>
+              <stop offset="60%" stop-color="#F2AABB" stop-opacity="0.18"/>
+              <stop offset="100%" stop-color="#F2AABB" stop-opacity="0"/>
+            </radialGradient>
+            <!-- Watercolor wash blob 2 — sage -->
+            <radialGradient id="wash2" cx="65%" cy="68%" r="48%">
+              <stop offset="0%" stop-color="#92B89A" stop-opacity="0.45"/>
+              <stop offset="55%" stop-color="#92B89A" stop-opacity="0.15"/>
+              <stop offset="100%" stop-color="#92B89A" stop-opacity="0"/>
+            </radialGradient>
+            <!-- Watercolor wash blob 3 — peach -->
+            <radialGradient id="wash3" cx="72%" cy="28%" r="40%">
+              <stop offset="0%" stop-color="#F0C090" stop-opacity="0.48"/>
+              <stop offset="60%" stop-color="#F0C090" stop-opacity="0.15"/>
+              <stop offset="100%" stop-color="#F0C090" stop-opacity="0"/>
+            </radialGradient>
+            <!-- Moon fill soft cream -->
+            <radialGradient id="moon2" cx="38%" cy="38%" r="62%">
+              <stop offset="0%" stop-color="#FFF8EC"/>
+              <stop offset="70%" stop-color="#F5DFA0"/>
+              <stop offset="100%" stop-color="#DFC070"/>
+            </radialGradient>
+            <filter id="inkBlur" x="-10%" y="-10%" width="120%" height="120%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="4" result="noise"/>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+          </defs>
+          <g clip-path="url(#squircle2)">
+            <!-- Parchment background -->
+            <rect width="512" height="512" fill="url(#bg2)"/>
+            <!-- Watercolor washes — large loose blobs -->
+            <ellipse cx="200" cy="180" rx="230" ry="190" fill="url(#wash1)" filter="url(#inkBlur)"/>
+            <ellipse cx="330" cy="340" rx="210" ry="185" fill="url(#wash2)" filter="url(#inkBlur)"/>
+            <ellipse cx="360" cy="145" rx="180" ry="155" fill="url(#wash3)" filter="url(#inkBlur)"/>
+            <!-- Paper texture grain lines (very subtle) -->
+            <line x1="0" y1="120" x2="512" y2="118" stroke="#C4A882" stroke-width="0.4" opacity="0.18"/>
+            <line x1="0" y1="240" x2="512" y2="238" stroke="#C4A882" stroke-width="0.4" opacity="0.14"/>
+            <line x1="0" y1="360" x2="512" y2="362" stroke="#C4A882" stroke-width="0.4" opacity="0.12"/>
+            <!-- MOON — ink line drawing style, filled watercolor -->
+            <!-- Moon disc -->
+            <circle cx="230" cy="225" r="130" fill="url(#moon2)" opacity="0.88"/>
+            <!-- Crescent shadow/bite -->
+            <circle cx="285" cy="198" r="112" fill="#EDD8C0" opacity="0.82"/>
+            <!-- Moon ink outline — slightly wobbly like hand-drawn -->
+            <circle cx="230" cy="225" r="130" fill="none" stroke="#7A5C3A" stroke-width="2.2" opacity="0.55" stroke-dasharray="8,3"/>
+            <!-- Moon face — sleeping dots (hand-drawn ink) -->
+            <path d="M 186 218 Q 195 210 204 218" stroke="#7A5C3A" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+            <path d="M 165 228 Q 170 235 178 230" stroke="#7A5C3A" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.5"/>
+            <!-- SPOON — large ink-drawn feeding spoon -->
+            <!-- Spoon handle -->
+            <path d="M 340 130 Q 330 200 310 280 Q 305 310 295 370 Q 290 400 285 440" stroke="#5A3A1E" stroke-width="7" fill="none" stroke-linecap="round"/>
+            <!-- Spoon bowl (top of spoon, rounded) -->
+            <ellipse cx="352" cy="108" rx="32" ry="22" fill="#8B6040" opacity="0.82" transform="rotate(-30,352,108)"/>
+            <ellipse cx="352" cy="108" rx="28" ry="18" fill="#C49A6A" opacity="0.55" transform="rotate(-30,352,108)"/>
+            <ellipse cx="352" cy="108" rx="32" ry="22" fill="none" stroke="#5A3A1E" stroke-width="2.2" opacity="0.7" transform="rotate(-30,352,108)"/>
+            <!-- Small stars — ink asterisks -->
+            <g opacity="0.6" stroke="#7A5C3A" stroke-width="1.8" stroke-linecap="round">
+              <!-- star 1 -->
+              <line x1="420" y1="310" x2="420" y2="328"/>
+              <line x1="411" y1="319" x2="429" y2="319"/>
+              <line x1="413" y1="312" x2="427" y2="326"/>
+              <line x1="413" y1="326" x2="427" y2="312"/>
+              <!-- star 2 -->
+              <line x1="95" y1="390" x2="95" y2="406"/>
+              <line x1="87" y1="398" x2="103" y2="398"/>
+              <line x1="89" y1="392" x2="101" y2="404"/>
+              <line x1="89" y1="404" x2="101" y2="392"/>
+              <!-- star 3 small -->
+              <line x1="450" y1="180" x2="450" y2="190"/>
+              <line x1="445" y1="185" x2="455" y2="185"/>
+            </g>
+            <!-- Tiny crescent moon ink mark, bottom left -->
+            <path d="M 80 350 Q 65 330 75 310 Q 95 320 90 345 Q 85 355 80 350 Z" fill="#7A5C3A" opacity="0.32"/>
+            <!-- LittleNest "L" letterform — fine ink, bottom right -->
+            <text x="390" y="460" font-family="Georgia,serif" font-size="52" fill="#7A5C3A" opacity="0.22" font-style="italic" font-weight="300">L</text>
+          </g>
+        </svg>
+      </div>
+      <div class="name">Watercolor Sketch</div>
+      <div class="note">Hand-painted washes in pink, sage, and peach with ink-line moon and feeding spoon. Children's-book cover energy — warm and organic.</div>
     </div>
-    <div class="name">Sleeping Bear</div>
-    <div class="tag">Sleep · Cute · Dreaming</div>
-  </div>
 
-  <!-- ③ Spoon & Heart -->
-  <div class="card">
-    <div class="icon-wrap">
-      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="g3bg" x1="0.1" y1="0" x2="0.9" y2="1">
-            <stop offset="0%" stop-color="#E8604A"/>
-            <stop offset="50%" stop-color="#D04070"/>
-            <stop offset="100%" stop-color="#901050"/>
-          </linearGradient>
-          <filter id="f3glow">
-            <feGaussianBlur stdDeviation="10" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <rect width="512" height="512" fill="url(#g3bg)"/>
-        <!-- soft overlay glow -->
-        <circle cx="256" cy="230" r="180" fill="#FF8060" opacity="0.1"/>
-        <!-- heart shape -->
-        <g filter="url(#f3glow)">
-          <path d="M 256 390
-                   C 200 350 100 290 100 200
-                   C 100 148 142 110 192 110
-                   C 218 110 240 122 256 142
-                   C 272 122 294 110 320 110
-                   C 370 110 412 148 412 200
-                   C 412 290 312 350 256 390 Z"
-                fill="#FFFCF7" opacity="0.96"/>
-        </g>
-        <!-- spoon silhouette inside heart -->
-        <ellipse cx="256" cy="192" rx="42" ry="48" fill="#E8604A" opacity="0.9"/>
-        <rect x="248" y="236" width="16" height="110" rx="8" fill="#E8604A" opacity="0.9"/>
-        <!-- spoon shine -->
-        <ellipse cx="246" cy="180" rx="12" ry="16" fill="white" opacity="0.3" transform="rotate(-15 246 180)"/>
-        <!-- tiny food dots on spoon -->
-        <circle cx="256" cy="195" r="5" fill="#FFFCF7" opacity="0.5"/>
-        <circle cx="244" cy="200" r="3.5" fill="#FFFCF7" opacity="0.4"/>
-        <circle cx="268" cy="200" r="3.5" fill="#FFFCF7" opacity="0.4"/>
-        <!-- sparkles -->
-        <text x="100" y="175" font-size="22" fill="#FFFCF7" opacity="0.45" font-family="Georgia,serif">✦</text>
-        <text x="374" y="165" font-size="16" fill="#FFFCF7" opacity="0.4" font-family="Georgia,serif">✦</text>
-        <text x="130" y="370" font-size="13" fill="#FFFCF7" opacity="0.3" font-family="Georgia,serif">✦</text>
-      </svg>
+    <!-- ICON 3: Liquid Glass / visionOS blob -->
+    <div class="tile">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <clipPath id="squircle3">
+              <rect width="512" height="512" rx="115" ry="115"/>
+            </clipPath>
+            <!-- Deep background gradient: deep plum to ink navy -->
+            <linearGradient id="bg3" x1="0.2" y1="0" x2="0.8" y2="1">
+              <stop offset="0%" stop-color="#1A0E2E"/>
+              <stop offset="40%" stop-color="#0F1628"/>
+              <stop offset="100%" stop-color="#060810"/>
+            </linearGradient>
+            <!-- Blob main fill: milky translucent white -->
+            <radialGradient id="blobFill" cx="38%" cy="32%" r="68%">
+              <stop offset="0%" stop-color="#FFF9F5" stop-opacity="0.96"/>
+              <stop offset="35%" stop-color="#F5EAD8" stop-opacity="0.92"/>
+              <stop offset="70%" stop-color="#EDD5B8" stop-opacity="0.85"/>
+              <stop offset="100%" stop-color="#D4B090" stop-opacity="0.80"/>
+            </radialGradient>
+            <!-- Blob inner glow highlight (top-left rim light) -->
+            <radialGradient id="blobHighlight" cx="28%" cy="22%" r="42%">
+              <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+              <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+            </radialGradient>
+            <!-- Star glow -->
+            <radialGradient id="starGlow3" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFFDE0" stop-opacity="1"/>
+              <stop offset="40%" stop-color="#FFE878" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="#FFE878" stop-opacity="0"/>
+            </radialGradient>
+            <!-- Spoon metal gradient -->
+            <linearGradient id="spoonMetal" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#E8E0D0"/>
+              <stop offset="45%" stop-color="#C8B898"/>
+              <stop offset="100%" stop-color="#A08860"/>
+            </linearGradient>
+            <!-- Blob shadow below -->
+            <filter id="blobShadow" x="-25%" y="-25%" width="150%" height="150%">
+              <feDropShadow dx="0" dy="18" stdDeviation="28" flood-color="#000000" flood-opacity="0.55"/>
+            </filter>
+            <!-- Soft glow behind star -->
+            <filter id="glowStar3" x="-200%" y="-200%" width="500%" height="500%">
+              <feGaussianBlur stdDeviation="14" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <!-- Ambient nebula background glow -->
+            <radialGradient id="nebula3" cx="50%" cy="45%" r="55%">
+              <stop offset="0%" stop-color="#4A2882" stop-opacity="0.38"/>
+              <stop offset="55%" stop-color="#2A1858" stop-opacity="0.18"/>
+              <stop offset="100%" stop-color="#0A0818" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <g clip-path="url(#squircle3)">
+            <!-- Dark background -->
+            <rect width="512" height="512" fill="url(#bg3)"/>
+            <!-- Nebula glow -->
+            <ellipse cx="256" cy="230" rx="260" ry="240" fill="url(#nebula3)"/>
+            <!-- Tiny background stars -->
+            <circle cx="55" cy="65" r="1.2" fill="#CCC8E0" opacity="0.5"/>
+            <circle cx="430" cy="55" r="1.5" fill="#CCC8E0" opacity="0.6"/>
+            <circle cx="480" cy="155" r="1" fill="#CCC8E0" opacity="0.4"/>
+            <circle cx="35" cy="200" r="1.2" fill="#CCC8E0" opacity="0.45"/>
+            <circle cx="490" cy="380" r="1" fill="#CCC8E0" opacity="0.35"/>
+            <circle cx="60" cy="430" r="1.5" fill="#CCC8E0" opacity="0.4"/>
+            <circle cx="400" cy="460" r="1" fill="#CCC8E0" opacity="0.3"/>
+            <!-- Star glow halo behind blob -->
+            <circle cx="258" cy="192" r="55" fill="#FFE878" filter="url(#glowStar3)" opacity="0.35"/>
+            <!-- LIQUID GLASS BLOB — organic rounded shape -->
+            <path d="
+              M 256,100
+              C 330,90 415,145 420,220
+              C 428,310 390,390 320,415
+              C 265,432 195,420 158,375
+              C 115,320 110,240 145,180
+              C 170,135 200,108 256,100 Z
+            " fill="url(#blobFill)" filter="url(#blobShadow)"/>
+            <!-- Blob inner highlight — glass shimmer top-left -->
+            <path d="
+              M 256,100
+              C 330,90 415,145 420,220
+              C 428,310 390,390 320,415
+              C 265,432 195,420 158,375
+              C 115,320 110,240 145,180
+              C 170,135 200,108 256,100 Z
+            " fill="url(#blobHighlight)"/>
+            <!-- Glass rim — subtle stroke -->
+            <path d="
+              M 256,100
+              C 330,90 415,145 420,220
+              C 428,310 390,390 320,415
+              C 265,432 195,420 158,375
+              C 115,320 110,240 145,180
+              C 170,135 200,108 256,100 Z
+            " fill="none" stroke="#FFFFFF" stroke-width="1.5" opacity="0.45"/>
+            <!-- Small secondary blob / reflection in top-right of glass -->
+            <ellipse cx="355" cy="158" rx="42" ry="28" fill="#FFFFFF" opacity="0.22" transform="rotate(-30,355,158)"/>
+            <!-- STAR inside — golden 6-point -->
+            <g filter="url(#glowStar3)" transform="translate(258,195)">
+              <!-- 6-point star -->
+              <polygon points="0,-30 8,-12 28,-12 14,0 20,20 0,10 -20,20 -14,0 -28,-12 -8,-12" fill="#FFE060"/>
+              <polygon points="0,-22 6,-10 20,-10 10,0 14,14 0,7 -14,14 -10,0 -20,-10 -6,-10" fill="#FFFBCC"/>
+            </g>
+            <!-- SPOON — elegant inside blob, centered lower -->
+            <!-- Handle -->
+            <path d="M 240 265 Q 248 310 252 360 Q 254 390 255 420" stroke="url(#spoonMetal)" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <!-- Spoon bowl -->
+            <ellipse cx="233" cy="255" rx="24" ry="16" fill="url(#spoonMetal)" transform="rotate(-18,233,255)"/>
+            <ellipse cx="233" cy="255" rx="18" ry="11" fill="#FFFAF0" opacity="0.6" transform="rotate(-18,233,255)"/>
+            <!-- Spoon highlight line -->
+            <path d="M 247 263 Q 252 270 250 280" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+            <!-- Tiny crescent moon above spoon (in glass) -->
+            <path d="M 295 278 Q 280 258 288 238 Q 308 248 304 272 Q 302 282 295 278 Z" fill="#8A6830" opacity="0.55"/>
+          </g>
+        </svg>
+      </div>
+      <div class="name">Liquid Glass</div>
+      <div class="note">Apple visionOS / iOS 26 aesthetic — a translucent milky blob with rim-light shimmer, golden star and a silver spoon. Elegant dark canvas.</div>
     </div>
-    <div class="name">Feed with Love</div>
-    <div class="tag">Feeding · Food · Nutrition</div>
-  </div>
 
-  <!-- ④ Baby Bottle Moon -->
-  <div class="card">
-    <div class="icon-wrap">
-      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="g4bg" x1="0" y1="0" x2="0.5" y2="1">
-            <stop offset="0%" stop-color="#1E5C6E"/>
-            <stop offset="100%" stop-color="#0D2D3A"/>
-          </linearGradient>
-          <linearGradient id="g4bottle" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#FFFCF7"/>
-            <stop offset="100%" stop-color="#E8F4F0"/>
-          </linearGradient>
-          <linearGradient id="g4milk" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#FFFCF7" stop-opacity="0.9"/>
-            <stop offset="100%" stop-color="#C8E8DC" stop-opacity="0.8"/>
-          </linearGradient>
-          <filter id="f4glow">
-            <feGaussianBlur stdDeviation="12" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <rect width="512" height="512" fill="url(#g4bg)"/>
-        <!-- bg glow -->
-        <circle cx="256" cy="270" r="160" fill="#3A9AB0" opacity="0.1"/>
-        <!-- stars -->
-        <circle cx="80" cy="100" r="2.5" fill="#FFFCF7" opacity="0.7"/>
-        <circle cx="420" cy="90" r="2" fill="#FFFCF7" opacity="0.65"/>
-        <circle cx="440" cy="160" r="1.8" fill="#A8D8C8" opacity="0.6"/>
-        <circle cx="70" cy="200" r="1.5" fill="#A8D8C8" opacity="0.55"/>
-        <!-- moon top right -->
-        <circle cx="390" cy="118" r="36" fill="#F5DFA0" opacity="0.88"/>
-        <circle cx="408" cy="106" r="30" fill="#0D2D3A"/>
-        <!-- bottle body -->
-        <g filter="url(#f4glow)">
-          <!-- bottle cap/nipple -->
-          <rect x="228" y="98" width="56" height="18" rx="8" fill="url(#g4bottle)"/>
-          <rect x="236" y="80" width="40" height="24" rx="10" fill="url(#g4bottle)" opacity="0.9"/>
-          <path d="M 248 80 Q 256 66 264 80" stroke="url(#g4bottle)" stroke-width="12" fill="none" stroke-linecap="round"/>
-          <!-- bottle collar -->
-          <rect x="220" y="114" width="72" height="14" rx="5" fill="url(#g4bottle)"/>
-          <!-- bottle body -->
-          <rect x="200" y="126" width="112" height="258" rx="52" fill="url(#g4bottle)"/>
-        </g>
-        <!-- milk level inside bottle -->
-        <rect x="202" y="230" width="108" height="152" rx="0" fill="url(#g4milk)" opacity="0.7"/>
-        <rect x="202" y="376" width="108" height="6" rx="3" fill="url(#g4milk)" opacity="0.4"/>
-        <!-- bottle measurement lines -->
-        <line x1="232" y1="265" x2="248" y2="265" stroke="#A8D8C8" stroke-width="2.5" opacity="0.6" stroke-linecap="round"/>
-        <line x1="226" y1="305" x2="248" y2="305" stroke="#A8D8C8" stroke-width="2.5" opacity="0.5" stroke-linecap="round"/>
-        <line x1="232" y1="345" x2="248" y2="345" stroke="#A8D8C8" stroke-width="2.5" opacity="0.45" stroke-linecap="round"/>
-        <!-- bottle shine -->
-        <rect x="282" y="140" width="14" height="80" rx="7" fill="white" opacity="0.25"/>
-        <!-- heart on bottle -->
-        <path d="M 256 192
-                 C 248 184 236 182 234 192
-                 C 232 200 240 208 256 218
-                 C 272 208 280 200 278 192
-                 C 276 182 264 184 256 192 Z"
-              fill="#E8604A" opacity="0.6"/>
-      </svg>
+    <!-- ICON 4: Sticker-Pop Crescent with Baby Bottle -->
+    <div class="tile">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <clipPath id="squircle4">
+              <rect width="512" height="512" rx="115" ry="115"/>
+            </clipPath>
+            <!-- Background warm peach solid to light pink -->
+            <linearGradient id="bg4" x1="0" y1="0" x2="0.5" y2="1">
+              <stop offset="0%" stop-color="#FFE8D6"/>
+              <stop offset="50%" stop-color="#FFD4E8"/>
+              <stop offset="100%" stop-color="#F8C8DC"/>
+            </linearGradient>
+            <!-- Crescent fill peach/coral gradient -->
+            <radialGradient id="crescent4" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#FFBB88"/>
+              <stop offset="45%" stop-color="#FF8B5E"/>
+              <stop offset="100%" stop-color="#E8603A"/>
+            </radialGradient>
+            <!-- Crescent shadow layer inside -->
+            <radialGradient id="crescentShadow" cx="80%" cy="80%" r="50%">
+              <stop offset="0%" stop-color="#C84020" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#C84020" stop-opacity="0"/>
+            </radialGradient>
+            <!-- Bottle body gradient -->
+            <linearGradient id="bottle4" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#A8D8F8"/>
+              <stop offset="45%" stop-color="#D8F0FF"/>
+              <stop offset="100%" stop-color="#A0C8E8"/>
+            </linearGradient>
+            <!-- Bottle milk gradient -->
+            <linearGradient id="milk4" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FFFFFF"/>
+              <stop offset="100%" stop-color="#EEF8FF"/>
+            </linearGradient>
+          </defs>
+          <g clip-path="url(#squircle4)">
+            <!-- Background soft pink-peach -->
+            <rect width="512" height="512" fill="url(#bg4)"/>
+            <!-- Background polka dots (sticker vibe) -->
+            <circle cx="60" cy="55" r="12" fill="#FFAACC" opacity="0.25"/>
+            <circle cx="450" cy="80" r="16" fill="#FFAACC" opacity="0.20"/>
+            <circle cx="480" cy="420" r="22" fill="#FFAACC" opacity="0.18"/>
+            <circle cx="40" cy="450" r="14" fill="#FFAACC" opacity="0.22"/>
+            <circle cx="240" cy="490" r="10" fill="#FFAACC" opacity="0.20"/>
+            <circle cx="490" cy="260" r="8" fill="#FF88AA" opacity="0.18"/>
+            <circle cx="22" cy="280" r="10" fill="#FF88AA" opacity="0.20"/>
+            <!-- Hard drop shadow for crescent sticker (offset to bottom-right) -->
+            <path d="M 262 80 C 360 82 435 152 438 248 C 441 344 378 422 288 440 C 225 452 160 430 125 382 C 90 334 92 268 128 220 C 112 195 108 165 120 140 C 148 90 210 78 262 80 Z" fill="#C84030" opacity="0.35" transform="translate(10,12)"/>
+            <!-- CRESCENT — large sticker shape -->
+            <!-- Full disc first -->
+            <circle cx="258" cy="265" r="188" fill="url(#crescent4)"/>
+            <!-- Bite-out to create crescent + shadow depth -->
+            <circle cx="258" cy="265" r="188" fill="url(#crescentShadow)"/>
+            <!-- Cutout for crescent shape -->
+            <circle cx="328" cy="222" r="170" fill="url(#bg4)"/>
+            <!-- White sticker border on crescent -->
+            <!-- We fake it by drawing a slightly larger crescent under in white -->
+            <!-- Actually: add white border by drawing an outline path -->
+            <path d="
+              M 258,77
+              C 362,78 446,152 446,265
+              C 446,378 362,452 258,453
+              C 195,453 140,428 103,382
+              C 67,336 67,193 103,148
+              C 140,102 194,77 258,77 Z
+            " fill="none" stroke="#FFFFFF" stroke-width="10" opacity="0.92"/>
+            <!-- BABY BOTTLE — nestled in crescent curve -->
+            <!-- Hard shadow for bottle -->
+            <rect x="303" y="168" width="62" height="138" rx="18" fill="#5090B8" opacity="0.30" transform="translate(6,8)"/>
+            <!-- Bottle nipple/top -->
+            <rect x="317" y="155" width="35" height="22" rx="10" fill="#E8D898"/>
+            <rect x="317" y="155" width="35" height="22" rx="10" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.7"/>
+            <!-- Bottle cap ring -->
+            <rect x="312" y="172" width="44" height="14" rx="6" fill="#C8B060"/>
+            <rect x="312" y="172" width="44" height="14" rx="6" fill="none" stroke="#FFFFFF" stroke-width="2.5" opacity="0.6"/>
+            <!-- Bottle body -->
+            <rect x="306" y="182" width="58" height="132" rx="20" fill="url(#bottle4)"/>
+            <!-- Milk inside -->
+            <rect x="312" y="210" width="46" height="96" rx="14" fill="url(#milk4)" opacity="0.88"/>
+            <!-- ml markings -->
+            <line x1="316" y1="230" x2="326" y2="230" stroke="#A0C8E0" stroke-width="2" opacity="0.7"/>
+            <line x1="316" y1="248" x2="330" y2="248" stroke="#A0C8E0" stroke-width="2" opacity="0.7"/>
+            <line x1="316" y1="266" x2="326" y2="266" stroke="#A0C8E0" stroke-width="2" opacity="0.7"/>
+            <line x1="316" y1="284" x2="330" y2="284" stroke="#A0C8E0" stroke-width="2" opacity="0.7"/>
+            <!-- Bottle shine highlight -->
+            <rect x="312" y="185" width="12" height="55" rx="6" fill="#FFFFFF" opacity="0.55"/>
+            <!-- Bottle sticker border -->
+            <rect x="306" y="182" width="58" height="132" rx="20" fill="none" stroke="#FFFFFF" stroke-width="3.5" opacity="0.8"/>
+            <!-- Star sticker top-right -->
+            <g transform="translate(415,95)">
+              <!-- Shadow -->
+              <polygon points="0,-22 6,-8 21,-8 10,1 15,17 0,8 -15,17 -10,1 -21,-8 -6,-8" fill="#E85030" opacity="0.35" transform="translate(3,3)"/>
+              <!-- Star -->
+              <polygon points="0,-22 6,-8 21,-8 10,1 15,17 0,8 -15,17 -10,1 -21,-8 -6,-8" fill="#FFFAE0"/>
+              <polygon points="0,-22 6,-8 21,-8 10,1 15,17 0,8 -15,17 -10,1 -21,-8 -6,-8" fill="none" stroke="#FFFFFF" stroke-width="2.5"/>
+            </g>
+            <!-- Small hearts scattered (sticker feel) -->
+            <path d="M 105 350 C 105 345 113 341 113 348 C 113 341 121 345 121 350 C 121 358 113 365 113 365 C 113 365 105 358 105 350 Z" fill="#FF7A9A" opacity="0.6"/>
+            <path d="M 418 345 C 418 341 424 338 424 343 C 424 338 430 341 430 345 C 430 351 424 357 424 357 C 424 357 418 351 418 345 Z" fill="#FF7A9A" opacity="0.45"/>
+          </g>
+        </svg>
+      </div>
+      <div class="name">Sticker-Pop Crescent</div>
+      <div class="note">Bold die-cut sticker aesthetic — coral crescent with hard drop shadow cradling a baby bottle, white border outlines, polka-dot background. High energy.</div>
     </div>
-    <div class="name">Baby Bottle</div>
-    <div class="tag">Feeding · Tracking · Night</div>
-  </div>
 
-  <!-- ⑤ Growth Leaf -->
-  <div class="card">
-    <div class="icon-wrap">
-      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="g5bg" x1="0.1" y1="0" x2="0.9" y2="1">
-            <stop offset="0%" stop-color="#2D6A4F"/>
-            <stop offset="100%" stop-color="#0D2E1C"/>
-          </linearGradient>
-          <linearGradient id="g5leaf" x1="0" y1="0" x2="0.5" y2="1">
-            <stop offset="0%" stop-color="#A8E8C0"/>
-            <stop offset="50%" stop-color="#52C076"/>
-            <stop offset="100%" stop-color="#28804A"/>
-          </linearGradient>
-          <filter id="f5glow">
-            <feGaussianBlur stdDeviation="10" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <rect width="512" height="512" fill="url(#g5bg)"/>
-        <!-- bg glow -->
-        <circle cx="256" cy="240" r="170" fill="#40A060" opacity="0.1"/>
-        <!-- sparkles -->
-        <circle cx="380" cy="100" r="3" fill="#A8E8C0" opacity="0.7"/>
-        <circle cx="420" cy="145" r="2" fill="#A8E8C0" opacity="0.55"/>
-        <circle cx="100" cy="110" r="2.5" fill="#A8E8C0" opacity="0.6"/>
-        <circle cx="80" cy="175" r="1.8" fill="#FFFCF7" opacity="0.5"/>
-        <circle cx="440" cy="240" r="2" fill="#FFFCF7" opacity="0.45"/>
-        <!-- leaf -->
-        <g filter="url(#f5glow)">
-          <path d="M 256 96
-                   C 340 128 400 196 388 296
-                   C 376 396 316 440 256 456
-                   C 196 440 136 396 124 296
-                   C 112 196 172 128 256 96 Z"
-                fill="url(#g5leaf)" opacity="0.95"/>
-        </g>
-        <!-- central vein -->
-        <path d="M 256 108 Q 256 275 256 444" stroke="#2D6A4F" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.7"/>
-        <!-- side veins left -->
-        <path d="M 256 180 Q 216 196 188 220" stroke="#2D6A4F" stroke-width="3" fill="none" opacity="0.5" stroke-linecap="round"/>
-        <path d="M 256 230 Q 206 244 178 268" stroke="#2D6A4F" stroke-width="2.5" fill="none" opacity="0.45" stroke-linecap="round"/>
-        <path d="M 256 280 Q 212 294 188 318" stroke="#2D6A4F" stroke-width="2.5" fill="none" opacity="0.4" stroke-linecap="round"/>
-        <path d="M 256 330 Q 218 344 200 366" stroke="#2D6A4F" stroke-width="2" fill="none" opacity="0.35" stroke-linecap="round"/>
-        <!-- side veins right -->
-        <path d="M 256 180 Q 296 196 324 220" stroke="#2D6A4F" stroke-width="3" fill="none" opacity="0.5" stroke-linecap="round"/>
-        <path d="M 256 230 Q 306 244 334 268" stroke="#2D6A4F" stroke-width="2.5" fill="none" opacity="0.45" stroke-linecap="round"/>
-        <path d="M 256 280 Q 300 294 324 318" stroke="#2D6A4F" stroke-width="2.5" fill="none" opacity="0.4" stroke-linecap="round"/>
-        <path d="M 256 330 Q 294 344 312 366" stroke="#2D6A4F" stroke-width="2" fill="none" opacity="0.35" stroke-linecap="round"/>
-        <!-- leaf sheen -->
-        <path d="M 256 110 C 300 138 340 190 335 264" stroke="white" stroke-width="10" fill="none" opacity="0.15" stroke-linecap="round"/>
-        <!-- heart at center -->
-        <path d="M 256 262
-                 C 244 250 226 248 224 262
-                 C 222 274 234 284 256 300
-                 C 278 284 290 274 288 262
-                 C 286 248 268 250 256 262 Z"
-              fill="white" opacity="0.85"/>
-        <!-- tiny star inside leaf tip -->
-        <circle cx="256" cy="118" r="6" fill="white" opacity="0.5"/>
-      </svg>
+    <!-- ICON 5: Constellation — sleeping baby silhouette -->
+    <div class="tile">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <clipPath id="squircle5">
+              <rect width="512" height="512" rx="115" ry="115"/>
+            </clipPath>
+            <!-- Deep space background -->
+            <linearGradient id="bg5" x1="0.1" y1="0" x2="0.9" y2="1">
+              <stop offset="0%" stop-color="#08101E"/>
+              <stop offset="35%" stop-color="#0D1828"/>
+              <stop offset="70%" stop-color="#0A1520"/>
+              <stop offset="100%" stop-color="#060C14"/>
+            </linearGradient>
+            <!-- Nebula color washes -->
+            <radialGradient id="nebula5a" cx="30%" cy="35%" r="45%">
+              <stop offset="0%" stop-color="#2A1858" stop-opacity="0.55"/>
+              <stop offset="70%" stop-color="#1A0E38" stop-opacity="0.20"/>
+              <stop offset="100%" stop-color="#080418" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="nebula5b" cx="72%" cy="65%" r="40%">
+              <stop offset="0%" stop-color="#0E2A48" stop-opacity="0.55"/>
+              <stop offset="70%" stop-color="#061828" stop-opacity="0.20"/>
+              <stop offset="100%" stop-color="#040C18" stop-opacity="0"/>
+            </radialGradient>
+            <!-- Star glow filter -->
+            <filter id="starGlow5" x="-200%" y="-200%" width="500%" height="500%">
+              <feGaussianBlur stdDeviation="4" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <!-- Bright star point glow -->
+            <filter id="brightStar5" x="-300%" y="-300%" width="700%" height="700%">
+              <feGaussianBlur stdDeviation="8" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <g clip-path="url(#squircle5)">
+            <!-- Space background -->
+            <rect width="512" height="512" fill="url(#bg5)"/>
+            <!-- Nebula soft washes -->
+            <ellipse cx="155" cy="175" rx="220" ry="195" fill="url(#nebula5a)"/>
+            <ellipse cx="360" cy="335" rx="210" ry="180" fill="url(#nebula5b)"/>
+            <!-- STAR FIELD — varied sizes and opacities -->
+            <!-- Background micro stars -->
+            <circle cx="45" cy="40" r="0.8" fill="#E8E0FF" opacity="0.4"/>
+            <circle cx="88" cy="28" r="0.6" fill="#E8E0FF" opacity="0.35"/>
+            <circle cx="145" cy="55" r="0.8" fill="#E8E0FF" opacity="0.5"/>
+            <circle cx="195" cy="32" r="0.6" fill="#E8E0FF" opacity="0.3"/>
+            <circle cx="270" cy="48" r="0.8" fill="#E8E0FF" opacity="0.45"/>
+            <circle cx="340" cy="30" r="0.7" fill="#E8E0FF" opacity="0.4"/>
+            <circle cx="405" cy="52" r="0.8" fill="#E8E0FF" opacity="0.5"/>
+            <circle cx="462" cy="38" r="0.6" fill="#E8E0FF" opacity="0.35"/>
+            <circle cx="490" cy="88" r="0.8" fill="#E8E0FF" opacity="0.45"/>
+            <circle cx="480" cy="145" r="0.7" fill="#E8E0FF" opacity="0.4"/>
+            <circle cx="500" cy="220" r="0.8" fill="#E8E0FF" opacity="0.35"/>
+            <circle cx="492" cy="300" r="0.7" fill="#E8E0FF" opacity="0.4"/>
+            <circle cx="478" cy="380" r="0.8" fill="#E8E0FF" opacity="0.45"/>
+            <circle cx="460" cy="455" r="0.6" fill="#E8E0FF" opacity="0.35"/>
+            <circle cx="380" cy="490" r="0.8" fill="#E8E0FF" opacity="0.4"/>
+            <circle cx="290" cy="500" r="0.6" fill="#E8E0FF" opacity="0.3"/>
+            <circle cx="200" cy="495" r="0.8" fill="#E8E0FF" opacity="0.4"/>
+            <circle cx="115" cy="480" r="0.7" fill="#E8E0FF" opacity="0.45"/>
+            <circle cx="42" cy="460" r="0.8" fill="#E8E0FF" opacity="0.35"/>
+            <circle cx="28" cy="380" r="0.6" fill="#E8E0FF" opacity="0.4"/>
+            <circle cx="20" cy="295" r="0.8" fill="#E8E0FF" opacity="0.45"/>
+            <circle cx="32" cy="205" r="0.7" fill="#E8E0FF" opacity="0.4"/>
+            <circle cx="22" cy="130" r="0.8" fill="#E8E0FF" opacity="0.35"/>
+            <!-- More scattered mid-field stars -->
+            <circle cx="120" cy="120" r="1.0" fill="#D8D4F8" opacity="0.45"/>
+            <circle cx="380" cy="110" r="1.0" fill="#D8D4F8" opacity="0.4"/>
+            <circle cx="440" cy="200" r="0.9" fill="#D8D4F8" opacity="0.5"/>
+            <circle cx="70" cy="340" r="1.0" fill="#D8D4F8" opacity="0.4"/>
+            <circle cx="430" cy="440" r="1.0" fill="#D8D4F8" opacity="0.45"/>
+            <circle cx="90" cy="170" r="0.8" fill="#D8D4F8" opacity="0.35"/>
+            <!-- CONSTELLATION NODES — the sleeping baby outline -->
+            <!-- Node positions (the key star points forming sleeping baby) -->
+            <!-- Head: 256,135 -->
+            <!-- Neck: 270,175 -->
+            <!-- Shoulder R: 300,200 -->
+            <!-- Elbow R: 330,235 -->
+            <!-- Hand R: 345,270 -->
+            <!-- Body top: 270,210 -->
+            <!-- Body bottom: 262,290 -->
+            <!-- Hip: 255,310 -->
+            <!-- Knee: 230,350 -->
+            <!-- Foot: 210,390 -->
+            <!-- Back of head: 230,135 -->
+            <!-- Ear: 248,148 -->
+            <!-- Shoulder L: 235,200 -->
+            <!-- Knee L back: 275,355 -->
+            <!-- Foot L: 290,400 -->
+            <!-- Constellation lines — hair-thin, slightly glowing -->
+            <g stroke="#B8CCFF" stroke-width="0.9" opacity="0.55" filter="url(#starGlow5)">
+              <!-- Head round -->
+              <path d="M 248,122 Q 270,118 285,130 Q 295,145 288,162 Q 278,175 262,178 Q 245,178 236,165 Q 228,150 235,136 Q 240,127 248,122 Z" fill="none"/>
+              <!-- Neck to shoulder -->
+              <line x1="262" y1="178" x2="275" y2="202"/>
+              <line x1="262" y1="178" x2="242" y2="200"/>
+              <!-- Body spine curve -->
+              <path d="M 258,202 Q 268,250 260,295" fill="none"/>
+              <!-- Right arm -->
+              <line x1="275" y1="202" x2="312" y2="230"/>
+              <line x1="312" y1="230" x2="338" y2="268"/>
+              <!-- Hip and legs curled -->
+              <line x1="260" y1="295" x2="250" y2="325"/>
+              <line x1="250" y1="325" x2="222" y2="360"/>
+              <line x1="222" y1="360" x2="205" y2="398"/>
+              <!-- Second leg (slightly behind) -->
+              <line x1="255" y1="318" x2="272" y2="358"/>
+              <line x1="272" y1="358" x2="285" y2="400"/>
+              <!-- Left shoulder to arm tucked -->
+              <line x1="242" y1="200" x2="215" y2="228"/>
+              <line x1="215" y1="228" x2="205" y2="268"/>
+            </g>
+            <!-- CONSTELLATION NODES — glowing star points at key intersections -->
+            <g filter="url(#brightStar5)">
+              <!-- Head top — brightest -->
+              <circle cx="256" cy="128" r="3.5" fill="#FFFFFF"/>
+              <!-- Head nodes -->
+              <circle cx="285" cy="132" r="2.2" fill="#E8EEFF" opacity="0.9"/>
+              <circle cx="290" cy="155" r="2.0" fill="#E8EEFF" opacity="0.85"/>
+              <circle cx="265" cy="178" r="2.5" fill="#E8EEFF" opacity="0.9"/>
+              <circle cx="238" cy="170" r="2.0" fill="#E8EEFF" opacity="0.85"/>
+              <circle cx="232" cy="138" r="2.2" fill="#E8EEFF" opacity="0.88"/>
+              <!-- Body nodes -->
+              <circle cx="275" cy="202" r="2.8" fill="#D8E4FF" opacity="0.9"/>
+              <circle cx="242" cy="200" r="2.2" fill="#D8E4FF" opacity="0.85"/>
+              <circle cx="260" cy="255" r="2.0" fill="#D8E4FF" opacity="0.8"/>
+              <circle cx="260" cy="295" r="2.5" fill="#D8E4FF" opacity="0.88"/>
+              <!-- Arm nodes -->
+              <circle cx="312" cy="230" r="2.2" fill="#C8D8FF" opacity="0.85"/>
+              <circle cx="338" cy="268" r="2.8" fill="#C8D8FF" opacity="0.9"/>
+              <circle cx="215" cy="228" r="2.0" fill="#C8D8FF" opacity="0.82"/>
+              <circle cx="205" cy="268" r="2.2" fill="#C8D8FF" opacity="0.85"/>
+              <!-- Leg nodes -->
+              <circle cx="250" cy="325" r="2.2" fill="#B8CCFF" opacity="0.85"/>
+              <circle cx="222" cy="360" r="2.5" fill="#B8CCFF" opacity="0.9"/>
+              <circle cx="205" cy="398" r="2.8" fill="#B8CCFF" opacity="0.88"/>
+              <circle cx="272" cy="358" r="2.0" fill="#B8CCFF" opacity="0.82"/>
+              <circle cx="285" cy="400" r="2.2" fill="#B8CCFF" opacity="0.85"/>
+            </g>
+            <!-- Bright feature stars — non-constellation, scattered -->
+            <g filter="url(#brightStar5)">
+              <circle cx="412" cy="88" r="2.8" fill="#FFFBE8" opacity="0.95"/>
+              <circle cx="82" cy="418" r="2.5" fill="#FFFBE8" opacity="0.88"/>
+              <circle cx="455" cy="340" r="2.0" fill="#FFFBE8" opacity="0.82"/>
+              <circle cx="65" cy="190" r="2.2" fill="#FFFBE8" opacity="0.88"/>
+              <circle cx="380" cy="478" r="2.5" fill="#FFFBE8" opacity="0.85"/>
+            </g>
+            <!-- 4-pointed sparkle at top-right bright star -->
+            <g filter="url(#brightStar5)" transform="translate(412,88)">
+              <line x1="0" y1="-9" x2="0" y2="9" stroke="#FFFBE8" stroke-width="1.2" opacity="0.9"/>
+              <line x1="-9" y1="0" x2="9" y2="0" stroke="#FFFBE8" stroke-width="1.2" opacity="0.9"/>
+              <line x1="-5" y1="-5" x2="5" y2="5" stroke="#FFFBE8" stroke-width="0.7" opacity="0.6"/>
+              <line x1="5" y1="-5" x2="-5" y2="5" stroke="#FFFBE8" stroke-width="0.7" opacity="0.6"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="name">Constellation Baby</div>
+      <div class="note">Star points connected by fine lines form a sleeping newborn on a deep-space canvas. Mysterious and elegant — reads beautifully small on a phone home screen.</div>
     </div>
-    <div class="name">Growth Leaf</div>
-    <div class="tag">Growth · Nature · Life</div>
-  </div>
 
-  <!-- ⑥ Star Lullaby -->
-  <div class="card">
-    <div class="icon-wrap">
-      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="g6bg" x1="0.2" y1="0" x2="0.8" y2="1">
-            <stop offset="0%" stop-color="#3D1F6E"/>
-            <stop offset="100%" stop-color="#150A2E"/>
-          </linearGradient>
-          <radialGradient id="g6star" cx="50%" cy="45%" r="55%">
-            <stop offset="0%" stop-color="#FFF8D0"/>
-            <stop offset="50%" stop-color="#F5DFA0"/>
-            <stop offset="100%" stop-color="#C8A030"/>
-          </radialGradient>
-          <filter id="f6glow">
-            <feGaussianBlur stdDeviation="16" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-          <filter id="f6soft"><feGaussianBlur stdDeviation="5"/></filter>
-        </defs>
-        <rect width="512" height="512" fill="url(#g6bg)"/>
-        <!-- star field background -->
-        <circle cx="80" cy="80" r="1.8" fill="#FFFCF7" opacity="0.8"/>
-        <circle cx="430" cy="70" r="1.5" fill="#FFFCF7" opacity="0.7"/>
-        <circle cx="460" cy="160" r="2" fill="#FFFCF7" opacity="0.6"/>
-        <circle cx="50" cy="180" r="1.5" fill="#FFFCF7" opacity="0.65"/>
-        <circle cx="100" cy="320" r="1.8" fill="#C9BBD9" opacity="0.55"/>
-        <circle cx="450" cy="350" r="1.5" fill="#C9BBD9" opacity="0.5"/>
-        <circle cx="390" cy="430" r="2" fill="#FFFCF7" opacity="0.45"/>
-        <circle cx="120" cy="420" r="1.5" fill="#FFFCF7" opacity="0.4"/>
-        <circle cx="330" cy="60" r="1.2" fill="#C9BBD9" opacity="0.6"/>
-        <circle cx="180" cy="50" r="1.5" fill="#FFFCF7" opacity="0.55"/>
-        <!-- glow behind star -->
-        <circle cx="256" cy="248" r="130" fill="#F5DFA0" opacity="0.07" filter="url(#f6soft)"/>
-        <!-- 5-pointed star — elegant rounded points -->
-        <g filter="url(#f6glow)">
-          <polygon
-            points="256,88  283,175  374,175  302,228  328,316  256,262  184,316  210,228  138,175  229,175"
-            fill="url(#g6star)"/>
-        </g>
-        <!-- star inner glow detail -->
-        <polygon
-          points="256,118  276,178  340,178  290,214  310,275  256,238  202,275  222,214  172,178  236,178"
-          fill="#FFF8D0" opacity="0.25"/>
-        <!-- small secondary stars -->
-        <g opacity="0.7">
-          <!-- left small star -->
-          <polygon points="108,282  114,300  133,300  118,311  124,329  108,318  92,329  98,311  83,300  102,300" fill="#C9BBD9" opacity="0.6"/>
-          <!-- right small star -->
-          <polygon points="404,310  409,325  425,325  412,334  417,350  404,340  391,350  396,334  383,325  399,325" fill="#C9BBD9" opacity="0.5"/>
-        </g>
-        <!-- crescent moon small bottom -->
-        <circle cx="256" cy="418" r="28" fill="#F5DFA0" opacity="0.7"/>
-        <circle cx="268" cy="412" r="23" fill="#150A2E"/>
-      </svg>
+    <!-- ICON 6: Olive Branch Nest with glowing egg-star -->
+    <div class="tile">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <clipPath id="squircle6">
+              <rect width="512" height="512" rx="115" ry="115"/>
+            </clipPath>
+            <!-- Warm cream background -->
+            <linearGradient id="bg6" x1="0" y1="0" x2="0.5" y2="1">
+              <stop offset="0%" stop-color="#FBF4E8"/>
+              <stop offset="45%" stop-color="#F4E6CC"/>
+              <stop offset="100%" stop-color="#E8D4B0"/>
+            </linearGradient>
+            <!-- Subtle warm vignette -->
+            <radialGradient id="vignette6" cx="50%" cy="50%" r="70%">
+              <stop offset="50%" stop-color="#FBF4E8" stop-opacity="0"/>
+              <stop offset="100%" stop-color="#C8A870" stop-opacity="0.35"/>
+            </radialGradient>
+            <!-- Nest branch warm honey-tan -->
+            <linearGradient id="branch6" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#C8904A"/>
+              <stop offset="50%" stop-color="#A87038"/>
+              <stop offset="100%" stop-color="#7A5020"/>
+            </linearGradient>
+            <!-- Nest interior shadow -->
+            <radialGradient id="nestInner" cx="50%" cy="65%" r="55%">
+              <stop offset="0%" stop-color="#7A5020" stop-opacity="0.4"/>
+              <stop offset="70%" stop-color="#7A5020" stop-opacity="0.12"/>
+              <stop offset="100%" stop-color="#7A5020" stop-opacity="0"/>
+            </radialGradient>
+            <!-- Egg gradient — warm ivory with soft sheen -->
+            <radialGradient id="egg6" cx="38%" cy="30%" r="65%">
+              <stop offset="0%" stop-color="#FFF8F0"/>
+              <stop offset="50%" stop-color="#F8EAD4"/>
+              <stop offset="100%" stop-color="#E8CCB0"/>
+            </radialGradient>
+            <!-- Egg inner glow (star light inside egg) -->
+            <radialGradient id="eggGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFF8A0" stop-opacity="0.75"/>
+              <stop offset="55%" stop-color="#FFD858" stop-opacity="0.30"/>
+              <stop offset="100%" stop-color="#FFD858" stop-opacity="0"/>
+            </radialGradient>
+            <!-- Sage leaf gradient -->
+            <linearGradient id="leaf6a" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#A8C890"/>
+              <stop offset="100%" stop-color="#6A9860"/>
+            </linearGradient>
+            <linearGradient id="leaf6b" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#90B878"/>
+              <stop offset="100%" stop-color="#587848"/>
+            </linearGradient>
+            <!-- Star glow filter -->
+            <filter id="eggStarGlow" x="-200%" y="-200%" width="500%" height="500%">
+              <feGaussianBlur stdDeviation="10" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <!-- Nest drop shadow -->
+            <filter id="nestShadow" x="-15%" y="-15%" width="130%" height="130%">
+              <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#7A5020" flood-opacity="0.28"/>
+            </filter>
+          </defs>
+          <g clip-path="url(#squircle6)">
+            <!-- Warm background -->
+            <rect width="512" height="512" fill="url(#bg6)"/>
+            <rect width="512" height="512" fill="url(#vignette6)"/>
+            <!-- OLIVE BRANCHES — left side -->
+            <!-- Main branch arc left -->
+            <path d="M 60 380 Q 120 310 180 280 Q 220 265 256 268" stroke="url(#branch6)" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <!-- Left branch leaves -->
+            <!-- Leaf cluster 1 -->
+            <ellipse cx="110" cy="338" rx="22" ry="9" fill="url(#leaf6a)" transform="rotate(-45,110,338)"/>
+            <ellipse cx="110" cy="338" rx="22" ry="9" fill="none" stroke="#5A8850" stroke-width="1" opacity="0.5" transform="rotate(-45,110,338)"/>
+            <line x1="97" y1="352" x2="123" y2="325" stroke="#5A8850" stroke-width="0.8" opacity="0.5"/>
+            <ellipse cx="130" cy="320" rx="22" ry="8" fill="url(#leaf6a)" transform="rotate(-52,130,320)"/>
+            <line x1="117" y1="332" x2="143" y2="308" stroke="#5A8850" stroke-width="0.8" opacity="0.5"/>
+            <ellipse cx="92" cy="355" rx="18" ry="7" fill="url(#leaf6b)" transform="rotate(-35,92,355)"/>
+            <!-- Leaf cluster 2 -->
+            <ellipse cx="162" cy="295" rx="22" ry="8" fill="url(#leaf6a)" transform="rotate(-60,162,295)"/>
+            <line x1="150" y1="306" x2="174" y2="284" stroke="#5A8850" stroke-width="0.8" opacity="0.5"/>
+            <ellipse cx="180" cy="280" rx="20" ry="7" fill="url(#leaf6b)" transform="rotate(-68,180,280)"/>
+            <!-- Olive berries left -->
+            <circle cx="148" cy="308" r="5" fill="#7A9850" opacity="0.8"/>
+            <circle cx="168" cy="298" r="4" fill="#6A8840" opacity="0.7"/>
+            <!-- RIGHT BRANCH arc -->
+            <path d="M 450 380 Q 390 310 330 280 Q 295 265 256 268" stroke="url(#branch6)" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <!-- Right branch leaves -->
+            <ellipse cx="400" cy="338" rx="22" ry="9" fill="url(#leaf6a)" transform="rotate(45,400,338)"/>
+            <line x1="388" y1="326" x2="412" y2="350" stroke="#5A8850" stroke-width="0.8" opacity="0.5"/>
+            <ellipse cx="378" cy="320" rx="22" ry="8" fill="url(#leaf6a)" transform="rotate(52,378,320)"/>
+            <ellipse cx="418" cy="355" rx="18" ry="7" fill="url(#leaf6b)" transform="rotate(35,418,355)"/>
+            <ellipse cx="345" cy="295" rx="22" ry="8" fill="url(#leaf6a)" transform="rotate(60,345,295)"/>
+            <ellipse cx="328" cy="280" rx="20" ry="7" fill="url(#leaf6b)" transform="rotate(68,328,280)"/>
+            <!-- Olive berries right -->
+            <circle cx="360" cy="308" r="5" fill="#7A9850" opacity="0.8"/>
+            <circle cx="340" cy="298" r="4" fill="#6A8840" opacity="0.7"/>
+            <!-- TOP branches arching over -->
+            <path d="M 130 260 Q 180 200 256 185 Q 332 200 380 260" stroke="url(#branch6)" stroke-width="7" fill="none" stroke-linecap="round"/>
+            <!-- Top leaves left -->
+            <ellipse cx="165" cy="220" rx="20" ry="7" fill="url(#leaf6a)" transform="rotate(-70,165,220)"/>
+            <ellipse cx="185" cy="205" rx="18" ry="6.5" fill="url(#leaf6b)" transform="rotate(-78,185,205)"/>
+            <ellipse cx="148" cy="238" rx="18" ry="7" fill="url(#leaf6a)" transform="rotate(-55,148,238)"/>
+            <!-- Top leaves right -->
+            <ellipse cx="345" cy="220" rx="20" ry="7" fill="url(#leaf6a)" transform="rotate(70,345,220)"/>
+            <ellipse cx="325" cy="205" rx="18" ry="6.5" fill="url(#leaf6b)" transform="rotate(78,325,205)"/>
+            <ellipse cx="362" cy="238" rx="18" ry="7" fill="url(#leaf6a)" transform="rotate(55,362,238)"/>
+            <!-- Top berries -->
+            <circle cx="255" cy="185" r="5.5" fill="#7A9850" opacity="0.75"/>
+            <circle cx="240" cy="190" r="4" fill="#6A8840" opacity="0.65"/>
+            <circle cx="272" cy="190" r="4" fill="#6A8840" opacity="0.65"/>
+            <!-- NEST BODY — woven twigs, elliptical bowl shape -->
+            <!-- Nest shadow / base shape -->
+            <ellipse cx="256" cy="330" rx="148" ry="68" fill="#8A6030" opacity="0.22" transform="translate(0,12)"/>
+            <!-- Nest body main -->
+            <ellipse cx="256" cy="328" rx="148" ry="62" fill="#C89050" filter="url(#nestShadow)"/>
+            <!-- Woven twig texture lines — horizontal arcs -->
+            <g stroke="#7A5020" stroke-width="2.5" fill="none" opacity="0.55">
+              <path d="M 115 318 Q 256 305 397 318"/>
+              <path d="M 118 330 Q 256 317 394 330"/>
+              <path d="M 122 342 Q 256 330 390 342"/>
+              <path d="M 128 354 Q 256 342 384 354"/>
+              <path d="M 136 365 Q 256 354 376 365"/>
+              <path d="M 146 375 Q 256 365 366 375"/>
+              <path d="M 160 383 Q 256 374 352 383"/>
+            </g>
+            <!-- Woven twig lines — diagonal cross-weave -->
+            <g stroke="#9A6828" stroke-width="1.8" fill="none" opacity="0.38">
+              <line x1="140" y1="310" x2="172" y2="390"/>
+              <line x1="175" y1="308" x2="202" y2="388"/>
+              <line x1="210" y1="307" x2="232" y2="387"/>
+              <line x1="245" y1="306" x2="258" y2="386"/>
+              <line x1="280" y1="307" x2="278" y2="386"/>
+              <line x1="315" y1="308" x2="305" y2="387"/>
+              <line x1="350" y1="310" x2="335" y2="388"/>
+              <line x1="380" y1="313" x2="362" y2="387"/>
+            </g>
+            <!-- Nest inner shadow / bowl depth -->
+            <ellipse cx="256" cy="308" rx="112" ry="46" fill="url(#nestInner)"/>
+            <!-- EGG inner glow (light emanating) -->
+            <ellipse cx="258" cy="252" rx="72" ry="52" fill="url(#eggGlow)" filter="url(#eggStarGlow)" opacity="0.8"/>
+            <!-- EGG body -->
+            <ellipse cx="256" cy="255" rx="64" ry="50" fill="url(#egg6)"/>
+            <!-- Egg sheen highlight -->
+            <ellipse cx="238" cy="236" rx="24" ry="16" fill="#FFFFFF" opacity="0.42" transform="rotate(-15,238,236)"/>
+            <!-- Egg subtle outline -->
+            <ellipse cx="256" cy="255" rx="64" ry="50" fill="none" stroke="#D4A870" stroke-width="1.5" opacity="0.45"/>
+            <!-- STAR inside egg — golden, small -->
+            <g filter="url(#eggStarGlow)" transform="translate(256,252)">
+              <polygon points="0,-18 5,-7 18,-7 8,1 12,14 0,7 -12,14 -8,1 -18,-7 -5,-7" fill="#FFD848"/>
+              <polygon points="0,-12 3,-5 12,-5 5,0 8,9 0,5 -8,9 -5,0 -12,-5 -3,-5" fill="#FFFBE0"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="name">Olive Branch Nest</div>
+      <div class="note">Woven nest of olive branches holds a glowing egg with a star inside. Sage leaves + warm honey tones — "LittleNest" as literal visual wordplay, full of warmth.</div>
     </div>
-    <div class="name">Star Lullaby</div>
-    <div class="tag">Magic · Night · Dreams</div>
+
   </div>
-
-</div>
-
-<p style="text-align:center;margin-top:52px;color:#44446A;font-size:12px;letter-spacing:0.5px;">
-  LittleNest · 6 Icon Concepts · 512 × 512 SVG
-</p>
-
 </body>
 </html>
