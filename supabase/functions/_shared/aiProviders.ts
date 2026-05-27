@@ -3,6 +3,7 @@ import type { AiSource, ConfidenceLabel, ProviderAnswer } from './responseSchema
 function requireSecret(name: string) {
   const value = Deno.env.get(name);
   if (!value) {
+    console.error(`[aiProviders] Missing required env var: ${name}`);
     throw new Error(`Missing secret: ${name}`);
   }
   return value;
@@ -275,11 +276,12 @@ export async function fetchGeminiText(
   useSearch: boolean,
 ): Promise<{ text: string; sources: AiSource[]; raw: unknown }> {
   const apiKey = requireSecret('GEMINI_API_KEY');
-  const model = Deno.env.get('GEMINI_MODEL') ?? 'gemini-2.0-flash';
+  const model = Deno.env.get('GEMINI_MODEL') ?? 'gemini-2.5-flash';
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-    {
+  let response: Response;
+  try {
+    response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'x-goog-api-key': apiKey,
@@ -289,24 +291,77 @@ export async function fetchGeminiText(
         contents: [{ parts: [{ text: prompt }] }],
         tools: useSearch ? [{ google_search: {} }] : undefined,
       }),
-    },
-  );
-
-  const json = await response.json();
-  if (!response.ok) {
-    throw new Error(`Gemini failed: ${JSON.stringify(json)}`);
+    });
+  } catch (networkError) {
+    console.error('[gemini] network error before response', {
+      model,
+      useSearch,
+      endpoint,
+      error: networkError instanceof Error ? networkError.message : String(networkError),
+    });
+    throw networkError;
   }
 
+  const rawBody = await response.text();
+  let json: unknown;
+  try {
+    json = rawBody ? JSON.parse(rawBody) : {};
+  } catch (parseError) {
+    console.error('[gemini] failed to parse JSON response', {
+      model,
+      useSearch,
+      status: response.status,
+      statusText: response.statusText,
+      bodySnippet: rawBody.slice(0, 1000),
+      parseError: parseError instanceof Error ? parseError.message : String(parseError),
+    });
+    throw new Error(
+      `Gemini returned non-JSON (status ${response.status}): ${rawBody.slice(0, 500)}`,
+    );
+  }
+
+  if (!response.ok) {
+    console.error('[gemini] non-OK response', {
+      model,
+      useSearch,
+      status: response.status,
+      statusText: response.statusText,
+      body: json,
+    });
+    throw new Error(`Gemini failed (status ${response.status}): ${JSON.stringify(json)}`);
+  }
+
+  const candidates = (json as { candidates?: unknown }).candidates;
   const text =
-    json.candidates?.[0]?.content?.parts
-      ?.map((part: { text?: string }) => part.text ?? '')
+    (json as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> })
+      .candidates?.[0]?.content?.parts
+      ?.map((part) => part.text ?? '')
       .join('') ?? '';
+
+  if (!text) {
+    console.error('[gemini] empty text in candidates', {
+      model,
+      useSearch,
+      candidatesCount: Array.isArray(candidates) ? candidates.length : 0,
+      bodySnippet: JSON.stringify(json).slice(0, 1000),
+    });
+  }
+
   const sources = extractGeminiSources(json as Record<string, unknown>);
 
   return { text, sources, raw: json };
 }
 
 export async function callGemini(prompt: string, useSearch: boolean): Promise<ProviderAnswer> {
-  const { text, sources, raw } = await fetchGeminiText(prompt, useSearch);
-  return parseAnswer('gemini', text, raw, sources);
+  try {
+    const { text, sources, raw } = await fetchGeminiText(prompt, useSearch);
+    return parseAnswer('gemini', text, raw, sources);
+  } catch (error) {
+    console.error('[gemini] callGemini failed', {
+      useSearch,
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+    throw error;
+  }
 }
