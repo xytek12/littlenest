@@ -275,7 +275,7 @@ export async function fetchGeminiText(
   useSearch: boolean,
 ): Promise<{ text: string; sources: AiSource[]; raw: unknown }> {
   const apiKey = requireSecret('GEMINI_API_KEY');
-  const model = Deno.env.get('GEMINI_MODEL') ?? 'gemini-2.5-flash';
+  const model = Deno.env.get('GEMINI_MODEL') ?? 'gemini-2.0-flash';
 
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,

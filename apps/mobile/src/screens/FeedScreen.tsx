@@ -16,7 +16,7 @@ import { usePrototypeState } from '../state/PrototypeState';
 import { getChildAccent, getPalette } from '../theme';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
-import { formatDurationSeconds } from '../utils/formatDuration';
+import { formatDurationHuman, formatDurationSeconds } from '../utils/formatDuration';
 import { formatHistoryTime } from '../utils/formatHistoryDate';
 import { entriesInLastDays, groupEntriesByDay } from '../utils/historyFilters';
 import { useTickEverySecond } from '../utils/useTickEverySecond';
@@ -114,9 +114,9 @@ export function FeedScreen() {
             ? labels.history.bottleRowInDay(time, entry.amount, entry.unit)
             : labels.history.nursingRowInDay(
                 time,
-                formatDurationSeconds(entry.totalSeconds),
-                formatDurationSeconds(entry.leftSeconds),
-                formatDurationSeconds(entry.rightSeconds),
+                formatDurationHuman(entry.totalSeconds, family.language),
+                formatDurationHuman(entry.leftSeconds, family.language),
+                formatDurationHuman(entry.rightSeconds, family.language),
               );
         return { key: entry.id, primary, secondary, accentColor };
       }),

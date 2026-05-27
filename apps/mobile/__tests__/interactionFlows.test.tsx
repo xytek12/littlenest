@@ -194,8 +194,9 @@ describe('interaction flows', () => {
     fireEvent.press(getByText('Stop right'));
     fireEvent.press(getByText('Finish nursing session'));
 
-    // New inline history card format: "Nursing · {total} (L {left} / R {right})".
+    // Inline history uses human-readable durations (minutes only, seconds dropped).
+    // formatDurationHuman: 770s→"12 minutes", 455s→"7 minutes", 315s→"5 minutes".
     // (Testing Library normalizes runs of whitespace to a single space.)
-    expect(queryAllByText(/Nursing · 12:50 \(L 07:35 \/ R 05:15\)/).length).toBeGreaterThan(0);
+    expect(queryAllByText(/Nursing · 12 minutes \(L 7 minutes \/ R 5 minutes\)/).length).toBeGreaterThan(0);
   });
 });

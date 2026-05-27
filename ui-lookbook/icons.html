@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LittleNest — Icon Concepts</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1A1A2E;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    padding: 48px 40px 64px;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #FFFCF7;
+    text-align: center;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #8888AA;
+    font-size: 14px;
+    margin-bottom: 52px;
+    letter-spacing: 0.2px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .icon-wrap {
+    width: 180px;
+    height: 180px;
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow:
+      0 2px 4px rgba(0,0,0,0.15),
+      0 8px 24px rgba(0,0,0,0.35),
+      0 20px 48px rgba(0,0,0,0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+  }
+  .icon-wrap:hover {
+    transform: scale(1.06) translateY(-4px);
+    box-shadow:
+      0 4px 8px rgba(0,0,0,0.2),
+      0 16px 40px rgba(0,0,0,0.45),
+      0 32px 64px rgba(0,0,0,0.3);
+  }
+  .icon-wrap svg { width: 180px; height: 180px; display: block; }
+  .name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #FFFCF7;
+    text-align: center;
+    letter-spacing: -0.2px;
+  }
+  .tag {
+    font-size: 11px;
+    color: #6666AA;
+    text-align: center;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-top: -10px;
+  }
+  .rec .name::after {
+    content: ' ✦';
+    color: #F5DFA0;
+  }
+</style>
+</head>
+<body>
+
+<h1>LittleNest — Icon Concepts</h1>
+<p class="subtitle">Hover to lift · click to inspect · ✦ marks the top pick</p>
+
+<div class="grid">
+
+  <!-- ① Moon & Nest — The signature icon -->
+  <div class="card rec">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="g1bg" x1="0" y1="0" x2="0.6" y2="1">
+            <stop offset="0%" stop-color="#1C1B4B"/>
+            <stop offset="100%" stop-color="#0A0A1E"/>
+          </linearGradient>
+          <radialGradient id="g1moon" cx="45%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#FFF8D6"/>
+            <stop offset="60%" stop-color="#F5DFA0"/>
+            <stop offset="100%" stop-color="#D4A840"/>
+          </radialGradient>
+          <filter id="f1glow">
+            <feGaussianBlur stdDeviation="14" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="f1soft"><feGaussianBlur stdDeviation="6"/></filter>
+        </defs>
+        <!-- bg -->
+        <rect width="512" height="512" fill="url(#g1bg)"/>
+        <!-- moon glow halo -->
+        <circle cx="256" cy="196" r="110" fill="#F5DFA0" opacity="0.08" filter="url(#f1soft)"/>
+        <!-- crescent moon -->
+        <g filter="url(#f1glow)">
+          <circle cx="256" cy="196" r="96" fill="url(#g1moon)"/>
+          <circle cx="306" cy="170" r="80" fill="#0A0A1E"/>
+        </g>
+        <!-- moon craters -->
+        <circle cx="212" cy="182" r="9" fill="#E8C870" opacity="0.25"/>
+        <circle cx="228" cy="208" r="6" fill="#E8C870" opacity="0.18"/>
+        <circle cx="198" cy="210" r="5" fill="#E8C870" opacity="0.15"/>
+        <!-- stars -->
+        <circle cx="380" cy="100" r="3.5" fill="#FFFCF7" opacity="0.9"/>
+        <circle cx="340" cy="72" r="2.2" fill="#FFFCF7" opacity="0.7"/>
+        <circle cx="420" cy="145" r="2" fill="#FFFCF7" opacity="0.65"/>
+        <circle cx="110" cy="90" r="3" fill="#FFFCF7" opacity="0.8"/>
+        <circle cx="148" cy="130" r="1.8" fill="#FFFCF7" opacity="0.6"/>
+        <circle cx="80" cy="160" r="2.5" fill="#C9BBD9" opacity="0.65"/>
+        <circle cx="448" cy="200" r="1.8" fill="#C9BBD9" opacity="0.55"/>
+        <!-- nest body -->
+        <path d="M 136 370 Q 128 408 158 428 Q 196 450 256 452 Q 316 450 354 428 Q 384 408 376 370 Z"
+              fill="#7A5220" opacity="0.95"/>
+        <path d="M 152 373 Q 145 403 172 420 Q 206 440 256 442 Q 306 440 340 420 Q 367 403 360 373 Z"
+              fill="#B07838"/>
+        <path d="M 170 377 Q 165 400 186 414 Q 216 430 256 432 Q 296 430 326 414 Q 347 400 342 377 Z"
+              fill="#D4A050" opacity="0.85"/>
+        <!-- nest weave lines -->
+        <path d="M 142 388 Q 196 381 256 383 Q 316 381 370 388" stroke="#6A4418" stroke-width="3" fill="none" opacity="0.55" stroke-linecap="round"/>
+        <path d="M 140 400 Q 195 394 256 396 Q 317 394 372 400" stroke="#6A4418" stroke-width="2.5" fill="none" opacity="0.45" stroke-linecap="round"/>
+        <path d="M 145 412 Q 198 407 256 409 Q 314 407 367 412" stroke="#6A4418" stroke-width="2" fill="none" opacity="0.4" stroke-linecap="round"/>
+        <!-- nest rim -->
+        <path d="M 136 370 Q 166 353 204 362 Q 228 355 256 358 Q 284 355 308 362 Q 346 353 376 370"
+              stroke="#C49040" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <path d="M 136 370 Q 166 353 204 362 Q 228 355 256 358 Q 284 355 308 362 Q 346 353 376 370"
+              stroke="#F0D080" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <!-- small twig details -->
+        <path d="M 162 363 Q 150 342 168 326" stroke="#B07838" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+        <path d="M 350 363 Q 362 342 344 326" stroke="#B07838" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+        <!-- star accent -->
+        <text x="60" y="300" font-size="18" fill="#C9BBD9" opacity="0.5" font-family="Georgia,serif">⋆</text>
+        <text x="430" y="310" font-size="14" fill="#F5DFA0" opacity="0.4" font-family="Georgia,serif">⋆</text>
+      </svg>
+    </div>
+    <div class="name">Moon & Nest</div>
+    <div class="tag">Sleep · Night · Home</div>
+  </div>
+
+  <!-- ② Sleeping Bear -->
+  <div class="card">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="g2bg" x1="0" y1="0" x2="0.4" y2="1">
+            <stop offset="0%" stop-color="#5B4A8A"/>
+            <stop offset="100%" stop-color="#2C2252"/>
+          </linearGradient>
+          <radialGradient id="g2face" cx="50%" cy="42%" r="52%">
+            <stop offset="0%" stop-color="#FDECD8"/>
+            <stop offset="100%" stop-color="#F0C8A0"/>
+          </radialGradient>
+          <radialGradient id="g2ear" cx="40%" cy="35%" r="60%">
+            <stop offset="0%" stop-color="#FDECD8"/>
+            <stop offset="100%" stop-color="#E8B888"/>
+          </radialGradient>
+        </defs>
+        <rect width="512" height="512" fill="url(#g2bg)"/>
+        <!-- soft bg glow -->
+        <circle cx="256" cy="280" r="180" fill="#8068C0" opacity="0.12"/>
+        <!-- tiny stars -->
+        <circle cx="90" cy="100" r="2.5" fill="#FFFCF7" opacity="0.7"/>
+        <circle cx="420" cy="80" r="2" fill="#FFFCF7" opacity="0.6"/>
+        <circle cx="380" cy="140" r="1.5" fill="#C9BBD9" opacity="0.6"/>
+        <circle cx="130" cy="150" r="1.8" fill="#C9BBD9" opacity="0.55"/>
+        <circle cx="450" cy="180" r="2" fill="#FFFCF7" opacity="0.5"/>
+        <!-- tiny crescent above bear -->
+        <circle cx="340" cy="118" r="28" fill="#F5DFA0" opacity="0.9"/>
+        <circle cx="352" cy="110" r="23" fill="#2C2252"/>
+        <!-- ears -->
+        <circle cx="162" cy="192" r="58" fill="url(#g2ear)"/>
+        <circle cx="350" cy="192" r="58" fill="url(#g2ear)"/>
+        <!-- inner ears -->
+        <circle cx="162" cy="196" r="36" fill="#E8A090" opacity="0.55"/>
+        <circle cx="350" cy="196" r="36" fill="#E8A090" opacity="0.55"/>
+        <!-- face -->
+        <circle cx="256" cy="290" r="148" fill="url(#g2face)"/>
+        <!-- closed sleepy eyes -->
+        <path d="M 196 268 Q 214 257 232 268" stroke="#7A5030" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M 280 268 Q 298 257 316 268" stroke="#7A5030" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <!-- little lashes -->
+        <line x1="196" y1="268" x2="190" y2="258" stroke="#7A5030" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+        <line x1="232" y1="268" x2="238" y2="258" stroke="#7A5030" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+        <line x1="280" y1="268" x2="274" y2="258" stroke="#7A5030" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+        <line x1="316" y1="268" x2="322" y2="258" stroke="#7A5030" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+        <!-- nose -->
+        <ellipse cx="256" cy="308" rx="22" ry="15" fill="#C87050" opacity="0.85"/>
+        <!-- mouth -->
+        <path d="M 238 322 Q 256 336 274 322" stroke="#C87050" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.7"/>
+        <!-- blush cheeks -->
+        <ellipse cx="188" cy="318" rx="28" ry="18" fill="#F4A0A0" opacity="0.28"/>
+        <ellipse cx="324" cy="318" rx="28" ry="18" fill="#F4A0A0" opacity="0.28"/>
+        <!-- Z Z Z -->
+        <text x="370" y="210" font-size="26" fill="#C9BBD9" opacity="0.65" font-family="Georgia,serif" font-weight="bold">z</text>
+        <text x="396" y="182" font-size="20" fill="#C9BBD9" opacity="0.5" font-family="Georgia,serif" font-weight="bold">z</text>
+        <text x="416" y="158" font-size="15" fill="#C9BBD9" opacity="0.38" font-family="Georgia,serif" font-weight="bold">z</text>
+      </svg>
+    </div>
+    <div class="name">Sleeping Bear</div>
+    <div class="tag">Sleep · Cute · Dreaming</div>
+  </div>
+
+  <!-- ③ Spoon & Heart -->
+  <div class="card">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="g3bg" x1="0.1" y1="0" x2="0.9" y2="1">
+            <stop offset="0%" stop-color="#E8604A"/>
+            <stop offset="50%" stop-color="#D04070"/>
+            <stop offset="100%" stop-color="#901050"/>
+          </linearGradient>
+          <filter id="f3glow">
+            <feGaussianBlur stdDeviation="10" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <rect width="512" height="512" fill="url(#g3bg)"/>
+        <!-- soft overlay glow -->
+        <circle cx="256" cy="230" r="180" fill="#FF8060" opacity="0.1"/>
+        <!-- heart shape -->
+        <g filter="url(#f3glow)">
+          <path d="M 256 390
+                   C 200 350 100 290 100 200
+                   C 100 148 142 110 192 110
+                   C 218 110 240 122 256 142
+                   C 272 122 294 110 320 110
+                   C 370 110 412 148 412 200
+                   C 412 290 312 350 256 390 Z"
+                fill="#FFFCF7" opacity="0.96"/>
+        </g>
+        <!-- spoon silhouette inside heart -->
+        <ellipse cx="256" cy="192" rx="42" ry="48" fill="#E8604A" opacity="0.9"/>
+        <rect x="248" y="236" width="16" height="110" rx="8" fill="#E8604A" opacity="0.9"/>
+        <!-- spoon shine -->
+        <ellipse cx="246" cy="180" rx="12" ry="16" fill="white" opacity="0.3" transform="rotate(-15 246 180)"/>
+        <!-- tiny food dots on spoon -->
+        <circle cx="256" cy="195" r="5" fill="#FFFCF7" opacity="0.5"/>
+        <circle cx="244" cy="200" r="3.5" fill="#FFFCF7" opacity="0.4"/>
+        <circle cx="268" cy="200" r="3.5" fill="#FFFCF7" opacity="0.4"/>
+        <!-- sparkles -->
+        <text x="100" y="175" font-size="22" fill="#FFFCF7" opacity="0.45" font-family="Georgia,serif">✦</text>
+        <text x="374" y="165" font-size="16" fill="#FFFCF7" opacity="0.4" font-family="Georgia,serif">✦</text>
+        <text x="130" y="370" font-size="13" fill="#FFFCF7" opacity="0.3" font-family="Georgia,serif">✦</text>
+      </svg>
+    </div>
+    <div class="name">Feed with Love</div>
+    <div class="tag">Feeding · Food · Nutrition</div>
+  </div>
+
+  <!-- ④ Baby Bottle Moon -->
+  <div class="card">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="g4bg" x1="0" y1="0" x2="0.5" y2="1">
+            <stop offset="0%" stop-color="#1E5C6E"/>
+            <stop offset="100%" stop-color="#0D2D3A"/>
+          </linearGradient>
+          <linearGradient id="g4bottle" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#FFFCF7"/>
+            <stop offset="100%" stop-color="#E8F4F0"/>
+          </linearGradient>
+          <linearGradient id="g4milk" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFCF7" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#C8E8DC" stop-opacity="0.8"/>
+          </linearGradient>
+          <filter id="f4glow">
+            <feGaussianBlur stdDeviation="12" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <rect width="512" height="512" fill="url(#g4bg)"/>
+        <!-- bg glow -->
+        <circle cx="256" cy="270" r="160" fill="#3A9AB0" opacity="0.1"/>
+        <!-- stars -->
+        <circle cx="80" cy="100" r="2.5" fill="#FFFCF7" opacity="0.7"/>
+        <circle cx="420" cy="90" r="2" fill="#FFFCF7" opacity="0.65"/>
+        <circle cx="440" cy="160" r="1.8" fill="#A8D8C8" opacity="0.6"/>
+        <circle cx="70" cy="200" r="1.5" fill="#A8D8C8" opacity="0.55"/>
+        <!-- moon top right -->
+        <circle cx="390" cy="118" r="36" fill="#F5DFA0" opacity="0.88"/>
+        <circle cx="408" cy="106" r="30" fill="#0D2D3A"/>
+        <!-- bottle body -->
+        <g filter="url(#f4glow)">
+          <!-- bottle cap/nipple -->
+          <rect x="228" y="98" width="56" height="18" rx="8" fill="url(#g4bottle)"/>
+          <rect x="236" y="80" width="40" height="24" rx="10" fill="url(#g4bottle)" opacity="0.9"/>
+          <path d="M 248 80 Q 256 66 264 80" stroke="url(#g4bottle)" stroke-width="12" fill="none" stroke-linecap="round"/>
+          <!-- bottle collar -->
+          <rect x="220" y="114" width="72" height="14" rx="5" fill="url(#g4bottle)"/>
+          <!-- bottle body -->
+          <rect x="200" y="126" width="112" height="258" rx="52" fill="url(#g4bottle)"/>
+        </g>
+        <!-- milk level inside bottle -->
+        <rect x="202" y="230" width="108" height="152" rx="0" fill="url(#g4milk)" opacity="0.7"/>
+        <rect x="202" y="376" width="108" height="6" rx="3" fill="url(#g4milk)" opacity="0.4"/>
+        <!-- bottle measurement lines -->
+        <line x1="232" y1="265" x2="248" y2="265" stroke="#A8D8C8" stroke-width="2.5" opacity="0.6" stroke-linecap="round"/>
+        <line x1="226" y1="305" x2="248" y2="305" stroke="#A8D8C8" stroke-width="2.5" opacity="0.5" stroke-linecap="round"/>
+        <line x1="232" y1="345" x2="248" y2="345" stroke="#A8D8C8" stroke-width="2.5" opacity="0.45" stroke-linecap="round"/>
+        <!-- bottle shine -->
+        <rect x="282" y="140" width="14" height="80" rx="7" fill="white" opacity="0.25"/>
+        <!-- heart on bottle -->
+        <path d="M 256 192
+                 C 248 184 236 182 234 192
+                 C 232 200 240 208 256 218
+                 C 272 208 280 200 278 192
+                 C 276 182 264 184 256 192 Z"
+              fill="#E8604A" opacity="0.6"/>
+      </svg>
+    </div>
+    <div class="name">Baby Bottle</div>
+    <div class="tag">Feeding · Tracking · Night</div>
+  </div>
+
+  <!-- ⑤ Growth Leaf -->
+  <div class="card">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="g5bg" x1="0.1" y1="0" x2="0.9" y2="1">
+            <stop offset="0%" stop-color="#2D6A4F"/>
+            <stop offset="100%" stop-color="#0D2E1C"/>
+          </linearGradient>
+          <linearGradient id="g5leaf" x1="0" y1="0" x2="0.5" y2="1">
+            <stop offset="0%" stop-color="#A8E8C0"/>
+            <stop offset="50%" stop-color="#52C076"/>
+            <stop offset="100%" stop-color="#28804A"/>
+          </linearGradient>
+          <filter id="f5glow">
+            <feGaussianBlur stdDeviation="10" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <rect width="512" height="512" fill="url(#g5bg)"/>
+        <!-- bg glow -->
+        <circle cx="256" cy="240" r="170" fill="#40A060" opacity="0.1"/>
+        <!-- sparkles -->
+        <circle cx="380" cy="100" r="3" fill="#A8E8C0" opacity="0.7"/>
+        <circle cx="420" cy="145" r="2" fill="#A8E8C0" opacity="0.55"/>
+        <circle cx="100" cy="110" r="2.5" fill="#A8E8C0" opacity="0.6"/>
+        <circle cx="80" cy="175" r="1.8" fill="#FFFCF7" opacity="0.5"/>
+        <circle cx="440" cy="240" r="2" fill="#FFFCF7" opacity="0.45"/>
+        <!-- leaf -->
+        <g filter="url(#f5glow)">
+          <path d="M 256 96
+                   C 340 128 400 196 388 296
+                   C 376 396 316 440 256 456
+                   C 196 440 136 396 124 296
+                   C 112 196 172 128 256 96 Z"
+                fill="url(#g5leaf)" opacity="0.95"/>
+        </g>
+        <!-- central vein -->
+        <path d="M 256 108 Q 256 275 256 444" stroke="#2D6A4F" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.7"/>
+        <!-- side veins left -->
+        <path d="M 256 180 Q 216 196 188 220" stroke="#2D6A4F" stroke-width="3" fill="none" opacity="0.5" stroke-linecap="round"/>
+        <path d="M 256 230 Q 206 244 178 268" stroke="#2D6A4F" stroke-width="2.5" fill="none" opacity="0.45" stroke-linecap="round"/>
+        <path d="M 256 280 Q 212 294 188 318" stroke="#2D6A4F" stroke-width="2.5" fill="none" opacity="0.4" stroke-linecap="round"/>
+        <path d="M 256 330 Q 218 344 200 366" stroke="#2D6A4F" stroke-width="2" fill="none" opacity="0.35" stroke-linecap="round"/>
+        <!-- side veins right -->
+        <path d="M 256 180 Q 296 196 324 220" stroke="#2D6A4F" stroke-width="3" fill="none" opacity="0.5" stroke-linecap="round"/>
+        <path d="M 256 230 Q 306 244 334 268" stroke="#2D6A4F" stroke-width="2.5" fill="none" opacity="0.45" stroke-linecap="round"/>
+        <path d="M 256 280 Q 300 294 324 318" stroke="#2D6A4F" stroke-width="2.5" fill="none" opacity="0.4" stroke-linecap="round"/>
+        <path d="M 256 330 Q 294 344 312 366" stroke="#2D6A4F" stroke-width="2" fill="none" opacity="0.35" stroke-linecap="round"/>
+        <!-- leaf sheen -->
+        <path d="M 256 110 C 300 138 340 190 335 264" stroke="white" stroke-width="10" fill="none" opacity="0.15" stroke-linecap="round"/>
+        <!-- heart at center -->
+        <path d="M 256 262
+                 C 244 250 226 248 224 262
+                 C 222 274 234 284 256 300
+                 C 278 284 290 274 288 262
+                 C 286 248 268 250 256 262 Z"
+              fill="white" opacity="0.85"/>
+        <!-- tiny star inside leaf tip -->
+        <circle cx="256" cy="118" r="6" fill="white" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="name">Growth Leaf</div>
+    <div class="tag">Growth · Nature · Life</div>
+  </div>
+
+  <!-- ⑥ Star Lullaby -->
+  <div class="card">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="g6bg" x1="0.2" y1="0" x2="0.8" y2="1">
+            <stop offset="0%" stop-color="#3D1F6E"/>
+            <stop offset="100%" stop-color="#150A2E"/>
+          </linearGradient>
+          <radialGradient id="g6star" cx="50%" cy="45%" r="55%">
+            <stop offset="0%" stop-color="#FFF8D0"/>
+            <stop offset="50%" stop-color="#F5DFA0"/>
+            <stop offset="100%" stop-color="#C8A030"/>
+          </radialGradient>
+          <filter id="f6glow">
+            <feGaussianBlur stdDeviation="16" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="f6soft"><feGaussianBlur stdDeviation="5"/></filter>
+        </defs>
+        <rect width="512" height="512" fill="url(#g6bg)"/>
+        <!-- star field background -->
+        <circle cx="80" cy="80" r="1.8" fill="#FFFCF7" opacity="0.8"/>
+        <circle cx="430" cy="70" r="1.5" fill="#FFFCF7" opacity="0.7"/>
+        <circle cx="460" cy="160" r="2" fill="#FFFCF7" opacity="0.6"/>
+        <circle cx="50" cy="180" r="1.5" fill="#FFFCF7" opacity="0.65"/>
+        <circle cx="100" cy="320" r="1.8" fill="#C9BBD9" opacity="0.55"/>
+        <circle cx="450" cy="350" r="1.5" fill="#C9BBD9" opacity="0.5"/>
+        <circle cx="390" cy="430" r="2" fill="#FFFCF7" opacity="0.45"/>
+        <circle cx="120" cy="420" r="1.5" fill="#FFFCF7" opacity="0.4"/>
+        <circle cx="330" cy="60" r="1.2" fill="#C9BBD9" opacity="0.6"/>
+        <circle cx="180" cy="50" r="1.5" fill="#FFFCF7" opacity="0.55"/>
+        <!-- glow behind star -->
+        <circle cx="256" cy="248" r="130" fill="#F5DFA0" opacity="0.07" filter="url(#f6soft)"/>
+        <!-- 5-pointed star — elegant rounded points -->
+        <g filter="url(#f6glow)">
+          <polygon
+            points="256,88  283,175  374,175  302,228  328,316  256,262  184,316  210,228  138,175  229,175"
+            fill="url(#g6star)"/>
+        </g>
+        <!-- star inner glow detail -->
+        <polygon
+          points="256,118  276,178  340,178  290,214  310,275  256,238  202,275  222,214  172,178  236,178"
+          fill="#FFF8D0" opacity="0.25"/>
+        <!-- small secondary stars -->
+        <g opacity="0.7">
+          <!-- left small star -->
+          <polygon points="108,282  114,300  133,300  118,311  124,329  108,318  92,329  98,311  83,300  102,300" fill="#C9BBD9" opacity="0.6"/>
+          <!-- right small star -->
+          <polygon points="404,310  409,325  425,325  412,334  417,350  404,340  391,350  396,334  383,325  399,325" fill="#C9BBD9" opacity="0.5"/>
+        </g>
+        <!-- crescent moon small bottom -->
+        <circle cx="256" cy="418" r="28" fill="#F5DFA0" opacity="0.7"/>
+        <circle cx="268" cy="412" r="23" fill="#150A2E"/>
+      </svg>
+    </div>
+    <div class="name">Star Lullaby</div>
+    <div class="tag">Magic · Night · Dreams</div>
+  </div>
+
+</div>
+
+<p style="text-align:center;margin-top:52px;color:#44446A;font-size:12px;letter-spacing:0.5px;">
+  LittleNest · 6 Icon Concepts · 512 × 512 SVG
+</p>
+
+</body>
+</html>

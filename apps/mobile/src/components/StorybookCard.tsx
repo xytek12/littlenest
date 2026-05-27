@@ -16,6 +16,11 @@ type Action = {
 };
 
 type Props = {
+  /**
+   * Optional large section header rendered above the kicker — useful on Home
+   * to give each card a prominent, at-a-glance label (e.g. "שינה", "הנקה / בקבוק").
+   */
+  sectionTitle?: string;
   /** Small uppercase tag at the top, e.g. "SLEEP", "NURSING", "WHISPER". */
   kicker: string;
   /** Main status line, e.g. "Maya is dreaming · 42 min". */
@@ -48,6 +53,7 @@ type Props = {
  * cards. Other screens keep the existing ActionCard look.
  */
 export function StorybookCard({
+  sectionTitle,
   kicker,
   title,
   subtitle,
@@ -81,6 +87,10 @@ export function StorybookCard({
       style={[styles.card, { backgroundColor, borderColor }]}
       testID={testID}
     >
+      {sectionTitle ? (
+        <Text style={[styles.sectionHeader, rtlText, { color: theme.text }]}>{sectionTitle}</Text>
+      ) : null}
+
       <Text style={[styles.kicker, rtlText, { color: kickerColor }]}>
         {kicker.toUpperCase()}
       </Text>
@@ -144,6 +154,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 12,
     padding: 18,
+  },
+  sectionHeader: {
+    fontFamily: typography.displayBold,
+    fontSize: 20,
+    fontWeight: '900',
+    lineHeight: 25,
+    marginBottom: 4,
   },
   kicker: {
     fontFamily: typography.bodyBlack,

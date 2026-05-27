@@ -96,7 +96,9 @@ export function HomeScreen() {
           {learningReady ? labels.suggestionKicker : labels.learningKicker}
         </Text>
         <Text style={[styles.learningTitle, rtlText, { color: theme.text }]}>
-          {learningReady ? labels.suggestionTitle : labels.learningTitle}
+          {learningReady
+            ? labels.suggestionTitle
+            : renderWithStyledDigits(labels.learningTitle, styles.learningTitleNumber)}
         </Text>
         <Text style={[styles.learningBody, rtlText, { color: theme.mutedText }]}>
           {learningReady
@@ -112,6 +114,7 @@ export function HomeScreen() {
 
 
       <StorybookCard
+        sectionTitle={labels.sleepTitle}
         kicker={story.kickers.sleep}
         title={
           activeSleepStartedAt
@@ -128,6 +131,7 @@ export function HomeScreen() {
         }}
       />
       <StorybookCard
+        sectionTitle={labels.feedTitle}
         kicker={story.kickers.nursing}
         title={story.status.feedIdle(activeChild.displayName)}
         subtitle={labels.feedSubtitle}
@@ -138,6 +142,7 @@ export function HomeScreen() {
         }}
       />
       <StorybookCard
+        sectionTitle={labels.foodTastingTitle}
         kicker={story.kickers.allergen}
         title={story.status.foodTastingIdle(activeChild.displayName)}
         subtitle={labels.foodTastingSubtitle}
@@ -184,6 +189,11 @@ const styles = StyleSheet.create({
     fontFamily: typography.bodyBlack,
     fontSize: 15,
     fontWeight: '800',
+  },
+  learningTitleNumber: {
+    fontFamily: typography.displayBold,
+    fontSize: 24,
+    fontWeight: '900',
   },
   rtlText: { textAlign: 'right', writingDirection: 'rtl' },
 });
