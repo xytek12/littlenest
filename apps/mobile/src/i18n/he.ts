@@ -317,5 +317,17 @@ export const he = {
     viewHistory: 'היסטוריה ›',
     sleepHistoryTitle: 'היסטוריית שינה',
     startPrompt: 'לחצו על "התחלה" כדי למדוד את שינת התינוק.',
+    sleepingNowTitle: (name: string, sex: 'boy' | 'girl') =>
+      `${name} ${sex === 'boy' ? 'ישן' : 'ישנה'} עכשיו`,
+    sleepingNowSubtitle: (startTime: string, minutes: number) =>
+      `החל ב-${startTime} · ${minutes} ${minutes === 1 ? 'דקה' : 'דקות'}`,
+    sleepingNowHint: 'לחצו לסיום השינה',
+    recentSleepsLabel: 'שינות אחרונות',
+    noRecentSleeps: 'עדיין אין שינות מתועדות',
+    endSleepTitle: 'לסיים את השינה?',
+    endSleepBody: (minutes: number) =>
+      `השינה תישמר כ-${minutes} ${minutes === 1 ? 'דקה' : 'דקות'}.`,
+    endSleepConfirm: 'סיום שינה',
+    sleepTimeRange: (start: string, end: string) => `${start} – ${end}`,
   },
 };

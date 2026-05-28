@@ -36,21 +36,21 @@ describe('app shell', () => {
     expect(getByText('Height')).toBeTruthy();
   });
 
-  it('routes from home actions into the hidden sleep flow instead of using a visible tab', () => {
+  it('starts sleep from the home popup and stays on home with the active sleep card', () => {
     const { getByLabelText, getByText, getByTestId, queryByRole } = render(<App />);
 
     completeFamilySetup(getByText);
     expect(queryByRole('button', { name: /Sleep, tab/i })).toBeNull();
 
+    // Press the "+" on the Sleep section card → popup opens in pre-start state.
     fireEvent.press(getByLabelText('Sleep'));
-    // Modal opens → confirm start to navigate to SleepFlow
     fireEvent.press(getByText('Start sleep'));
 
-    expect(getByTestId('screen-sleep')).toBeTruthy();
-    expect(getByLabelText('Home tab')).toBeTruthy();
-
-    fireEvent.press(getByLabelText('Back to Home'));
+    // We STAY on home — no separate sleep screen. The idle card is replaced
+    // by the active sleep card (big text + tap-to-end-sleep affordance).
     expect(getByTestId('screen-home')).toBeTruthy();
+    expect(getByTestId('home-active-sleep-card')).toBeTruthy();
+    expect(getByLabelText('Home tab')).toBeTruthy();
   });
 
   it('routes from home actions into the food tasting flow', () => {

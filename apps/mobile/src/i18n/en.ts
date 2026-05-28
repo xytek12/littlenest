@@ -330,5 +330,24 @@ export const en = {
     sleepHistoryTitle: 'Sleep History',
     /** Sleep start popup hint */
     startPrompt: "Tap Start to begin timing your baby's sleep.",
+    /** Big active-sleep title shown on Home */
+    sleepingNowTitle: (name: string, _sex: 'boy' | 'girl') =>
+      `${name} is sleeping now`,
+    /** Active sleep subtitle on Home — start time + minutes */
+    sleepingNowSubtitle: (startTime: string, minutes: number) =>
+      `Started ${startTime} · ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`,
+    /** Tap-hint for active sleep card */
+    sleepingNowHint: 'Tap to end sleep',
+    /** Idle card title label above the recent sleeps list */
+    recentSleepsLabel: 'RECENT SLEEPS',
+    /** No sleeps yet — idle empty state */
+    noRecentSleeps: 'No sleeps recorded yet',
+    /** Popup: confirm end sleep */
+    endSleepTitle: 'End sleep?',
+    endSleepBody: (minutes: number) =>
+      `This will save the session as ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`,
+    endSleepConfirm: 'End sleep',
+    /** Render "{start} – {end}" — locked LTR so start is on the left */
+    sleepTimeRange: (start: string, end: string) => `${start} – ${end}`,
   },
 };

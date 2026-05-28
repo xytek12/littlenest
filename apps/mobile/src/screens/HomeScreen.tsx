@@ -14,14 +14,11 @@ import { getPalette, typography, typographyHe } from '../theme';
 import { useAppTheme } from '../theme/useAppTheme';
 import { getAgeLabel } from '../utils/age';
 import { formatDateLong } from '../utils/formatDateLong';
-import { formatDurationHuman } from '../utils/formatDuration';
+import { formatHistoryTime } from '../utils/formatHistoryDate';
 import { useTickEverySecond } from '../utils/useTickEverySecond';
 
-function getRunningDuration(startedAt: string, language = 'he') {
-  return formatDurationHuman(
-    Math.max(0, Math.round((Date.now() - Date.parse(startedAt)) / 1000)),
-    language,
-  );
+function getRunningMinutes(startedAt: string) {
+  return Math.max(0, Math.floor((Date.now() - Date.parse(startedAt)) / 60000));
 }
 
 // Render a string so that any digit runs (e.g. "14" inside "14 ימי מעקב")
@@ -82,7 +79,7 @@ export function HomeScreen() {
 
   const [showSleepModal, setShowSleepModal] = useState(false);
 
-  // Keep ticker active so the sleep modal shows a live timer when open
+  // Keep ticker active so the active-sleep card and modal update each minute
   useTickEverySecond(activeSleepStartedAt != null);
 
   const storybookTitle = isTwins
@@ -96,7 +93,11 @@ export function HomeScreen() {
       ? undefined
       : getAgeLabel(activeChild.dateOfBirth, new Date(), family.language);
 
-  const lastSleep = sleepSessions.length > 0 ? sleepSessions[sleepSessions.length - 1] : null;
+  // Last 2 sleeps for the idle card. State stores newest first via
+  // `[session, ...current]`, but to be safe we sort descending by startedAt.
+  const recentSleeps = [...sleepSessions]
+    .sort((a, b) => Date.parse(b.startedAt) - Date.parse(a.startedAt))
+    .slice(0, 2);
 
   const insets = useSafeAreaInsets();
 
@@ -109,6 +110,15 @@ export function HomeScreen() {
   const digitBodyStyle = isRtl
     ? { ...styles.learningBodyNumber, fontFamily: typographyHe.bodyBoldHe }
     : styles.learningBodyNumber;
+
+  const activeMinutes = activeSleepStartedAt
+    ? getRunningMinutes(activeSleepStartedAt)
+    : 0;
+
+  function openSleepHistory() {
+    // Navigate into the nested SleepStack and land directly on SleepHistory.
+    navigation.navigate('SleepFlow', { screen: 'SleepHistory' });
+  }
 
   return (
     <GenderedBackground>
@@ -150,35 +160,88 @@ export function HomeScreen() {
 
         <TwinPickerCards />
 
-        {/* Sleep SectionCard — both states open the sleep modal */}
+        {/* Sleep card — active vs idle */}
         {activeSleepStartedAt ? (
-          <SectionCard
-            sectionType="sleep"
-            title={homeSleep.sectionSleep}
-            iconEmoji="🌙"
-            label={homeSleep.activeSleepLabel}
-            value={homeSleep.activeSleepSince(formatDateLong(activeSleepStartedAt, family.language))}
-            footerLabel={homeSleep.viewHistory}
-            onFooterPress={() => navigation.navigate('SleepFlow')}
-            onPlusPress={() => setShowSleepModal(true)}
-            plusAccessibilityLabel={labels.sleepTitle}
-          />
+          <Pressable
+            testID="home-active-sleep-card"
+            onPress={() => setShowSleepModal(true)}
+            accessibilityRole="button"
+            accessibilityLabel={homeSleep.sleepingNowTitle(activeChild.displayName, activeChild.sex)}
+            style={[
+              styles.activeSleepCard,
+              {
+                backgroundColor: theme.surface,
+                borderColor: palette.primary,
+              },
+            ]}
+          >
+            <Text style={styles.moonGlyph}>🌙</Text>
+            <Text
+              style={[
+                styles.activeSleepTitle,
+                rtlText,
+                { color: theme.text, fontFamily: isRtl ? typographyHe.displayHe : typography.displayBold },
+              ]}
+            >
+              {homeSleep.sleepingNowTitle(activeChild.displayName, activeChild.sex)}
+            </Text>
+            <Text style={[styles.activeSleepSubtitle, rtlText, { color: theme.mutedText }]}>
+              {homeSleep.sleepingNowSubtitle(
+                formatHistoryTime(activeSleepStartedAt, family.language),
+                activeMinutes,
+              )}
+            </Text>
+            <Text style={[styles.activeSleepHint, rtlText, { color: palette.primaryDeep }]}>
+              {homeSleep.sleepingNowHint}
+            </Text>
+            <Pressable
+              onPress={openSleepHistory}
+              accessibilityRole="button"
+              hitSlop={8}
+              style={[styles.activeSleepHistoryRow, isRtl ? styles.alignEnd : null]}
+            >
+              <Text style={[styles.activeSleepHistoryText, rtlText, { color: palette.primaryDeep }]}>
+                {homeSleep.viewHistory}
+              </Text>
+            </Pressable>
+          </Pressable>
         ) : (
           <SectionCard
             sectionType="sleep"
             title={homeSleep.sectionSleep}
             iconEmoji="🌙"
-            label={homeSleep.idleSleepLabel}
-            value={
-              lastSleep
-                ? formatDateLong(lastSleep.startedAt, family.language)
-                : homeSleep.noSessionYet
-            }
             footerLabel={homeSleep.viewHistory}
-            onFooterPress={() => navigation.navigate('SleepFlow')}
+            onFooterPress={openSleepHistory}
             onPlusPress={() => setShowSleepModal(true)}
             plusAccessibilityLabel={labels.sleepTitle}
-          />
+          >
+            <Text style={[styles.idleSleepLabel, rtlText, { color: theme.mutedText }]}>
+              {homeSleep.recentSleepsLabel}
+            </Text>
+            {recentSleeps.length === 0 ? (
+              <Text style={[styles.idleSleepEmpty, rtlText, { color: theme.text }]}>
+                {homeSleep.noRecentSleeps}
+              </Text>
+            ) : (
+              recentSleeps.map((session) => {
+                const startTime = formatHistoryTime(session.startedAt, family.language);
+                const endTime = formatHistoryTime(session.endedAt, family.language);
+                const dateLabel = formatDateLong(session.startedAt, family.language);
+                return (
+                  <View key={session.id} style={styles.recentSleepRow}>
+                    <Text style={[styles.recentSleepDate, rtlText, { color: theme.text }]}>
+                      {dateLabel}
+                    </Text>
+                    {/* Force LTR so start time stays on the LEFT, end on the RIGHT,
+                        even in Hebrew. The user explicitly wants chronological ordering. */}
+                    <Text style={[styles.recentSleepRange, { color: theme.text }]}>
+                      {homeSleep.sleepTimeRange(startTime, endTime)}
+                    </Text>
+                  </View>
+                );
+              })
+            )}
+          </SectionCard>
         )}
 
         {/* Feed SectionCard */}
@@ -204,7 +267,7 @@ export function HomeScreen() {
         />
       </ScrollView>
 
-      {/* Sleep start / stop popup */}
+      {/* Sleep start / end popup */}
       <Modal
         animationType="slide"
         onRequestClose={() => setShowSleepModal(false)}
@@ -218,17 +281,13 @@ export function HomeScreen() {
             style={styles.modalBackdrop}
           />
           <View style={[styles.sheetCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-            <Text style={[styles.sheetTitle, rtlText, { color: theme.text }]}>
-              {homeSleep.sectionSleep}
-            </Text>
-
             {activeSleepStartedAt ? (
               <>
-                <Text style={[styles.sheetBody, rtlText, { color: theme.mutedText }]}>
-                  {homeSleep.activeSleepSince(formatDateLong(activeSleepStartedAt, family.language))}
+                <Text style={[styles.sheetTitle, rtlText, { color: theme.text }]}>
+                  {homeSleep.endSleepTitle}
                 </Text>
-                <Text style={[styles.timerDisplay, { color: theme.text }]}>
-                  {getRunningDuration(activeSleepStartedAt, family.language)}
+                <Text style={[styles.sheetBody, rtlText, { color: theme.mutedText }]}>
+                  {homeSleep.endSleepBody(activeMinutes)}
                 </Text>
                 <View style={styles.sheetActions}>
                   <Pressable
@@ -240,20 +299,25 @@ export function HomeScreen() {
                     </Text>
                   </Pressable>
                   <Pressable
+                    accessibilityLabel="End sleep session"
                     onPress={() => {
+                      // Don't touch wake count — saved silently as 0 per user spec.
                       endSleep({ wakeCount: 0 });
                       setShowSleepModal(false);
                     }}
                     style={[styles.primaryBtn, { backgroundColor: palette.primary }]}
                   >
                     <Text style={[styles.primaryBtnText, { color: palette.primaryDeep }]}>
-                      {homeSleep.activeSleepStopButton}
+                      {homeSleep.endSleepConfirm}
                     </Text>
                   </Pressable>
                 </View>
               </>
             ) : (
               <>
+                <Text style={[styles.sheetTitle, rtlText, { color: theme.text }]}>
+                  {homeSleep.sectionSleep}
+                </Text>
                 <Text style={[styles.sheetBody, rtlText, { color: theme.mutedText }]}>
                   {homeSleep.startPrompt}
                 </Text>
@@ -270,7 +334,6 @@ export function HomeScreen() {
                     onPress={() => {
                       startSleep();
                       setShowSleepModal(false);
-                      navigation.navigate('SleepFlow');
                     }}
                     style={[styles.primaryBtn, { backgroundColor: palette.primary }]}
                   >
@@ -314,13 +377,13 @@ const styles = StyleSheet.create({
   },
   learningBody: {
     fontFamily: typography.body,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 16,
+    lineHeight: 24,
     marginTop: 10,
   },
   learningBodyNumber: {
     fontFamily: typography.bodyBlack,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '800',
   },
   learningTitleNumber: {
@@ -329,6 +392,76 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   rtlText: { textAlign: 'right', writingDirection: 'rtl' },
+  alignEnd: { alignSelf: 'flex-end' },
+  // Active sleep card — big, tappable
+  activeSleepCard: {
+    borderRadius: 22,
+    borderWidth: 2,
+    marginBottom: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 22,
+  },
+  moonGlyph: {
+    fontSize: 36,
+    marginBottom: 6,
+  },
+  activeSleepTitle: {
+    fontSize: 28,
+    fontWeight: '900',
+    lineHeight: 34,
+  },
+  activeSleepSubtitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    lineHeight: 24,
+    marginTop: 8,
+  },
+  activeSleepHint: {
+    fontSize: 14,
+    fontWeight: '800',
+    letterSpacing: 0.4,
+    marginTop: 12,
+    textTransform: 'uppercase',
+  },
+  activeSleepHistoryRow: {
+    marginTop: 14,
+  },
+  activeSleepHistoryText: {
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  // Idle sleep card body (inside SectionCard children)
+  idleSleepLabel: {
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 1.2,
+    marginBottom: 8,
+    textTransform: 'uppercase',
+  },
+  idleSleepEmpty: {
+    fontSize: 16,
+    fontStyle: 'italic',
+    lineHeight: 22,
+  },
+  recentSleepRow: {
+    marginBottom: 10,
+  },
+  recentSleepDate: {
+    fontSize: 15,
+    fontWeight: '700',
+    lineHeight: 22,
+  },
+  recentSleepRange: {
+    fontSize: 17,
+    fontVariant: ['tabular-nums'],
+    fontWeight: '800',
+    letterSpacing: 0.5,
+    lineHeight: 24,
+    marginTop: 2,
+    // Force LTR ordering so the chronological start is on the LEFT.
+    writingDirection: 'ltr',
+    textAlign: 'left',
+  },
   // Sleep modal
   modalOverlay: {
     flex: 1,
@@ -347,21 +480,14 @@ const styles = StyleSheet.create({
   },
   sheetTitle: {
     fontFamily: typography.displayBold,
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '900',
     marginBottom: 8,
   },
   sheetBody: {
-    fontSize: 15,
-    lineHeight: 22,
-    marginBottom: 12,
-  },
-  timerDisplay: {
-    fontFamily: typography.displayBold,
-    fontSize: 36,
-    fontWeight: '900',
+    fontSize: 16,
+    lineHeight: 24,
     marginBottom: 16,
-    textAlign: 'center',
   },
   sheetActions: {
     flexDirection: 'row',
@@ -376,6 +502,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   secondaryBtnText: {
+    fontSize: 16,
     fontWeight: '800',
   },
   primaryBtn: {
@@ -385,6 +512,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   primaryBtnText: {
+    fontSize: 16,
     fontWeight: '900',
   },
 });

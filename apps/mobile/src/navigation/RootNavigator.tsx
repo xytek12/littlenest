@@ -7,6 +7,7 @@ import {
   DefaultTheme,
   NavigationContainer,
   useNavigation,
+  type NavigatorScreenParams,
   type Theme,
 } from '@react-navigation/native';
 import type { Session } from '@supabase/supabase-js';
@@ -32,18 +33,6 @@ import { PrototypeStateProvider, usePrototypeState } from '../state/PrototypeSta
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 
-export type RootTabParamList = {
-  Recipes: undefined;
-  Home: undefined;
-  AI: undefined;
-  Growth: undefined;
-  SleepFlow: undefined;
-  FeedFlow: undefined;
-  FoodTastingFlow: undefined;
-  FamilySetupFlow: undefined;
-  Settings: undefined;
-};
-
 export type GrowthStackParamList = {
   GrowthMain: undefined;
   GrowthHistory: undefined;
@@ -57,6 +46,18 @@ export type SleepStackParamList = {
 export type FeedStackParamList = {
   FeedMain: undefined;
   FeedHistory: undefined;
+};
+
+export type RootTabParamList = {
+  Recipes: undefined;
+  Home: undefined;
+  AI: undefined;
+  Growth: undefined;
+  SleepFlow: NavigatorScreenParams<SleepStackParamList> | undefined;
+  FeedFlow: NavigatorScreenParams<FeedStackParamList> | undefined;
+  FoodTastingFlow: undefined;
+  FamilySetupFlow: undefined;
+  Settings: undefined;
 };
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
