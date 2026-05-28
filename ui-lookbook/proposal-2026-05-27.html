@@ -1,0 +1,1619 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LittleNest — Watercolor Nursery proposal (v2 · 2026-05-27)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500;1,700&family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&family=Frank+Ruhl+Libre:wght@500;700&family=Heebo:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ---------- INK ---------- */
+    --inkDeep: #2A1F2E;       /* warm plum-black */
+    --inkSoft: #6E5E66;        /* dusty mauve */
+    --cardWash: rgba(255, 252, 247, 0.85);
+    --border: rgba(42, 31, 46, 0.10);
+
+    /* ---------- BOY (light) ---------- */
+    --boyBgFrom: #DDEDF6;
+    --boyBgTo: #F4FAFD;
+    --boyHeaderFrom: #ADCEE5;
+    --boyHeaderMid: #C9E1F0;
+    --boyHeaderTo: #F4FAFD;
+    --boyAccent: #4F89BC;
+    --boyAccentDeep: #2D5A86;
+
+    /* ---------- GIRL (light) ---------- */
+    --girlBgFrom: #F8DCD6;
+    --girlBgTo: #FCEFEC;
+    --girlHeaderFrom: #EDB7AE;
+    --girlHeaderMid: #F4D2C9;
+    --girlHeaderTo: #FCEFEC;
+    --girlAccent: #D4736A;
+    --girlAccentDeep: #98423A;
+
+    /* ---------- TWINS (boy+girl) ---------- */
+    --twinsBg: linear-gradient(115deg, #DDEDF6 0%, #ECECF1 48%, #F8DCD6 100%);
+    --twinsHeader: linear-gradient(115deg, #ADCEE5 0%, #DBC8C9 50%, #EDB7AE 100%);
+
+    /* ---------- DARK (Moonlit) ---------- */
+    --darkBgFrom: #1B0F2C;
+    --darkBgMid: #2A1346;
+    --darkBgTo: #0F2A2C;
+    --darkSurface: rgba(56, 30, 78, 0.55);
+    --darkSurfaceSolid: #2B1844;
+    --darkBorder: rgba(241, 226, 199, 0.16);
+    --darkText: #FBF1DC;
+    --darkMuted: #D9C8B6;
+    --darkAccent: #C8A0FF;
+
+    /* ---------- SECTION ACCENTS (light) ---------- */
+    --sleepBg: #E2D5EE;       --sleepInk: #3B2762;
+    --feedBg: #F6D7BD;        --feedInk: #6E3A18;
+    --foodBg: #D2E2BD;        --foodInk: #34522C;
+    --learnBg: #F2E2C7;       --learnInk: #5A4225;
+
+    /* ---------- SECTION ACCENTS (dark — glowing) ---------- */
+    --sleepDark1: #5D3AAD;    --sleepDark2: #321A6A;
+    --feedDark1: #B95A2C;     --feedDark2: #6B2A12;
+    --foodDark1: #4F8B45;     --foodDark2: #1F4A2D;
+    --learnDark1: #C9923C;    --learnDark2: #6A4818;
+  }
+
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background:
+      radial-gradient(ellipse at 12% 8%, #2E1B4A 0%, transparent 50%),
+      radial-gradient(ellipse at 88% 92%, #0F3E3C 0%, transparent 55%),
+      #14091F;
+    color: #FBF1DC;
+    font-family: "Fraunces", Georgia, serif;
+    min-height: 100vh;
+    padding: 40px 32px 80px;
+  }
+
+  /* Subtle film grain over whole canvas */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode: overlay;
+    opacity: 0.5;
+  }
+
+  .top {
+    max-width: 1380px;
+    margin: 0 auto 36px;
+    position: relative;
+    z-index: 2;
+  }
+  .top .kicker {
+    font-family: "Fraunces", serif;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #C8A0FF;
+    margin: 0 0 8px;
+  }
+  .top h1 {
+    margin: 0 0 8px;
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 44px;
+    line-height: 1.05;
+    letter-spacing: -0.5px;
+  }
+  .top h1 .accent { color: #F8C8D8; font-style: normal; font-weight: 700; }
+  .top .lede {
+    color: #C9B8CC;
+    font-size: 14px;
+    line-height: 1.55;
+    max-width: 760px;
+    font-weight: 300;
+    margin: 0;
+  }
+  .top .lede em { color: #FBF1DC; font-style: normal; font-weight: 500; }
+
+  /* SECTION HEADERS in the canvas */
+  .section-row {
+    max-width: 1380px;
+    margin: 32px auto 0;
+    position: relative;
+    z-index: 2;
+  }
+  .section-row .section-head {
+    display: flex; align-items: baseline; gap: 14px;
+    margin: 24px 0 14px;
+  }
+  .section-row .section-head .num {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 28px;
+    color: #F8C8D8;
+    line-height: 1;
+  }
+  .section-row .section-head .label {
+    font-family: "Fraunces", serif;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #FBF1DC;
+    font-weight: 700;
+  }
+  .section-row .section-head .rule {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, rgba(248,200,216,0.5), transparent);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 304px);
+    gap: 28px 22px;
+    justify-content: start;
+  }
+  .group { display: flex; flex-direction: column; gap: 10px; max-width: 304px; }
+
+  /* ---------- PHONE FRAME ---------- */
+  .phone {
+    width: 304px;
+    height: 650px;
+    border-radius: 44px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 28px 64px rgba(0,0,0,0.55),
+      0 0 0 6px #0A0612,
+      0 0 0 8px #2A1F33;
+  }
+  .phone::after {
+    content: "";
+    position: absolute; left: 50%; top: 8px;
+    transform: translateX(-50%);
+    width: 90px; height: 22px;
+    background: #0A0612;
+    border-radius: 0 0 14px 14px;
+    z-index: 10;
+  }
+
+  /* LIGHT MODE BACKGROUNDS — gendered */
+  .phone.light.boy {
+    background:
+      radial-gradient(ellipse 100% 60% at 50% 0%, var(--boyHeaderFrom) 0%, transparent 60%),
+      linear-gradient(180deg, var(--boyBgFrom) 0%, var(--boyBgTo) 70%);
+    color: var(--inkDeep);
+  }
+  .phone.light.girl {
+    background:
+      radial-gradient(ellipse 100% 60% at 50% 0%, var(--girlHeaderFrom) 0%, transparent 60%),
+      linear-gradient(180deg, var(--girlBgFrom) 0%, var(--girlBgTo) 70%);
+    color: var(--inkDeep);
+  }
+  .phone.light.twins {
+    background:
+      linear-gradient(180deg, rgba(173,206,229,0.55) 0%, rgba(237,183,174,0.0) 60%),
+      linear-gradient(180deg, rgba(237,183,174,0.0) 40%, rgba(237,183,174,0.55) 100%),
+      linear-gradient(115deg, var(--boyBgFrom) 0%, #F0EAEC 50%, var(--girlBgFrom) 100%);
+    color: var(--inkDeep);
+  }
+
+  /* DARK MODE — moonlit jewel canvas */
+  .phone.dark {
+    background:
+      radial-gradient(ellipse 90% 50% at 20% 0%, rgba(157,90,229,0.45) 0%, transparent 55%),
+      radial-gradient(ellipse 90% 60% at 90% 30%, rgba(60,180,170,0.30) 0%, transparent 55%),
+      radial-gradient(ellipse 100% 50% at 50% 100%, rgba(244,108,143,0.20) 0%, transparent 60%),
+      linear-gradient(170deg, var(--darkBgFrom) 0%, var(--darkBgMid) 50%, var(--darkBgTo) 100%);
+    color: var(--darkText);
+  }
+
+  /* status bar */
+  .statusbar {
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    font-family: "Fraunces", serif;
+    font-size: 12px;
+    font-weight: 700;
+    position: relative; z-index: 3;
+  }
+  .phone.light .statusbar { color: var(--inkDeep); }
+  .phone.dark .statusbar { color: var(--darkText); }
+
+  /* SCROLL AREA */
+  .scroll {
+    padding: 4px 16px 78px;
+    height: calc(100% - 34px);
+    overflow-y: auto;
+    position: relative; z-index: 2;
+  }
+  .scroll::-webkit-scrollbar { display: none; }
+
+  /* ---------- DOCK ---------- */
+  .dock {
+    position: absolute;
+    left: 12px; right: 12px; bottom: 12px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px;
+    border-radius: 22px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 5;
+  }
+  .phone.light .dock {
+    background: rgba(255,252,247,0.78);
+    box-shadow: 0 8px 24px rgba(42,31,46,0.12), inset 0 1px 0 rgba(255,255,255,0.8);
+  }
+  .phone.dark .dock {
+    background: rgba(27,15,44,0.65);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45), inset 0 1px 0 rgba(248,200,216,0.10);
+  }
+  .dock .tab {
+    font-family: "Fraunces", serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .phone.light .dock .tab { color: var(--inkSoft); }
+  .phone.dark .dock .tab { color: var(--darkMuted); }
+  .dock .tab .icon {
+    font-size: 18px;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 12px;
+  }
+  .phone.light .boy .dock .tab.active .icon,
+  .phone.light.boy .dock .tab.active .icon { background: var(--boyAccent); color: #fff; }
+  .phone.light.girl .dock .tab.active .icon { background: var(--girlAccent); color: #fff; }
+  .phone.light.twins .dock .tab.active .icon {
+    background: linear-gradient(120deg, var(--boyAccent), var(--girlAccent));
+    color: #fff;
+  }
+  .phone.light .dock .tab.active { color: var(--inkDeep); font-weight: 800; }
+  .phone.dark .dock .tab.active .icon {
+    background: linear-gradient(120deg, #C8A0FF, #F8C8D8);
+    color: #1B0F2C;
+  }
+  .phone.dark .dock .tab.active { color: var(--darkText); font-weight: 800; }
+
+  /* ---------- HERO (Watercolor header replacement) ---------- */
+  .hero {
+    padding: 14px 6px 22px;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .hero .sparkle-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 6px;
+    font-size: 10px; letter-spacing: 6px;
+    font-family: "Fraunces", serif;
+    text-transform: uppercase; font-weight: 700;
+  }
+  .phone.light .hero .sparkle-row { color: var(--inkSoft); }
+  .phone.dark .hero .sparkle-row { color: #C8A0FF; }
+  .hero .sparkle-row svg { width: 12px; height: 12px; }
+  .hero h2 {
+    margin: 0;
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 32px;
+    line-height: 1.08;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+  }
+  .hero h2 .ampersand { font-weight: 700; font-style: italic; }
+  .phone.light .hero h2 { color: var(--inkDeep); }
+  .phone.dark .hero h2 { color: var(--darkText); }
+  .hero .sub {
+    margin-top: 10px;
+    font-family: "Fraunces", serif;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .phone.light .hero .sub { color: var(--inkSoft); }
+  .phone.dark .hero .sub { color: var(--darkMuted); }
+
+  /* Hebrew typography */
+  .rtl { direction: rtl; }
+  .rtl .hero h2 { font-family: "Frank Ruhl Libre", serif; font-style: normal; font-weight: 700; }
+  .rtl .hero .sub { font-family: "Heebo", sans-serif; font-weight: 400; }
+  .rtl .card .banner h3 { font-family: "Frank Ruhl Libre", serif; font-style: normal; font-weight: 700; }
+  .rtl .learn h3 { font-family: "Frank Ruhl Libre", serif; font-style: normal; font-weight: 700; }
+  .rtl .learn p { font-family: "Heebo", sans-serif; }
+  .rtl .card .meta .value,
+  .rtl .card .meta .label,
+  .rtl .card .footer { font-family: "Heebo", sans-serif; }
+  .rtl .card .body .right { font-family: "Frank Ruhl Libre", serif; font-weight: 700; }
+  .rtl .dock .tab { font-family: "Heebo", sans-serif; }
+  .rtl .pill { font-family: "Heebo", sans-serif; }
+
+  /* ---------- LEARNING CARD ---------- */
+  .learn {
+    border-radius: 22px;
+    padding: 16px 18px 18px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--cardWash);
+    backdrop-filter: blur(8px);
+  }
+  .phone.dark .learn {
+    background: var(--darkSurface);
+    border-color: var(--darkBorder);
+    backdrop-filter: blur(14px);
+  }
+  .learn .kicker {
+    font-family: "Fraunces", serif;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;
+  }
+  .phone.light.boy .learn .kicker { color: var(--boyAccentDeep); }
+  .phone.light.girl .learn .kicker { color: var(--girlAccentDeep); }
+  .phone.light.twins .learn .kicker { color: #5A4630; }
+  .phone.dark .learn .kicker { color: #F8C8D8; }
+  .learn h3 {
+    margin: 8px 0 8px;
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 20px;
+    line-height: 1.22;
+    font-weight: 500;
+  }
+  .phone.light .learn h3 { color: var(--inkDeep); }
+  .phone.dark .learn h3 { color: var(--darkText); }
+  .learn p {
+    margin: 0;
+    font-family: "Fraunces", serif;
+    font-weight: 300;
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+  .phone.light .learn p { color: var(--inkSoft); }
+  .phone.dark .learn p { color: var(--darkMuted); }
+
+  /* ---------- SECTION CARD ---------- */
+  .card {
+    border-radius: 26px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+    background: var(--cardWash);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 6px 22px rgba(42,31,46,0.06);
+  }
+  .phone.dark .card {
+    background: var(--darkSurface);
+    border-color: var(--darkBorder);
+    box-shadow: 0 6px 22px rgba(0,0,0,0.35), inset 0 1px 0 rgba(248,200,216,0.06);
+    backdrop-filter: blur(14px);
+  }
+
+  .card .banner {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card .banner::after {
+    /* subtle paint brush texture */
+    content: "";
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 60'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='2' numOctaves='2' seed='4'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.18 0'/></filter><rect width='400' height='60' filter='url(%23n)'/></svg>");
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+  }
+  .card .banner h3 {
+    margin: 0;
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.3px;
+    position: relative; z-index: 1;
+  }
+  .card .banner .plus {
+    width: 42px; height: 42px;
+    border-radius: 999px;
+    border: none;
+    font-size: 24px;
+    font-weight: 300;
+    font-family: "Fraunces", serif;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    position: relative; z-index: 1;
+    transition: transform 0.2s;
+  }
+  .card .banner .plus:hover { transform: scale(1.05); }
+  /* per-child accent on "+" */
+  .phone.light.boy .card .banner .plus { background: var(--boyAccent); color: #fff; box-shadow: 0 4px 12px rgba(45,90,134,0.35); }
+  .phone.light.girl .card .banner .plus { background: var(--girlAccent); color: #fff; box-shadow: 0 4px 12px rgba(152,66,58,0.35); }
+  .phone.light.twins .card .banner .plus {
+    background: linear-gradient(135deg, var(--boyAccent), var(--girlAccent));
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  }
+  .phone.dark .card .banner .plus {
+    background: linear-gradient(135deg, #C8A0FF, #F8C8D8);
+    color: #1B0F2C;
+    box-shadow: 0 4px 16px rgba(200,160,255,0.4);
+  }
+
+  /* SECTION BANNER PAINT */
+  .card.sleep .banner { background: linear-gradient(135deg, var(--sleepBg) 0%, transparent 100%), var(--sleepBg); }
+  .card.sleep .banner h3 { color: var(--sleepInk); }
+  .card.feed .banner { background: linear-gradient(135deg, var(--feedBg) 0%, transparent 100%), var(--feedBg); }
+  .card.feed .banner h3 { color: var(--feedInk); }
+  .card.food .banner { background: linear-gradient(135deg, var(--foodBg) 0%, transparent 100%), var(--foodBg); }
+  .card.food .banner h3 { color: var(--foodInk); }
+
+  .phone.dark .card.sleep .banner { background: linear-gradient(135deg, var(--sleepDark1) 0%, var(--sleepDark2) 100%); }
+  .phone.dark .card.sleep .banner h3 { color: #F7EDFF; }
+  .phone.dark .card.feed .banner { background: linear-gradient(135deg, var(--feedDark1) 0%, var(--feedDark2) 100%); }
+  .phone.dark .card.feed .banner h3 { color: #FFE5C8; }
+  .phone.dark .card.food .banner { background: linear-gradient(135deg, var(--foodDark1) 0%, var(--foodDark2) 100%); }
+  .phone.dark .card.food .banner h3 { color: #ECF6D8; }
+
+  /* CARD BODY */
+  .card .body {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+  }
+  .card .body .icon {
+    width: 46px; height: 46px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .phone.light.boy .card .body .icon { background: rgba(79,137,188,0.15); }
+  .phone.light.girl .card .body .icon { background: rgba(212,115,106,0.15); }
+  .phone.light.twins .card .body .icon { background: rgba(157,122,150,0.18); }
+  .phone.dark .card .body .icon { background: rgba(200,160,255,0.18); }
+
+  .card .body .meta { flex: 1; min-width: 0; }
+  .card .body .meta .label {
+    font-family: "Fraunces", serif;
+    font-size: 10px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    font-weight: 700;
+    opacity: 0.6;
+  }
+  .card .body .meta .value {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 4px;
+    line-height: 1.2;
+  }
+  .card .body .right {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: right;
+    line-height: 1;
+  }
+  .card .body .right .sublabel {
+    font-family: "Fraunces", serif;
+    font-size: 9px;
+    font-style: normal;
+    font-weight: 400;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    opacity: 0.55;
+    margin-top: 3px;
+  }
+  .rtl .card .body .right { text-align: left; }
+
+  .card .footer {
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid var(--border);
+    padding: 12px 18px;
+    font-family: "Fraunces", serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+  }
+  .phone.dark .card .footer { border-top-color: var(--darkBorder); }
+  .card .footer .arrow { opacity: 0.5; }
+
+  /* ---------- ACTIVE SLEEP TIMER ---------- */
+  .timer-body {
+    padding: 18px 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .pulse {
+    width: 14px; height: 14px;
+    border-radius: 999px;
+    background: #6BC58F;
+    box-shadow: 0 0 0 0 rgba(107,197,143,0.55);
+    animation: pulse 1.6s infinite;
+    flex-shrink: 0;
+  }
+  .phone.dark .pulse { background: #8FE3B1; box-shadow: 0 0 0 0 rgba(143,227,177,0.6); }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(107,197,143,0.55); }
+    70%  { box-shadow: 0 0 0 14px rgba(107,197,143,0); }
+    100% { box-shadow: 0 0 0 0 rgba(107,197,143,0); }
+  }
+  .timer-body .time {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 36px; font-weight: 500; letter-spacing: 1px;
+    flex: 1; line-height: 1;
+  }
+  .timer-body .stop {
+    border: none;
+    background: var(--inkDeep);
+    color: #FBF1DC;
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .phone.dark .timer-body .stop {
+    background: linear-gradient(135deg, #C8A0FF, #F8C8D8);
+    color: #1B0F2C;
+    box-shadow: 0 4px 14px rgba(200,160,255,0.35);
+  }
+  .timer-body .since {
+    font-family: "Fraunces", serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-top: 4px;
+  }
+
+  /* ---------- HISTORY ROWS ---------- */
+  .history-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--border);
+    font-family: "Fraunces", serif;
+    font-size: 12.5px;
+    font-weight: 400;
+  }
+  .phone.dark .history-row { border-bottom-color: var(--darkBorder); }
+  .history-row:last-child { border-bottom: none; }
+  .history-row .when { font-weight: 600; }
+  .history-row .duration {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0.85;
+  }
+  .rtl .history-row .duration { font-family: "Frank Ruhl Libre", serif; font-style: normal; }
+  .rtl .history-row .when { font-family: "Heebo", sans-serif; }
+
+  /* ---------- QUICK-ADD SHEET ---------- */
+  .quick-sheet {
+    position: absolute;
+    left: 16px; right: 16px; bottom: 86px;
+    border-radius: 28px;
+    padding: 8px;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    z-index: 6;
+    animation: slideup 0.4s cubic-bezier(.2,.9,.3,1);
+  }
+  @keyframes slideup {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .phone.light .quick-sheet {
+    background: rgba(255,252,247,0.92);
+    box-shadow: 0 -20px 60px rgba(42,31,46,0.20), inset 0 1px 0 rgba(255,255,255,0.9);
+    border: 1px solid var(--border);
+  }
+  .phone.dark .quick-sheet {
+    background: rgba(43,24,68,0.88);
+    border: 1px solid var(--darkBorder);
+    box-shadow: 0 -20px 60px rgba(0,0,0,0.5);
+  }
+  .quick-sheet .grip {
+    width: 38px; height: 4px;
+    background: rgba(0,0,0,0.18);
+    border-radius: 999px;
+    margin: 4px auto 10px;
+  }
+  .phone.dark .quick-sheet .grip { background: rgba(255,255,255,0.18); }
+  .quick-sheet .item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 14px;
+    border-radius: 16px;
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 18px;
+    font-weight: 500;
+  }
+  .quick-sheet .item:hover { background: rgba(0,0,0,0.04); }
+  .phone.dark .quick-sheet .item:hover { background: rgba(255,255,255,0.06); }
+  .quick-sheet .item .ic {
+    width: 40px; height: 40px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
+  }
+  .phone.light .quick-sheet .item.nursing .ic { background: var(--feedBg); }
+  .phone.light .quick-sheet .item.bottle .ic { background: var(--sleepBg); }
+  .phone.dark .quick-sheet .item.nursing .ic { background: linear-gradient(135deg, var(--feedDark1), var(--feedDark2)); }
+  .phone.dark .quick-sheet .item.bottle .ic { background: linear-gradient(135deg, var(--sleepDark1), var(--sleepDark2)); }
+
+  /* ---------- ALLERGEN ---------- */
+  .allergen-row {
+    padding: 13px 18px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .phone.dark .allergen-row { border-bottom-color: var(--darkBorder); }
+  .allergen-row:last-child { border-bottom: none; }
+  .allergen-row .name {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 1.1;
+  }
+  .rtl .allergen-row .name { font-family: "Frank Ruhl Libre", serif; font-style: normal; }
+  .allergen-row .sub {
+    font-family: "Fraunces", serif;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    opacity: 0.6;
+    margin-top: 2px;
+  }
+  .rtl .allergen-row .sub { font-family: "Heebo", sans-serif; }
+  .pills { display: flex; gap: 6px; flex-shrink: 0; }
+  .pill {
+    width: 28px; height: 28px;
+    border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Fraunces", serif;
+    font-size: 11px; font-weight: 700;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: inherit;
+    opacity: 0.55;
+  }
+  .phone.dark .pill { border-color: rgba(248,200,216,0.30); }
+  .pill.done {
+    opacity: 1;
+    border-color: transparent;
+    color: #fff;
+  }
+  .phone.light.boy .pill.done { background: var(--boyAccent); }
+  .phone.light.girl .pill.done { background: var(--girlAccent); }
+  .phone.light.twins .pill.done { background: linear-gradient(135deg, var(--boyAccent), var(--girlAccent)); }
+  .phone.dark .pill.done {
+    background: linear-gradient(135deg, #C8A0FF, #F8C8D8);
+    color: #1B0F2C;
+  }
+
+  /* whisper / hint card */
+  .whisper {
+    padding: 14px 18px;
+    border-radius: 22px;
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+    background: var(--cardWash);
+  }
+  .phone.dark .whisper { background: var(--darkSurface); border-color: var(--darkBorder); }
+  .whisper .label {
+    font-family: "Fraunces", serif;
+    font-size: 10px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    font-weight: 700;
+    opacity: 0.6;
+  }
+  .whisper .text {
+    margin-top: 6px;
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+  .rtl .whisper .text { font-family: "Frank Ruhl Libre", serif; font-style: normal; }
+  .rtl .whisper .label { font-family: "Heebo", sans-serif; }
+
+  /* TABS SUBHEAD */
+  .tab-subhead {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 18px 4px 10px;
+    opacity: 0.85;
+  }
+  .rtl .tab-subhead { font-family: "Frank Ruhl Libre", serif; font-style: normal; }
+
+  /* small header inside cards */
+  .card .banner.compact { height: 44px; }
+  .card .banner.compact h3 { font-size: 18px; }
+  .card .banner.compact .count {
+    font-family: "Fraunces", serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    position: relative; z-index: 1;
+  }
+
+  /* ---------- CAPTION under each phone ---------- */
+  .caption {
+    font-family: "Fraunces", serif;
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 1.55;
+    color: #C9B8CC;
+    max-width: 304px;
+  }
+  .caption b {
+    color: #F8C8D8;
+    font-weight: 600;
+    font-style: italic;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 14px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* ---------- LEGEND ---------- */
+  .legend {
+    max-width: 1380px;
+    margin: 60px auto 0;
+    padding: 32px 36px;
+    border-radius: 28px;
+    background: rgba(43,24,68,0.40);
+    border: 1px solid rgba(248,200,216,0.18);
+    backdrop-filter: blur(20px);
+    position: relative; z-index: 2;
+  }
+  .legend h3 {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 0 14px;
+    color: #F8C8D8;
+  }
+  .legend h3:not(:first-child) { margin-top: 24px; }
+  .legend ul { margin: 0; padding-left: 22px; }
+  .legend li {
+    font-family: "Fraunces", serif;
+    font-weight: 300;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #DCDCEC;
+  }
+  .legend li b { color: #FBF1DC; font-weight: 600; }
+  .legend code {
+    font-family: "Courier New", monospace;
+    background: rgba(248,200,216,0.10);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #F8C8D8;
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <p class="kicker">LittleNest · UI proposal v2 · 2026-05-27</p>
+  <h1><span class="accent">Watercolor Nursery</span><br>by day, <em style="font-style:italic;">Moonlit Jewel Tones</em> by night</h1>
+  <p class="lede">
+    Every screen carries the child's accent into the whole background — <em>cornflower blue for a boy, blush rose for a girl, a soft diagonal of both for twins</em>.
+    By night the canvas turns into a deep gradient of plum, midnight, and teal, with glowing section banners and warm cream text that stays readable.
+    Cards keep the Nara-style banner + quick-add + history pattern. Allergen tracking, sleep timer, and the bottom dock are preserved exactly.
+  </p>
+</div>
+
+<!-- ============================================== -->
+<!-- 01 · HOME — LIGHT MODE, GENDERED               -->
+<!-- ============================================== -->
+<div class="section-row">
+  <div class="section-head">
+    <span class="num">01</span>
+    <span class="label">Home · Light Mode · Gendered Pastel</span>
+    <span class="rule"></span>
+  </div>
+  <div class="grid">
+
+    <!-- ============ LIGHT BOY EN ============ -->
+    <div class="group">
+    <div class="phone light boy">
+      <div class="statusbar"><span>21:10</span><span>78%</span></div>
+      <div class="scroll">
+        <div class="hero">
+          <div class="sparkle-row">
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+            <span>Wed · May 27</span>
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+          </div>
+          <h2>Once upon a day <span class="ampersand">&amp;</span><br>a little one named <em>Aner</em>…</h2>
+          <div class="sub">1 year, 7 months — sleeping peacefully right now.</div>
+        </div>
+
+        <div class="learn">
+          <div class="kicker">Little Nest is learning</div>
+          <h3>Log sleep &amp; feeds for 14 days to unlock smarter guidance.</h3>
+          <p>3 days tracked so far. Keep logging and the AI will learn your child's real rhythm.</p>
+        </div>
+
+        <div class="card sleep">
+          <div class="banner"><h3>Sleep</h3><button class="plus">+</button></div>
+          <div class="timer-body">
+            <div class="pulse"></div>
+            <div>
+              <div class="time">42:17</div>
+              <div class="since">Started Wed · May 27 · 20:28</div>
+            </div>
+            <button class="stop">Stop</button>
+          </div>
+          <div class="footer"><span>View history</span><span class="arrow">›</span></div>
+        </div>
+
+        <div class="card feed">
+          <div class="banner"><h3>Feed</h3><button class="plus">+</button></div>
+          <div class="body">
+            <div class="icon">🍼</div>
+            <div class="meta">
+              <div class="label">Last feeding</div>
+              <div class="value">Wed, May 27 · 19:14</div>
+            </div>
+            <div class="right">Right<div class="sublabel">last side</div></div>
+          </div>
+          <div class="footer"><span>View history</span><span class="arrow">›</span></div>
+        </div>
+
+        <div class="card food">
+          <div class="banner"><h3>Tastings</h3><button class="plus">+</button></div>
+          <div class="body">
+            <div class="icon">🥑</div>
+            <div class="meta">
+              <div class="label">In progress</div>
+              <div class="value">Milk · 1 of 3</div>
+            </div>
+            <div class="right">12<div class="sublabel">to test</div></div>
+          </div>
+          <div class="footer"><span>View tastings</span><span class="arrow">›</span></div>
+        </div>
+      </div>
+      <div class="dock">
+        <div class="tab"><span class="icon">🍽️</span>Recipes</div>
+        <div class="tab active"><span class="icon">🏠</span>Home</div>
+        <div class="tab"><span class="icon">✨</span>AI</div>
+        <div class="tab"><span class="icon">📊</span>Growth</div>
+        <div class="tab"><span class="icon">⚙️</span>Settings</div>
+      </div>
+    </div>
+    <div class="caption"><b>Boy · Light · EN</b>Sky-blue wash bleeds from header into page background — no flat cream. Active sleep timer with explicit start date.</div>
+    </div>
+
+    <!-- ============ LIGHT GIRL EN ============ -->
+    <div class="group">
+    <div class="phone light girl">
+      <div class="statusbar"><span>21:10</span><span>78%</span></div>
+      <div class="scroll">
+        <div class="hero">
+          <div class="sparkle-row">
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+            <span>Wed · May 27</span>
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+          </div>
+          <h2>Once upon a day <span class="ampersand">&amp;</span><br>a little one named <em>Maya</em>…</h2>
+          <div class="sub">11 months — quiet morning before nap.</div>
+        </div>
+
+        <div class="learn">
+          <div class="kicker">Little Nest is learning</div>
+          <h3>Log sleep &amp; feeds for 14 days to unlock smarter guidance.</h3>
+          <p>5 days tracked so far. Keep logging and the AI will learn your child's real rhythm.</p>
+        </div>
+
+        <div class="card sleep">
+          <div class="banner"><h3>Sleep</h3><button class="plus">+</button></div>
+          <div class="body">
+            <div class="icon">🌙</div>
+            <div class="meta">
+              <div class="label">Last sleep</div>
+              <div class="value">Wed, May 27 · 14:20–15:45</div>
+            </div>
+            <div class="right">1h 25m<div class="sublabel">duration</div></div>
+          </div>
+          <div class="footer"><span>View history</span><span class="arrow">›</span></div>
+        </div>
+
+        <div class="card feed">
+          <div class="banner"><h3>Feed</h3><button class="plus">+</button></div>
+          <div class="body">
+            <div class="icon">🍼</div>
+            <div class="meta">
+              <div class="label">Last feeding</div>
+              <div class="value">Wed, May 27 · 19:14</div>
+            </div>
+            <div class="right">Left<div class="sublabel">last side</div></div>
+          </div>
+          <div class="footer"><span>View history</span><span class="arrow">›</span></div>
+        </div>
+
+        <div class="card food">
+          <div class="banner"><h3>Tastings</h3><button class="plus">+</button></div>
+          <div class="body">
+            <div class="icon">🥑</div>
+            <div class="meta">
+              <div class="label">In progress</div>
+              <div class="value">Egg · 2 of 3</div>
+            </div>
+            <div class="right">9<div class="sublabel">to test</div></div>
+          </div>
+          <div class="footer"><span>View tastings</span><span class="arrow">›</span></div>
+        </div>
+      </div>
+      <div class="dock">
+        <div class="tab"><span class="icon">🍽️</span>Recipes</div>
+        <div class="tab active"><span class="icon">🏠</span>Home</div>
+        <div class="tab"><span class="icon">✨</span>AI</div>
+        <div class="tab"><span class="icon">📊</span>Growth</div>
+        <div class="tab"><span class="icon">⚙️</span>Settings</div>
+      </div>
+    </div>
+    <div class="caption"><b>Girl · Light · EN</b>Blush-rose wash. "+" pill, dock active state, and allergen ticks all adopt the petal-pink accent.</div>
+    </div>
+
+    <!-- ============ LIGHT TWINS EN ============ -->
+    <div class="group">
+    <div class="phone light twins">
+      <div class="statusbar"><span>21:10</span><span>78%</span></div>
+      <div class="scroll">
+        <div class="hero">
+          <div class="sparkle-row">
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+            <span>Wed · May 27</span>
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+          </div>
+          <h2>Once upon a day with <em>Noa</em><br><span class="ampersand">&amp;</span> <em>Eli</em>…</h2>
+          <div class="sub">8 months — twins, separate logs, shared dashboard.</div>
+        </div>
+
+        <div class="learn">
+          <div class="kicker">Little Nest is learning</div>
+          <h3>Log sleep &amp; feeds for 14 days to unlock smarter guidance.</h3>
+          <p>6 days tracked. The AI is learning each twin's rhythm separately.</p>
+        </div>
+
+        <div class="card sleep">
+          <div class="banner"><h3>Sleep</h3><button class="plus">+</button></div>
+          <div class="body">
+            <div class="icon">🌙</div>
+            <div class="meta">
+              <div class="label">Noa · last sleep</div>
+              <div class="value">Wed, May 27 · 13:40–15:10</div>
+            </div>
+            <div class="right">1h 30m</div>
+          </div>
+          <div class="footer"><span>View history</span><span class="arrow">›</span></div>
+        </div>
+
+        <div class="card feed">
+          <div class="banner"><h3>Feed</h3><button class="plus">+</button></div>
+          <div class="body">
+            <div class="icon">🍼</div>
+            <div class="meta">
+              <div class="label">Eli · last feeding</div>
+              <div class="value">Wed, May 27 · 19:48</div>
+            </div>
+            <div class="right">Bottle<div class="sublabel">120 ml</div></div>
+          </div>
+          <div class="footer"><span>View history</span><span class="arrow">›</span></div>
+        </div>
+
+        <div class="card food">
+          <div class="banner"><h3>Tastings</h3><button class="plus">+</button></div>
+          <div class="body">
+            <div class="icon">🥑</div>
+            <div class="meta">
+              <div class="label">Both twins</div>
+              <div class="value">Avocado · 2 of 3</div>
+            </div>
+            <div class="right">15<div class="sublabel">to test</div></div>
+          </div>
+          <div class="footer"><span>View tastings</span><span class="arrow">›</span></div>
+        </div>
+      </div>
+      <div class="dock">
+        <div class="tab"><span class="icon">🍽️</span>Recipes</div>
+        <div class="tab active"><span class="icon">🏠</span>Home</div>
+        <div class="tab"><span class="icon">✨</span>AI</div>
+        <div class="tab"><span class="icon">📊</span>Growth</div>
+        <div class="tab"><span class="icon">⚙️</span>Settings</div>
+      </div>
+    </div>
+    <div class="caption"><b>Twins · Light · EN</b>Diagonal gradient — sky-blue top-left fading through warm grey into blush-rose bottom-right. "+" and dock pill blend both accents.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- 02 · HOME — DARK MODE, MOONLIT                 -->
+<!-- ============================================== -->
+<div class="section-row">
+  <div class="section-head">
+    <span class="num">02</span>
+    <span class="label">Home · Dark Mode · Moonlit Jewel</span>
+    <span class="rule"></span>
+  </div>
+  <div class="grid">
+
+    <!-- ============ DARK EN ============ -->
+    <div class="group">
+    <div class="phone dark">
+      <div class="statusbar"><span>21:10</span><span>78%</span></div>
+      <div class="scroll">
+        <div class="hero">
+          <div class="sparkle-row">
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+            <span>Wed · May 27</span>
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+          </div>
+          <h2>Once upon a day <span class="ampersand">&amp;</span><br>a little one named <em>Aner</em>…</h2>
+          <div class="sub">1 year, 7 months — sleeping peacefully right now.</div>
+        </div>
+
+        <div class="learn">
+          <div class="kicker">Little Nest is learning</div>
+          <h3>Log sleep &amp; feeds for 14 days to unlock smarter guidance.</h3>
+          <p>3 days tracked so far. Keep logging and the AI will learn your child's real rhythm.</p>
+        </div>
+
+        <div class="card sleep">
+          <div class="banner"><h3>Sleep</h3><button class="plus">+</button></div>
+          <div class="timer-body">
+            <div class="pulse"></div>
+            <div>
+              <div class="time">42:17</div>
+              <div class="since">Started Wed · May 27 · 20:28</div>
+            </div>
+            <button class="stop">Stop</button>
+          </div>
+          <div class="footer"><span>View history</span><span class="arrow">›</span></div>
+        </div>
+
+        <div class="card feed">
+          <div class="banner"><h3>Feed</h3><button class="plus">+</button></div>
+          <div class="body">
+            <div class="icon">🍼</div>
+            <div class="meta">
+              <div class="label">Last feeding</div>
+              <div class="value">Wed, May 27 · 19:14</div>
+            </div>
+            <div class="right">Right<div class="sublabel">last side</div></div>
+          </div>
+          <div class="footer"><span>View history</span><span class="arrow">›</span></div>
+        </div>
+
+        <div class="card food">
+          <div class="banner"><h3>Tastings</h3><button class="plus">+</button></div>
+          <div class="body">
+            <div class="icon">🥑</div>
+            <div class="meta">
+              <div class="label">In progress</div>
+              <div class="value">Milk · 1 of 3</div>
+            </div>
+            <div class="right">12<div class="sublabel">to test</div></div>
+          </div>
+          <div class="footer"><span>View tastings</span><span class="arrow">›</span></div>
+        </div>
+      </div>
+      <div class="dock">
+        <div class="tab"><span class="icon">🍽️</span>Recipes</div>
+        <div class="tab active"><span class="icon">🏠</span>Home</div>
+        <div class="tab"><span class="icon">✨</span>AI</div>
+        <div class="tab"><span class="icon">📊</span>Growth</div>
+        <div class="tab"><span class="icon">⚙️</span>Settings</div>
+      </div>
+    </div>
+    <div class="caption"><b>Dark · EN</b>Deep plum + midnight + teal canvas with soft glows. Cream text (#FBF1DC) for high contrast. Section banners glow as saturated jewels.</div>
+    </div>
+
+    <!-- ============ DARK HE ============ -->
+    <div class="group">
+    <div class="phone dark rtl">
+      <div class="statusbar"><span>21:10</span><span>78%</span></div>
+      <div class="scroll">
+        <div class="hero">
+          <div class="sparkle-row">
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+            <span>יום רביעי · 27 במאי</span>
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+          </div>
+          <h2>היה היה יום עם ענר…</h2>
+          <div class="sub">שנה ו-7 חודשים — ישן בשקט עכשיו.</div>
+        </div>
+
+        <div class="learn">
+          <div class="kicker">קן קטן עוקב</div>
+          <h3>רשמו שינה והאכלות במשך 14 ימים כדי לפתוח הכוונה חכמה יותר.</h3>
+          <p>כרגע יש לקן הקטן 3 ימי מעקב. המשיכו לרשום כדי שה-AI ילמד את הקצב של הילד.</p>
+        </div>
+
+        <div class="card sleep">
+          <div class="banner"><h3>שינה</h3><button class="plus">+</button></div>
+          <div class="timer-body">
+            <div class="pulse"></div>
+            <div>
+              <div class="time">42:17</div>
+              <div class="since">החל ביום רביעי · 27 במאי · 20:28</div>
+            </div>
+            <button class="stop">סיום</button>
+          </div>
+          <div class="footer"><span>היסטוריה</span><span class="arrow">‹</span></div>
+        </div>
+
+        <div class="card feed">
+          <div class="banner"><h3>האכלה</h3><button class="plus">+</button></div>
+          <div class="body">
+            <div class="right">ימין<div class="sublabel">צד אחרון</div></div>
+            <div class="meta" style="text-align:right">
+              <div class="label">סעודה אחרונה</div>
+              <div class="value">יום רביעי, 27.5 · 19:14</div>
+            </div>
+            <div class="icon">🍼</div>
+          </div>
+          <div class="footer"><span>היסטוריה</span><span class="arrow">‹</span></div>
+        </div>
+
+        <div class="card food">
+          <div class="banner"><h3>טעימות</h3><button class="plus">+</button></div>
+          <div class="body">
+            <div class="right">12<div class="sublabel">לבדיקה</div></div>
+            <div class="meta" style="text-align:right">
+              <div class="label">בתהליך</div>
+              <div class="value">חלב · 1 מתוך 3</div>
+            </div>
+            <div class="icon">🥑</div>
+          </div>
+          <div class="footer"><span>הצגת טעימות</span><span class="arrow">‹</span></div>
+        </div>
+      </div>
+      <div class="dock">
+        <div class="tab"><span class="icon">🍽️</span>מתכונים</div>
+        <div class="tab active"><span class="icon">🏠</span>בית</div>
+        <div class="tab"><span class="icon">✨</span>AI</div>
+        <div class="tab"><span class="icon">📊</span>צמיחה</div>
+        <div class="tab"><span class="icon">⚙️</span>הגדרות</div>
+      </div>
+    </div>
+    <div class="caption"><b>Dark · HE</b>Frank Ruhl Libre for Hebrew display, Heebo for body — proper Hebrew typography. Every label is high-contrast cream, not faint mauve.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- 03 · SLEEP TAB                                  -->
+<!-- ============================================== -->
+<div class="section-row">
+  <div class="section-head">
+    <span class="num">03</span>
+    <span class="label">Sleep Tab · Active Timer + History</span>
+    <span class="rule"></span>
+  </div>
+  <div class="grid">
+
+    <!-- ============ SLEEP LIGHT BOY HE ============ -->
+    <div class="group">
+    <div class="phone light boy rtl">
+      <div class="statusbar"><span>21:11</span><span>78%</span></div>
+      <div class="scroll">
+        <div class="hero">
+          <div class="sparkle-row">
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+            <span>פרק · שעת חלום</span>
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+          </div>
+          <h2>שעת חלום של ענר…</h2>
+          <div class="sub">הטיימר רץ עכשיו. ניתן לערוך, לסיים, או להוסיף ידנית בכפתור +.</div>
+        </div>
+
+        <div class="card sleep">
+          <div class="banner"><h3>שינה פעילה</h3><button class="plus">+</button></div>
+          <div class="timer-body">
+            <div class="pulse"></div>
+            <div>
+              <div class="time">42:17</div>
+              <div class="since">החל יום רביעי · 27.5 · 20:28</div>
+            </div>
+            <button class="stop">סיום</button>
+          </div>
+        </div>
+
+        <div class="tab-subhead">היסטוריית שינה</div>
+
+        <div class="card sleep">
+          <div class="banner compact"><h3>7 הימים האחרונים</h3><span class="count">4 רישומים</span></div>
+          <div class="history-row"><span class="when">יום שלישי, 26.5 · 14:20–15:45</span><span class="duration">1 שעה ו-25 דק'</span></div>
+          <div class="history-row"><span class="when">יום שלישי, 26.5 · 22:30–06:12</span><span class="duration">7 שעות ו-42 דק'</span></div>
+          <div class="history-row"><span class="when">יום שני, 25.5 · 12:50–14:30</span><span class="duration">1 שעה ו-40 דק'</span></div>
+          <div class="history-row"><span class="when">יום ראשון, 24.5 · 23:00–06:55</span><span class="duration">7 שעות ו-55 דק'</span></div>
+        </div>
+      </div>
+      <div class="dock">
+        <div class="tab"><span class="icon">🍽️</span>מתכונים</div>
+        <div class="tab"><span class="icon">🏠</span>בית</div>
+        <div class="tab active"><span class="icon">😴</span>שינה</div>
+        <div class="tab"><span class="icon">📊</span>צמיחה</div>
+        <div class="tab"><span class="icon">⚙️</span>הגדרות</div>
+      </div>
+    </div>
+    <div class="caption"><b>Sleep · Boy · Light · HE</b>History rows show full dates ("יום שלישי, 26.5") rather than "yesterday". "+" opens manual entry.</div>
+    </div>
+
+    <!-- ============ SLEEP DARK HE ============ -->
+    <div class="group">
+    <div class="phone dark rtl">
+      <div class="statusbar"><span>21:11</span><span>78%</span></div>
+      <div class="scroll">
+        <div class="hero">
+          <div class="sparkle-row">
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+            <span>פרק · שעת חלום</span>
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+          </div>
+          <h2>שעת חלום של ענר…</h2>
+          <div class="sub">הטיימר רץ עכשיו. ניתן לערוך, לסיים, או להוסיף ידנית בכפתור +.</div>
+        </div>
+
+        <div class="card sleep">
+          <div class="banner"><h3>שינה פעילה</h3><button class="plus">+</button></div>
+          <div class="timer-body">
+            <div class="pulse"></div>
+            <div>
+              <div class="time">42:17</div>
+              <div class="since">החל יום רביעי · 27.5 · 20:28</div>
+            </div>
+            <button class="stop">סיום</button>
+          </div>
+        </div>
+
+        <div class="tab-subhead">היסטוריית שינה</div>
+
+        <div class="card sleep">
+          <div class="banner compact"><h3>7 הימים האחרונים</h3><span class="count">4 רישומים</span></div>
+          <div class="history-row"><span class="when">יום שלישי, 26.5 · 14:20–15:45</span><span class="duration">1 שעה ו-25 דק'</span></div>
+          <div class="history-row"><span class="when">יום שלישי, 26.5 · 22:30–06:12</span><span class="duration">7 שעות ו-42 דק'</span></div>
+          <div class="history-row"><span class="when">יום שני, 25.5 · 12:50–14:30</span><span class="duration">1 שעה ו-40 דק'</span></div>
+          <div class="history-row"><span class="when">יום ראשון, 24.5 · 23:00–06:55</span><span class="duration">7 שעות ו-55 דק'</span></div>
+        </div>
+      </div>
+      <div class="dock">
+        <div class="tab"><span class="icon">🍽️</span>מתכונים</div>
+        <div class="tab"><span class="icon">🏠</span>בית</div>
+        <div class="tab active"><span class="icon">😴</span>שינה</div>
+        <div class="tab"><span class="icon">📊</span>צמיחה</div>
+        <div class="tab"><span class="icon">⚙️</span>הגדרות</div>
+      </div>
+    </div>
+    <div class="caption"><b>Sleep · Dark · HE</b>Stop pill flips to a pink-to-lilac gradient on dark. History rows have full date prefixes, no relative time.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- 04 · FEED QUICK-ADD                             -->
+<!-- ============================================== -->
+<div class="section-row">
+  <div class="section-head">
+    <span class="num">04</span>
+    <span class="label">Feed Quick-Add · Nursing &amp; Bottle Only</span>
+    <span class="rule"></span>
+  </div>
+  <div class="grid">
+
+    <!-- ============ FEED QUICK LIGHT HE ============ -->
+    <div class="group">
+    <div class="phone light boy rtl">
+      <div class="statusbar"><span>21:12</span><span>77%</span></div>
+      <div class="scroll" style="filter:brightness(0.92) saturate(0.95);">
+        <div class="hero">
+          <div class="sparkle-row">
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+            <span>יום רביעי · 27 במאי</span>
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+          </div>
+          <h2>היה היה יום עם ענר…</h2>
+        </div>
+        <div class="card feed">
+          <div class="banner"><h3>האכלה</h3><button class="plus">+</button></div>
+          <div class="body">
+            <div class="right">ימין<div class="sublabel">צד אחרון</div></div>
+            <div class="meta" style="text-align:right">
+              <div class="label">סעודה אחרונה</div>
+              <div class="value">יום רביעי, 27.5 · 19:14</div>
+            </div>
+            <div class="icon">🍼</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quick-sheet rtl">
+        <div class="grip"></div>
+        <div class="item nursing"><div class="ic">🤱</div>הנקה</div>
+        <div class="item bottle"><div class="ic">🍼</div>בקבוק</div>
+      </div>
+
+      <div class="dock">
+        <div class="tab"><span class="icon">🍽️</span>מתכונים</div>
+        <div class="tab active"><span class="icon">🏠</span>בית</div>
+        <div class="tab"><span class="icon">✨</span>AI</div>
+        <div class="tab"><span class="icon">📊</span>צמיחה</div>
+        <div class="tab"><span class="icon">⚙️</span>הגדרות</div>
+      </div>
+    </div>
+    <div class="caption"><b>Feed quick-add · Boy · Light · HE</b>Two-option sheet — Nursing &amp; Bottle only. Solids removed per spec. Background dimmed under the sheet.</div>
+    </div>
+
+    <!-- ============ FEED QUICK DARK HE ============ -->
+    <div class="group">
+    <div class="phone dark rtl">
+      <div class="statusbar"><span>21:12</span><span>77%</span></div>
+      <div class="scroll" style="filter:brightness(0.85);">
+        <div class="hero">
+          <div class="sparkle-row">
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+            <span>יום רביעי · 27 במאי</span>
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+          </div>
+          <h2>היה היה יום עם ענר…</h2>
+        </div>
+        <div class="card feed">
+          <div class="banner"><h3>האכלה</h3><button class="plus">+</button></div>
+          <div class="body">
+            <div class="right">ימין<div class="sublabel">צד אחרון</div></div>
+            <div class="meta" style="text-align:right">
+              <div class="label">סעודה אחרונה</div>
+              <div class="value">יום רביעי, 27.5 · 19:14</div>
+            </div>
+            <div class="icon">🍼</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quick-sheet rtl">
+        <div class="grip"></div>
+        <div class="item nursing"><div class="ic">🤱</div>הנקה</div>
+        <div class="item bottle"><div class="ic">🍼</div>בקבוק</div>
+      </div>
+
+      <div class="dock">
+        <div class="tab"><span class="icon">🍽️</span>מתכונים</div>
+        <div class="tab active"><span class="icon">🏠</span>בית</div>
+        <div class="tab"><span class="icon">✨</span>AI</div>
+        <div class="tab"><span class="icon">📊</span>צמיחה</div>
+        <div class="tab"><span class="icon">⚙️</span>הגדרות</div>
+      </div>
+    </div>
+    <div class="caption"><b>Feed quick-add · Dark · HE</b>Sheet uses dark-glass with high-contrast cream text. Item backgrounds are saturated jewel tones (sienna for Nursing, plum for Bottle).</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- 05 · TASTINGS / ALLERGEN                        -->
+<!-- ============================================== -->
+<div class="section-row">
+  <div class="section-head">
+    <span class="num">05</span>
+    <span class="label">Tastings · Allergen Tracking · No "+" (pre-listed)</span>
+    <span class="rule"></span>
+  </div>
+  <div class="grid">
+
+    <!-- ============ TASTING LIGHT BOY HE — NO + ============ -->
+    <div class="group">
+    <div class="phone light boy rtl">
+      <div class="statusbar"><span>21:09</span><span>78%</span></div>
+      <div class="scroll">
+        <div class="hero">
+          <div class="sparkle-row">
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+            <span>פרק · ביסים ראשונים</span>
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+          </div>
+          <h2>ביסים ראשונים של ענר…</h2>
+          <div class="sub">עקבו שלוש פעמים אחרי טעימות ראשונות וראו מה עדיין צריך בדיקת אלרגיה.</div>
+        </div>
+
+        <div class="whisper">
+          <div class="label">לחישה</div>
+          <div class="text">כל טעם חדש מקבל שלוש טעימות קטנות עבור ענר. סמנו כל אחת כשנעשתה.</div>
+        </div>
+
+        <div class="card food">
+          <div class="banner compact"><h3>חלב / מוצרי חלב</h3></div>
+          <div class="allergen-row">
+            <div><div class="name">חלב</div><div class="sub">1 מתוך 3 בדיקות הושלמו</div></div>
+            <div class="pills"><div class="pill done">1</div><div class="pill">2</div><div class="pill">3</div></div>
+          </div>
+          <div class="allergen-row">
+            <div><div class="name">יוגורט</div><div class="sub">עדיין צריך בדיקה</div></div>
+            <div class="pills"><div class="pill">1</div><div class="pill">2</div><div class="pill">3</div></div>
+          </div>
+          <div class="allergen-row">
+            <div><div class="name">גבינה</div><div class="sub">עדיין צריך בדיקה</div></div>
+            <div class="pills"><div class="pill">1</div><div class="pill">2</div><div class="pill">3</div></div>
+          </div>
+        </div>
+
+        <div class="card food">
+          <div class="banner compact"><h3>ביצים</h3></div>
+          <div class="allergen-row">
+            <div><div class="name">ביצה</div><div class="sub">3 מתוך 3 הושלמו · אושר</div></div>
+            <div class="pills"><div class="pill done">1</div><div class="pill done">2</div><div class="pill done">3</div></div>
+          </div>
+        </div>
+
+        <div class="card food">
+          <div class="banner compact"><h3>קטניות ובוטנים</h3></div>
+          <div class="allergen-row">
+            <div><div class="name">חמאת בוטנים</div><div class="sub">עדיין צריך בדיקה</div></div>
+            <div class="pills"><div class="pill">1</div><div class="pill">2</div><div class="pill">3</div></div>
+          </div>
+          <div class="allergen-row">
+            <div><div class="name">עדשים</div><div class="sub">1 מתוך 3 בדיקות הושלמו</div></div>
+            <div class="pills"><div class="pill done">1</div><div class="pill">2</div><div class="pill">3</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="dock">
+        <div class="tab"><span class="icon">🍽️</span>מתכונים</div>
+        <div class="tab active"><span class="icon">🏠</span>בית</div>
+        <div class="tab"><span class="icon">✨</span>AI</div>
+        <div class="tab"><span class="icon">📊</span>צמיחה</div>
+        <div class="tab"><span class="icon">⚙️</span>הגדרות</div>
+      </div>
+    </div>
+    <div class="caption"><b>Tastings · Boy · Light · HE</b>No "+" anywhere on this page — every allergen is pre-listed and tappable. Completed allergens (3/3) shown in solid accent.</div>
+    </div>
+
+    <!-- ============ TASTING DARK HE — NO + ============ -->
+    <div class="group">
+    <div class="phone dark rtl">
+      <div class="statusbar"><span>21:09</span><span>78%</span></div>
+      <div class="scroll">
+        <div class="hero">
+          <div class="sparkle-row">
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+            <span>פרק · ביסים ראשונים</span>
+            <svg viewBox="0 0 12 12"><path d="M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z" fill="currentColor"/></svg>
+          </div>
+          <h2>ביסים ראשונים של ענר…</h2>
+          <div class="sub">עקבו שלוש פעמים אחרי טעימות ראשונות וראו מה עדיין צריך בדיקת אלרגיה.</div>
+        </div>
+
+        <div class="whisper">
+          <div class="label">לחישה</div>
+          <div class="text">כל טעם חדש מקבל שלוש טעימות קטנות עבור ענר. סמנו כל אחת כשנעשתה.</div>
+        </div>
+
+        <div class="card food">
+          <div class="banner compact"><h3>חלב / מוצרי חלב</h3></div>
+          <div class="allergen-row">
+            <div><div class="name">חלב</div><div class="sub">1 מתוך 3 בדיקות הושלמו</div></div>
+            <div class="pills"><div class="pill done">1</div><div class="pill">2</div><div class="pill">3</div></div>
+          </div>
+          <div class="allergen-row">
+            <div><div class="name">יוגורט</div><div class="sub">עדיין צריך בדיקה</div></div>
+            <div class="pills"><div class="pill">1</div><div class="pill">2</div><div class="pill">3</div></div>
+          </div>
+          <div class="allergen-row">
+            <div><div class="name">גבינה</div><div class="sub">עדיין צריך בדיקה</div></div>
+            <div class="pills"><div class="pill">1</div><div class="pill">2</div><div class="pill">3</div></div>
+          </div>
+        </div>
+
+        <div class="card food">
+          <div class="banner compact"><h3>ביצים</h3></div>
+          <div class="allergen-row">
+            <div><div class="name">ביצה</div><div class="sub">3 מתוך 3 הושלמו · אושר</div></div>
+            <div class="pills"><div class="pill done">1</div><div class="pill done">2</div><div class="pill done">3</div></div>
+          </div>
+        </div>
+
+        <div class="card food">
+          <div class="banner compact"><h3>קטניות ובוטנים</h3></div>
+          <div class="allergen-row">
+            <div><div class="name">חמאת בוטנים</div><div class="sub">עדיין צריך בדיקה</div></div>
+            <div class="pills"><div class="pill">1</div><div class="pill">2</div><div class="pill">3</div></div>
+          </div>
+          <div class="allergen-row">
+            <div><div class="name">עדשים</div><div class="sub">1 מתוך 3 בדיקות הושלמו</div></div>
+            <div class="pills"><div class="pill done">1</div><div class="pill">2</div><div class="pill">3</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="dock">
+        <div class="tab"><span class="icon">🍽️</span>מתכונים</div>
+        <div class="tab active"><span class="icon">🏠</span>בית</div>
+        <div class="tab"><span class="icon">✨</span>AI</div>
+        <div class="tab"><span class="icon">📊</span>צמיחה</div>
+        <div class="tab"><span class="icon">⚙️</span>הגדרות</div>
+      </div>
+    </div>
+    <div class="caption"><b>Tastings · Dark · HE</b>Direct fix for screenshot 5. "פרק: ביסים ראשונים", whisper card, and every allergen label are bright cream against deep plum — fully readable.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- LEGEND                                          -->
+<!-- ============================================== -->
+<div class="legend">
+  <h3>What this revision changes from v1</h3>
+  <ul>
+    <li><b>Backgrounds</b> — gendered pastel washes (sky-blue for boys, blush-rose for girls, diagonal blend for boy+girl twins) replace the flat cream. Dark mode is now a layered jewel-tone canvas (plum + midnight + teal glows) instead of flat indigo.</li>
+    <li><b>Typography</b> — Cormorant Garamond italic + Fraunces for English; <b>Frank Ruhl Libre + Heebo</b> for Hebrew so שינה / פרק render with proper serif weight, not a generic system font.</li>
+    <li><b>Dates</b> — all "yesterday" / "2 hours ago" strings replaced with explicit date+time (e.g. <code>Wed, May 27 · 19:14</code> or <code>יום שלישי, 26.5 · 14:20–15:45</code>).</li>
+    <li><b>Feed quick-add</b> — Solids removed. Sheet shows Nursing + Bottle only.</li>
+    <li><b>Allergen page</b> — no "+" button on any card. Banner is now compact (just a category label). Every allergen is pre-listed and tappable to step through 1/2/3.</li>
+    <li><b>Dark text</b> — body lifts from <code>#A8A2C9</code> (low contrast) to <code>#FBF1DC</code> warm cream + <code>#D9C8B6</code> muted taupe. Banner text on jewel banners is white-cream, not washed pastel.</li>
+  </ul>
+
+  <h3>What stays exactly the same</h3>
+  <ul>
+    <li>Bottom dock — same five tabs, same emoji icons, active pill follows child accent (boy blue / girl pink / twins gradient / dark cream).</li>
+    <li>Allergen 1/2/3 step flow — same data model, same tap target, just no "+" because allergens are catalog-driven.</li>
+    <li>Sleep / nursing / bottle state machine in <code>PrototypeState.tsx</code> — untouched.</li>
+    <li>Sleep timer on Home — appears when <code>activeSleepStartedAt</code> is set, with pulse + mm:ss + Stop.</li>
+    <li>All existing i18n keys in <code>en.ts / he.ts</code> — preserved; new strings added alongside.</li>
+  </ul>
+
+  <h3>Backend changes (parallel agents)</h3>
+  <ul>
+    <li>Bump <code>GEMINI_MODEL</code> default in <code>aiProviders.ts</code> from <code>gemini-2.0-flash</code> → <code>gemini-2.5-flash</code> (matches your new Supabase secret).</li>
+    <li>Validate new Gemini key end-to-end against ai-router + recipe-search.</li>
+    <li>Add structured error logging in recipe-search so future 500s tell us <em>what</em> failed (parse vs. fetch vs. domain filter).</li>
+  </ul>
+</div>
+
+</body>
+</html>
