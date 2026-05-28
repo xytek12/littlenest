@@ -2,13 +2,10 @@ import { useMemo, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { FlowHeader } from '../components/FlowHeader';
-import {
-  GroupedHistoryCard,
-  type GroupedHistoryDay,
-} from '../components/GroupedHistoryCard';
+import { GenderedBackground } from '../components/GenderedBackground';
+import { GroupedHistoryCard, type GroupedHistoryDay } from '../components/GroupedHistoryCard';
 import { Screen } from '../components/Screen';
-import { StorybookCard } from '../components/StorybookCard';
+import { SectionCard } from '../components/SectionCard';
 import { TwinPickerCards } from '../components/TwinPickerCards';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import type { FeedStackParamList } from '../navigation/RootNavigator';
@@ -17,6 +14,7 @@ import { getChildAccent, getPalette } from '../theme';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 import { formatDurationHuman, formatDurationSeconds } from '../utils/formatDuration';
+import { formatDateLong } from '../utils/formatDateLong';
 import { formatHistoryTime } from '../utils/formatHistoryDate';
 import { entriesInLastDays, groupEntriesByDay } from '../utils/historyFilters';
 import { useTickEverySecond } from '../utils/useTickEverySecond';
@@ -55,7 +53,6 @@ export function FeedScreen() {
   } = usePrototypeState();
   const dictionary = getDictionary(family.language);
   const labels = dictionary.feed;
-  const story = dictionary.storybook;
   const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
   const isTwins = family.mode === 'twins';
   const palette = getPalette(
@@ -68,6 +65,8 @@ export function FeedScreen() {
   const isNursingActive =
     activeNursingSession.leftStartedAt != null || activeNursingSession.rightStartedAt != null;
   useTickEverySecond(isNursingActive);
+
+  // Quick-add sheet state
   const [showComposer, setShowComposer] = useState(false);
   const [mode, setMode] = useState<'bottle' | 'nursing'>('bottle');
   const [selectedAmount, setSelectedAmount] = useState(120);
@@ -76,23 +75,39 @@ export function FeedScreen() {
     () => Number.parseInt(manualAmount, 10) || selectedAmount,
     [manualAmount, selectedAmount],
   );
+
   const childById = useMemo(() => {
     const map = new Map<string, (typeof family.children)[number]>();
     family.children.forEach((child) => map.set(child.id, child));
     return map;
   }, [family.children]);
+
   const filteredFeedEntries = useMemo(() => {
     if (!isTwins) return feedEntries;
     return feedEntries.filter((entry) => entry.childId === activeChild.id);
   }, [activeChild.id, feedEntries, isTwins]);
 
+  // Last feed for the section card body
+  const lastFeed = filteredFeedEntries[0];
+  const lastFeedValue = lastFeed
+    ? lastFeed.kind === 'bottle'
+      ? `${formatDateLong(lastFeed.timestamp, family.language)}`
+      : `${formatDateLong(lastFeed.timestamp, family.language)}`
+    : '';
+  const lastFeedRightLabel = lastFeed
+    ? lastFeed.kind === 'bottle'
+      ? `${lastFeed.amount} ${lastFeed.unit}`
+      : formatDurationHuman(lastFeed.totalSeconds, family.language)
+    : '';
+  const lastFeedRightSublabel = lastFeed
+    ? lastFeed.kind === 'bottle'
+      ? labels.bottle
+      : labels.nursing
+    : '';
+
   const grouped = dictionary.groupedHistory;
   const historyDays = useMemo<GroupedHistoryDay[]>(() => {
-    const windowed = entriesInLastDays(
-      filteredFeedEntries,
-      (entry) => entry.timestamp,
-      7,
-    );
+    const windowed = entriesInLastDays(filteredFeedEntries, (entry) => entry.timestamp, 7);
     return groupEntriesByDay(windowed, (entry) => entry.timestamp).map((day) => ({
       dayKey: day.dayKey,
       representativeIso: day.representativeIso,
@@ -135,194 +150,229 @@ export function FeedScreen() {
   }
 
   return (
-    <Screen testID="screen-feed" scroll>
-      <FlowHeader
-        title={labels.title}
-        subtitle={labels.subtitle(activeChild.displayName)}
-        storybookTitle={story.nursing}
-      />
+    <GenderedBackground>
+      <Screen testID="screen-feed" scroll contentContainerStyle={styles.screenContent}>
+        <TwinPickerCards compact />
 
-      <TwinPickerCards compact />
+        {/* Feed section card */}
+        <SectionCard
+          sectionType="feed"
+          title={labels.title}
+          iconEmoji="🍼"
+          onPlusPress={() => setShowComposer(true)}
+          label={lastFeed ? labels.feed_redesign_lastLabel : labels.feed_redesign_noneLabel}
+          value={lastFeedValue || labels.feed_redesign_noFeedYet}
+          rightLabel={lastFeed ? lastFeedRightLabel : undefined}
+          rightSublabel={lastFeed ? lastFeedRightSublabel : undefined}
+          footerLabel={labels.feed_redesign_viewHistory}
+          onFooterPress={() => navigation.navigate('FeedHistory')}
+        />
 
-      <StorybookCard
-        kicker={story.kickers.nursing}
-        title={
-          isNursingActive
-            ? story.status.feedNursingRunning(
-                formatDurationSeconds(
-                  getLiveSideSeconds('left', activeNursingSession),
-                ),
-                formatDurationSeconds(
-                  getLiveSideSeconds('right', activeNursingSession),
-                ),
-              )
-            : story.status.feedIdle(activeChild.displayName)
-        }
-        subtitle={labels.actionSubtitle}
-        primaryAction={{
-          label: isNursingActive
-            ? story.actions.finishFeast
-            : story.actions.logFeast,
-          accessibilityLabel: labels.actionTitle,
-          onPress: () => setShowComposer(true),
-        }}
-      />
+        {/* Grouped history inline card */}
+        <GroupedHistoryCard
+          days={historyDays}
+          windowLabel={grouped.lastWeek}
+          emptyLabel={grouped.emptyWeek}
+          onPress={() => navigation.navigate('FeedHistory')}
+          testID="feed-inline-history"
+        />
 
-      <Modal
-        animationType="slide"
-        onRequestClose={() => setShowComposer(false)}
-        transparent
-        visible={showComposer}
-      >
-        <View style={styles.modalOverlay}>
-          <Pressable
-            accessibilityLabel="Close feed composer"
-            onPress={() => setShowComposer(false)}
-            style={styles.modalBackdrop}
-          />
-          <View style={[styles.sheetCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-            <View style={styles.sheetHeader}>
-              <Text style={[styles.sheetTitle, rtlText, { color: theme.text }]}>{labels.sheetTitle}</Text>
-              <Pressable
-                accessibilityLabel="Close feed composer"
-                onPress={() => setShowComposer(false)}
-                style={[styles.closeButton, { borderColor: theme.border }]}
-              >
-                <Text style={[styles.closeButtonText, { color: theme.text }]}>×</Text>
-              </Pressable>
-            </View>
-
-            <View style={styles.modeRow}>
-              {(['bottle', 'nursing'] as const).map((nextMode) => {
-                const selected = mode === nextMode;
-
-                return (
-                  <Pressable
-                    key={nextMode}
-                    onPress={() => setMode(nextMode)}
-                    style={[
-                      styles.modeChip,
-                      {
-                        borderColor: selected ? colors.blue : theme.border,
-                        backgroundColor: selected ? colors.blueSoft : 'transparent',
-                      },
-                    ]}
-                  >
-                    <Text style={[styles.modeChipText, { color: selected ? '#284D71' : theme.text }]}>
-                      {nextMode === 'bottle' ? labels.bottle : labels.nursing}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-
-            {mode === 'bottle' ? (
-              <View>
-                <Text style={[styles.sectionTitle, rtlText, { color: theme.text }]}>
-                  {labels.bottleAmount(settings.feedUnit)}
+        {/* Quick-add bottom sheet — Nursing & Bottle only (no Solids) */}
+        <Modal
+          animationType="slide"
+          onRequestClose={() => setShowComposer(false)}
+          transparent
+          visible={showComposer}
+        >
+          <View style={styles.modalOverlay}>
+            <Pressable
+              accessibilityLabel="Close feed composer"
+              onPress={() => setShowComposer(false)}
+              style={styles.modalBackdrop}
+            />
+            <View
+              style={[
+                styles.sheetCard,
+                { backgroundColor: theme.surface, borderColor: theme.border },
+              ]}
+            >
+              <View style={styles.sheetHeader}>
+                <Text style={[styles.sheetTitle, rtlText, { color: theme.text }]}>
+                  {labels.sheetTitle}
                 </Text>
-                <View style={styles.presetWrap}>
-                  {bottlePresets.map((preset) => {
-                    const selected = bottleAmount === preset && manualAmount.length === 0;
+                <Pressable
+                  accessibilityLabel="Close feed composer"
+                  onPress={() => setShowComposer(false)}
+                  style={[styles.closeButton, { borderColor: theme.border }]}
+                >
+                  <Text style={[styles.closeButtonText, { color: theme.text }]}>×</Text>
+                </Pressable>
+              </View>
 
-                    return (
-                      <Pressable
-                        key={preset}
-                        onPress={() => {
-                          setSelectedAmount(preset);
-                          setManualAmount('');
-                        }}
+              {/* Mode picker — Nursing | Bottle only */}
+              <View style={styles.modeRow}>
+                {(['bottle', 'nursing'] as const).map((nextMode) => {
+                  const selected = mode === nextMode;
+                  return (
+                    <Pressable
+                      key={nextMode}
+                      onPress={() => setMode(nextMode)}
+                      style={[
+                        styles.modeChip,
+                        {
+                          borderColor: selected ? activeAccent.primary : theme.border,
+                          backgroundColor: selected ? activeAccent.primarySoft : 'transparent',
+                        },
+                      ]}
+                    >
+                      <Text
                         style={[
-                          styles.presetChip,
-                          {
-                            borderColor: selected ? colors.pink : theme.border,
-                            backgroundColor: selected ? colors.pinkSoft : 'transparent',
-                          },
+                          styles.modeChipText,
+                          { color: selected ? activeAccent.primaryDeep : theme.text },
                         ]}
                       >
-                        <Text style={[styles.presetText, { color: selected ? colors.berry : theme.text }]}>
-                          {preset}
+                        {nextMode === 'bottle' ? labels.bottle : labels.nursing}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+
+              {mode === 'bottle' ? (
+                <View>
+                  <Text style={[styles.sectionTitle, rtlText, { color: theme.text }]}>
+                    {labels.bottleAmount(settings.feedUnit)}
+                  </Text>
+                  <View style={styles.presetWrap}>
+                    {bottlePresets.map((preset) => {
+                      const selected = bottleAmount === preset && manualAmount.length === 0;
+                      return (
+                        <Pressable
+                          key={preset}
+                          onPress={() => {
+                            setSelectedAmount(preset);
+                            setManualAmount('');
+                          }}
+                          style={[
+                            styles.presetChip,
+                            {
+                              borderColor: selected ? activeAccent.primary : theme.border,
+                              backgroundColor: selected ? activeAccent.primarySoft : 'transparent',
+                            },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.presetText,
+                              { color: selected ? activeAccent.primaryDeep : theme.text },
+                            ]}
+                          >
+                            {preset}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                  <TextInput
+                    keyboardType="number-pad"
+                    onChangeText={setManualAmount}
+                    placeholder={labels.customAmount}
+                    placeholderTextColor={theme.mutedText}
+                    style={[
+                      styles.input,
+                      rtlText,
+                      { color: theme.text, borderColor: theme.border },
+                    ]}
+                    value={manualAmount}
+                  />
+                  <Pressable
+                    onPress={handleSaveBottle}
+                    style={[styles.primaryButton, { backgroundColor: activeAccent.primary }]}
+                  >
+                    <Text style={[styles.primaryButtonText, { color: activeAccent.primaryDeep }]}>
+                      {labels.saveBottle}
+                    </Text>
+                  </Pressable>
+                </View>
+              ) : (
+                <View>
+                  <Text style={[styles.sectionTitle, rtlText, { color: theme.text }]}>
+                    {labels.nursingSession}
+                  </Text>
+                  <View style={styles.nursingGrid}>
+                    <View style={[styles.sideCard, { borderColor: theme.border }]}>
+                      <Text style={[styles.sideTitle, rtlText, { color: theme.text }]}>
+                        {labels.leftBreast}
+                      </Text>
+                      <Text style={[styles.sideHint, rtlText, { color: theme.mutedText }]}>
+                        {labels.savedDuration(
+                          formatDurationSeconds(getLiveSideSeconds('left', activeNursingSession)),
+                        )}
+                      </Text>
+                      <Pressable
+                        onPress={
+                          activeNursingSession.leftStartedAt
+                            ? () => stopNursing('left')
+                            : () => startNursing('left')
+                        }
+                        style={[styles.primaryButton, { backgroundColor: activeAccent.primary }]}
+                      >
+                        <Text
+                          style={[styles.primaryButtonText, { color: activeAccent.primaryDeep }]}
+                        >
+                          {activeNursingSession.leftStartedAt ? labels.stopLeft : labels.startLeft}
                         </Text>
                       </Pressable>
-                    );
-                  })}
-                </View>
-                <TextInput
-                  keyboardType="number-pad"
-                  onChangeText={setManualAmount}
-                  placeholder={labels.customAmount}
-                  placeholderTextColor={theme.mutedText}
-                  style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
-                  value={manualAmount}
-                />
-                <Pressable onPress={handleSaveBottle} style={styles.primaryButton}>
-                  <Text style={styles.primaryButtonText}>{labels.saveBottle}</Text>
-                </Pressable>
-              </View>
-            ) : (
-              <View>
-                <Text style={[styles.sectionTitle, rtlText, { color: theme.text }]}>{labels.nursingSession}</Text>
-                <View style={styles.nursingGrid}>
-                  <View style={[styles.sideCard, { borderColor: theme.border }]}>
-                    <Text style={[styles.sideTitle, rtlText, { color: theme.text }]}>{labels.leftBreast}</Text>
-                    <Text style={[styles.sideHint, rtlText, { color: theme.mutedText }]}>
-                      {labels.savedDuration(
-                        formatDurationSeconds(getLiveSideSeconds('left', activeNursingSession)),
-                      )}
-                    </Text>
-                    <Pressable
-                      onPress={
-                        activeNursingSession.leftStartedAt ? () => stopNursing('left') : () => startNursing('left')
-                      }
-                      style={styles.primaryButton}
-                    >
-                      <Text style={styles.primaryButtonText}>
-                        {activeNursingSession.leftStartedAt ? labels.stopLeft : labels.startLeft}
+                    </View>
+                    <View style={[styles.sideCard, { borderColor: theme.border }]}>
+                      <Text style={[styles.sideTitle, rtlText, { color: theme.text }]}>
+                        {labels.rightBreast}
                       </Text>
-                    </Pressable>
-                  </View>
-                  <View style={[styles.sideCard, { borderColor: theme.border }]}>
-                    <Text style={[styles.sideTitle, rtlText, { color: theme.text }]}>{labels.rightBreast}</Text>
-                    <Text style={[styles.sideHint, rtlText, { color: theme.mutedText }]}>
-                      {labels.savedDuration(
-                        formatDurationSeconds(getLiveSideSeconds('right', activeNursingSession)),
-                      )}
-                    </Text>
-                    <Pressable
-                      onPress={
-                        activeNursingSession.rightStartedAt
-                          ? () => stopNursing('right')
-                          : () => startNursing('right')
-                      }
-                      style={styles.primaryButton}
-                    >
-                      <Text style={styles.primaryButtonText}>
-                        {activeNursingSession.rightStartedAt ? labels.stopRight : labels.startRight}
+                      <Text style={[styles.sideHint, rtlText, { color: theme.mutedText }]}>
+                        {labels.savedDuration(
+                          formatDurationSeconds(getLiveSideSeconds('right', activeNursingSession)),
+                        )}
                       </Text>
-                    </Pressable>
+                      <Pressable
+                        onPress={
+                          activeNursingSession.rightStartedAt
+                            ? () => stopNursing('right')
+                            : () => startNursing('right')
+                        }
+                        style={[styles.primaryButton, { backgroundColor: activeAccent.primary }]}
+                      >
+                        <Text
+                          style={[styles.primaryButtonText, { color: activeAccent.primaryDeep }]}
+                        >
+                          {activeNursingSession.rightStartedAt
+                            ? labels.stopRight
+                            : labels.startRight}
+                        </Text>
+                      </Pressable>
+                    </View>
                   </View>
+                  <Pressable
+                    onPress={handleFinishNursing}
+                    style={[styles.secondaryButton, { backgroundColor: activeAccent.primarySoft }]}
+                  >
+                    <Text
+                      style={[styles.secondaryButtonText, { color: activeAccent.primaryDeep }]}
+                    >
+                      {labels.finishNursing}
+                    </Text>
+                  </Pressable>
                 </View>
-                <Pressable onPress={handleFinishNursing} style={styles.secondaryButton}>
-                  <Text style={styles.secondaryButtonText}>{labels.finishNursing}</Text>
-                </Pressable>
-              </View>
-            )}
+              )}
+            </View>
           </View>
-        </View>
-      </Modal>
-
-      <GroupedHistoryCard
-        days={historyDays}
-        windowLabel={grouped.lastWeek}
-        emptyLabel={grouped.emptyWeek}
-        onPress={() => navigation.navigate('FeedHistory')}
-        testID="feed-inline-history"
-      />
-    </Screen>
+        </Modal>
+      </Screen>
+    </GenderedBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  screenContent: { paddingTop: 8 },
   modalOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -420,30 +470,25 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   sideHint: {
-    color: '#6B7D91',
     lineHeight: 20,
     marginBottom: 12,
     marginTop: 6,
   },
   primaryButton: {
     alignItems: 'center',
-    backgroundColor: colors.blue,
     borderRadius: 14,
     paddingVertical: 12,
   },
   primaryButtonText: {
-    color: '#0C2944',
     fontWeight: '900',
   },
   secondaryButton: {
     alignItems: 'center',
-    backgroundColor: colors.pinkSoft,
     borderRadius: 14,
     marginTop: 12,
     paddingVertical: 12,
   },
   secondaryButtonText: {
-    color: colors.berry,
     fontWeight: '900',
   },
   rtlText: { textAlign: 'right', writingDirection: 'rtl' },
