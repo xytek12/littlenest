@@ -231,12 +231,6 @@
       margin-bottom: 13px;
     }
 
-    .top-actions {
-      display: flex;
-      flex: 0 0 auto;
-      gap: 8px;
-    }
-
     .top h2 {
       font-size: 24px;
       letter-spacing: 0;
@@ -988,15 +982,6 @@
       <p class="lede">A single mixed direction: Family OS gives the high-level intelligence, Day Timeline keeps every action understandable for tired parents and caregiver handoff.</p>
 
       <div class="control-block">
-        <h2>Family setup color scheme</h2>
-        <div class="seg" id="setupControls">
-          <button data-setup="boy">Boy</button>
-          <button data-setup="girl">Girl</button>
-          <button data-setup="twins">Twins</button>
-        </div>
-      </div>
-
-      <div class="control-block">
         <h2>Mode</h2>
         <div class="seg two" id="modeControls">
           <button data-mode="light">Light</button>
@@ -1390,10 +1375,6 @@
     }
 
     function renderControls() {
-      document.querySelectorAll("#setupControls button").forEach((button) => {
-        button.classList.toggle("active", button.dataset.setup === state.setup);
-        button.onclick = () => setSetup(button.dataset.setup);
-      });
       document.querySelectorAll("#modeControls button").forEach((button) => {
         button.classList.toggle("active", button.dataset.mode === state.mode);
         button.onclick = () => {
@@ -1424,10 +1405,6 @@
           <div>
             <h2>${title}</h2>
             <p>${subtitle}</p>
-          </div>
-          <div class="top-actions">
-            <button class="icon-button" onclick="state.tab='logs';render()">LOG</button>
-            <button class="icon-button" onclick="state.tab='settings';render()">SET</button>
           </div>
         </div>
       `;
