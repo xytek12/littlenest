@@ -167,6 +167,17 @@ export const en = {
     sleepPredictionSubtitle: 'Compare Gemini and OpenAI in admin mode.',
     confidence: 'Confidence',
     feedback: ['Good', 'Okay', 'Bad'],
+    // Hero card
+    heroTitle: 'AI Guidance',
+    heroSubtitle: (name: string) => `Personalised advice for ${name}`,
+    topicSleep: 'Sleep',
+    topicFeed: 'Feed',
+    topicGeneral: 'General',
+    askButton: 'Ask AI now',
+    loadingBtn: 'Asking…',
+    recommendedLabel: 'Best recommendation',
+    compareLabel: 'Provider comparison',
+    noResultYet: 'Tap "Ask AI now" to get personalised guidance',
   },
   growth: {
     title: 'Growth',
@@ -195,6 +206,9 @@ export const en = {
       heightRowInDay: (time: string, value: string) => `${time}  ·  Height  ·  ${value}`,
       headRowInDay: (time: string, value: string, child: string) =>
         `${time}  ·  Head  ·  ${value}${child ? `  ·  ${child}` : ''}`,
+      /** Used in GrowthHistoryScreen date-grouped rows: "Weight: 8.2 kg" */
+      inDayRow: (kindLabel: string, value: number, unit: string) =>
+        `${kindLabel}: ${value} ${unit}`,
     },
   },
   sleep: {

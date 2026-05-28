@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { HistoryListRow } from '../components/HistoryListRow';
-import { Screen } from '../components/Screen';
 import { HistoryBackButton } from '../navigation/HistoryBackButton';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import { usePrototypeState } from '../state/PrototypeState';
@@ -9,8 +10,9 @@ import type { PrototypeSleepSession } from '../state/PrototypeState';
 import { useAppTheme } from '../theme/useAppTheme';
 import { colors } from '../theme/colors';
 import { formatDurationHuman } from '../utils/formatDuration';
-import { formatHistoryDate, formatHistoryTime } from '../utils/formatHistoryDate';
-import { entriesInLast90Days } from '../utils/historyFilters';
+import { formatDayHeading, formatTimeShort } from '../utils/formatDateLong';
+import { formatHistoryTime } from '../utils/formatHistoryDate';
+import { entriesInLast90Days, groupEntriesByDay } from '../utils/historyFilters';
 
 function toHHMM(isoString: string): string {
   const date = new Date(isoString);
@@ -31,6 +33,7 @@ function applyTimeToDate(baseIso: string, hhmm: string): string {
 
 export function SleepHistoryScreen() {
   const theme = useAppTheme();
+  const navigation = useNavigation();
   const { editSleepSession, family, sleepSessions } = usePrototypeState();
   const dictionary = getDictionary(family.language);
   const labels = dictionary.sleep;
@@ -55,6 +58,23 @@ export function SleepHistoryScreen() {
     () => entriesInLast90Days(sleepSessions, (session) => session.startedAt),
     [sleepSessions],
   );
+
+  const dayGroups = useMemo(
+    () => groupEntriesByDay(recent, (session) => session.startedAt),
+    [recent],
+  );
+
+  function handleClose() {
+    // When rendered inside the tab+stack navigator (real app), navigate the
+    // parent tab navigator to Home. In tests (plain stack, no tab parent),
+    // fall back to a regular goBack().
+    const parent = navigation.getParent<any>();
+    if (parent) {
+      parent.navigate('Home');
+    } else {
+      navigation.goBack();
+    }
+  }
 
   function openEdit(session: PrototypeSleepSession) {
     setEditingSession(session);
@@ -86,41 +106,62 @@ export function SleepHistoryScreen() {
   }
 
   return (
-    <Screen testID="screen-sleep-history" scroll>
-      <HistoryBackButton />
-      <Text style={[styles.title, rtlText, { color: theme.text }]}>
-        {dictionary.homeSleep.sleepHistoryTitle}
-      </Text>
-      <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-        {recent.length > 0 ? (
-          recent.map((session) => {
-            const date = formatHistoryDate(session.startedAt, family.language);
-            const time = formatHistoryTime(session.startedAt, family.language);
-            const duration = formatDurationHuman(session.durationSeconds, family.language);
-            const childName = isTwins
-              ? childById.get(session.childId)?.displayName
-              : undefined;
+    <SafeAreaView
+      testID="screen-sleep-history"
+      style={[styles.safe, { backgroundColor: theme.background }]}
+      edges={['top', 'left', 'right']}
+    >
+      <ScrollView
+        contentContainerStyle={[styles.content, { backgroundColor: theme.background }]}
+        style={{ backgroundColor: theme.background }}
+      >
+        <HistoryBackButton onPress={handleClose} />
+        <Text style={[styles.title, rtlText, { color: theme.text }]}>
+          {dictionary.homeSleep.sleepHistoryTitle}
+        </Text>
 
-            const wakesLine = historyLabels.rowWakes(session.wakeCount);
-            const secondary = childName ? `${wakesLine}  ·  ${childName}` : wakesLine;
-
+        {dayGroups.length === 0 ? (
+          <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+            <Text style={[styles.empty, rtlText, { color: theme.mutedText }]}>
+              {dictionary.history.emptyAll}
+            </Text>
+          </View>
+        ) : (
+          dayGroups.map((day) => {
+            const dayHeading = formatDayHeading(day.representativeIso, family.language);
             return (
-              <HistoryListRow
-                key={session.id}
-                primary={historyLabels.rowPrimary(date, time, duration)}
-                secondary={secondary}
-                rtl={rtl}
-                onEdit={() => openEdit(session)}
-              />
+              <View key={day.dayKey} style={styles.dayBlock}>
+                <Text style={[styles.dayHeading, rtlText, { color: theme.mutedText }]}>
+                  {dayHeading}
+                </Text>
+                <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+                  {day.entries.map((session) => {
+                    const time = formatHistoryTime(session.startedAt, family.language);
+                    const duration = formatDurationHuman(session.durationSeconds, family.language);
+                    const childName = isTwins
+                      ? childById.get(session.childId)?.displayName
+                      : undefined;
+                    const wakesLine = historyLabels.rowWakes(session.wakeCount);
+                    const secondary = childName ? `${wakesLine}  ·  ${childName}` : wakesLine;
+
+                    return (
+                      <HistoryListRow
+                        key={session.id}
+                        primary={historyLabels.rowInDay(time, duration, session.wakeCount)}
+                        secondary={secondary}
+                        rtl={rtl}
+                        onEdit={() => openEdit(session)}
+                      />
+                    );
+                  })}
+                </View>
+              </View>
             );
           })
-        ) : (
-          <Text style={[styles.empty, rtlText, { color: theme.mutedText }]}>
-            {dictionary.history.emptyAll}
-          </Text>
         )}
-      </View>
+      </ScrollView>
 
+      {/* Edit modal — kept from the original design */}
       <Modal
         animationType="slide"
         onRequestClose={() => setEditingSession(null)}
@@ -190,15 +231,30 @@ export function SleepHistoryScreen() {
           </View>
         </View>
       </Modal>
-    </Screen>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safe: { flex: 1 },
+  content: {
+    padding: 16,
+    paddingBottom: 40,
+  },
   title: {
     fontSize: 28,
     fontWeight: '900',
     marginBottom: 16,
+  },
+  dayBlock: {
+    marginBottom: 20,
+  },
+  dayHeading: {
+    fontSize: 15,
+    fontStyle: 'italic',
+    fontWeight: '600',
+    marginBottom: 8,
+    paddingHorizontal: 4,
   },
   card: {
     borderRadius: 18,
@@ -207,10 +263,10 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   empty: {
-    color: '#6B7D91',
     lineHeight: 20,
     paddingVertical: 12,
   },
+  // Edit modal
   modalOverlay: {
     flex: 1,
     justifyContent: 'flex-end',

@@ -65,6 +65,7 @@ describe('GrowthHistoryScreen', () => {
     fireEvent.press(getByTestId('growth-inline-history'));
 
     expect(getByTestId('screen-growth-history')).toBeTruthy();
-    expect(queryAllByText(/Weight · 8.2 kg/).length).toBeGreaterThan(0);
+    // History rows now show "Weight: 8.2 kg" (date-grouped redesign)
+    expect(queryAllByText(/Weight: 8.2 kg/).length).toBeGreaterThan(0);
   });
 });

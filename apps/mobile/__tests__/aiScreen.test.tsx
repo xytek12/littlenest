@@ -14,7 +14,8 @@ describe('AiScreen', () => {
     );
 
     expect(getByTestId('screen-ai')).toBeTruthy();
-    expect(queryByText('Compare Gemini + OpenAI')).toBeTruthy();
+    // Hero card title is now 'AI Guidance' (redesigned screen)
+    expect(queryByText('AI Guidance')).toBeTruthy();
     expect(queryByText('Recipe ideas')).toBeNull();
   });
 });

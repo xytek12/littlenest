@@ -284,14 +284,8 @@ export function HomeScreen() {
           onPlusPress={() => setShowFeedSheet(true)}
           plusAccessibilityLabel={labels.feedTitle}
         >
-          <Pressable
-            testID="home-feed-resume"
-            onPress={() => setShowFeedSheet(true)}
-            // Make the body tappable so the user can reopen the popup from a
-            // minimized state — only meaningful when there's something to resume.
-            disabled={!isNursingActive && !lastFeed}
-            style={styles.feedBody}
-          >
+          {/* Body is display-only; only the "+" button opens the composer. */}
+          <View style={styles.feedBody}>
             {isNursingActive ? (
               <>
                 <Text style={[styles.feedActiveLabel, rtlText, { color: palette.primaryDeep }]}>
@@ -316,7 +310,7 @@ export function HomeScreen() {
                 </Text>
               </>
             )}
-          </Pressable>
+          </View>
         </SectionCard>
 
         {/* Growth SectionCard — "+" opens the unified weight/height/head popup.

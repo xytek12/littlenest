@@ -4,22 +4,30 @@ import { getDictionary, isRtlLanguage } from '../i18n';
 import { usePrototypeState } from '../state/PrototypeState';
 import { useAppTheme } from '../theme/useAppTheme';
 
-export function HistoryBackButton() {
+type Props = {
+  /** Override the default goBack() handler. When provided the button is
+   *  always shown (the canGoBack() guard is skipped). */
+  onPress?: () => void;
+};
+
+export function HistoryBackButton({ onPress }: Props) {
   const navigation = useNavigation();
   const theme = useAppTheme();
   const { family } = usePrototypeState();
   const dictionary = getDictionary(family.language);
   const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
 
-  if (!navigation.canGoBack()) {
+  if (!onPress && !navigation.canGoBack()) {
     return null;
   }
+
+  const handlePress = onPress ?? (() => navigation.goBack());
 
   return (
     <Pressable
       accessibilityLabel={dictionary.common.close}
       accessibilityRole="button"
-      onPress={() => navigation.goBack()}
+      onPress={handlePress}
       style={[styles.button, { borderColor: theme.border }]}
     >
       <Text style={[styles.text, rtlText, { color: theme.text }]}>← {dictionary.common.close}</Text>

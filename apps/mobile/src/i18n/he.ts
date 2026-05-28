@@ -162,6 +162,16 @@ export const he = {
     sleepPredictionSubtitle: 'השוואת Gemini ו-OpenAI במצב בדיקה.',
     confidence: 'רמת ביטחון',
     feedback: ['טוב', 'בסדר', 'לא טוב'],
+    heroTitle: 'ייעוץ AI',
+    heroSubtitle: (name: string) => `ייעוץ אישי עבור ${name}`,
+    topicSleep: 'שינה',
+    topicFeed: 'האכלה',
+    topicGeneral: 'כללי',
+    askButton: 'שאל עכשיו',
+    loadingBtn: 'שואל…',
+    recommendedLabel: 'ההמלצה הטובה ביותר',
+    compareLabel: 'השוואת ספקים',
+    noResultYet: 'לחצו על "שאל עכשיו" לקבלת ייעוץ אישי',
   },
   growth: {
     title: 'צמיחה',
@@ -190,6 +200,8 @@ export const he = {
       heightRowInDay: (time: string, value: string) => `${time}  ·  גובה  ·  ${value}`,
       headRowInDay: (time: string, value: string, child: string) =>
         `${time}  ·  היקף ראש  ·  ${value}${child ? `  ·  ${child}` : ''}`,
+      inDayRow: (kindLabel: string, value: number, unit: string) =>
+        `${kindLabel}: ${value} ${unit}`,
     },
   },
   sleep: {

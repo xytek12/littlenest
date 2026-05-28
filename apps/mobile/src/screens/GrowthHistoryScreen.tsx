@@ -1,25 +1,31 @@
 import { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { HistoryListRow } from '../components/HistoryListRow';
-import { Screen } from '../components/Screen';
 import { HistoryBackButton } from '../navigation/HistoryBackButton';
 import { getDictionary, isRtlLanguage } from '../i18n';
-import { usePrototypeState, type PrototypeGrowthEntry } from '../state/PrototypeState';
+import { usePrototypeState } from '../state/PrototypeState';
 import { colors } from '../theme/colors';
+import { getChildAccent, getPalette } from '../theme';
 import { useAppTheme } from '../theme/useAppTheme';
-import { formatHistoryDate, formatHistoryTime } from '../utils/formatHistoryDate';
-import { entriesInLast90Days } from '../utils/historyFilters';
-
-function accentForSex(sex: 'boy' | 'girl'): string {
-  return sex === 'boy' ? colors.blue : colors.pink;
-}
+import { formatDayHeading } from '../utils/formatDateLong';
+import { entriesInLast90Days, groupEntriesByDay } from '../utils/historyFilters';
 
 export function GrowthHistoryScreen() {
   const theme = useAppTheme();
   const { family, growthEntries } = usePrototypeState();
   const dictionary = getDictionary(family.language);
-  const labels = dictionary.growth.history;
+  const labels = dictionary.growth;
+  const historyLabels = labels.history;
   const rtl = isRtlLanguage(family.language);
+  const rtlText = rtl ? styles.rtlText : null;
+  const isTwins = family.mode === 'twins';
+
+  const palette = getPalette(
+    isTwins
+      ? { mode: 'twins', twinType: family.twinType }
+      : { mode: 'single', sex: family.children[0]?.sex ?? 'girl' },
+  );
 
   const childById = useMemo(() => {
     const map = new Map<string, (typeof family.children)[number]>();
@@ -32,77 +38,111 @@ export function GrowthHistoryScreen() {
     [growthEntries],
   );
 
-  function renderRow(entry: PrototypeGrowthEntry) {
-    const date = formatHistoryDate(entry.recordedAt, family.language);
-    const time = formatHistoryTime(entry.recordedAt, family.language);
-    const value = `${entry.value} ${entry.unit}`;
+  const dayGroups = useMemo(
+    () => groupEntriesByDay(recent, (entry) => entry.recordedAt),
+    [recent],
+  );
 
-    if (entry.kind === 'weight') {
-      return (
-        <HistoryListRow
-          key={entry.id}
-          primary={labels.weightRow(date, time, value)}
-          accentColor={colors.blue}
-          rtl={rtl}
-        />
-      );
+  function kindLabel(kind: 'weight' | 'height' | 'head'): string {
+    return kind === 'weight'
+      ? labels.weight
+      : kind === 'height'
+        ? labels.height
+        : labels.head;
+  }
+
+  function accentForEntry(childId: string, kind: 'weight' | 'height' | 'head'): string {
+    const child = childById.get(childId);
+    if (!child) return colors.blue;
+    if (kind === 'head') {
+      const idx = family.children.findIndex((c) => c.id === childId);
+      return getChildAccent(child, Math.max(0, idx), palette).primary;
     }
-
-    if (entry.kind === 'height') {
-      return (
-        <HistoryListRow
-          key={entry.id}
-          primary={labels.heightRow(date, time, value)}
-          accentColor={colors.blue}
-          rtl={rtl}
-        />
-      );
-    }
-
-    const child = childById.get(entry.childId);
-    const childName = child?.displayName ?? '';
-    const accent = child ? accentForSex(child.sex) : colors.pink;
-
-    return (
-      <HistoryListRow
-        key={entry.id}
-        primary={labels.headRow(date, time, value, childName)}
-        accentColor={accent}
-        rtl={rtl}
-      />
-    );
+    return colors.blue;
   }
 
   return (
-    <Screen testID="screen-growth-history" scroll>
-      <HistoryBackButton />
-      <Text
-        style={[
-          styles.title,
-          rtl ? styles.rtlText : null,
-          { color: theme.text },
-        ]}
+    <SafeAreaView
+      testID="screen-growth-history"
+      style={[styles.safe, { backgroundColor: theme.background }]}
+      edges={['top', 'left', 'right']}
+    >
+      <ScrollView
+        contentContainerStyle={[styles.content, { backgroundColor: theme.background }]}
+        style={{ backgroundColor: theme.background }}
       >
-        {labels.title}
-      </Text>
-      <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-        {recent.length > 0 ? (
-          recent.map(renderRow)
+        <HistoryBackButton />
+        <Text style={[styles.title, rtlText, { color: theme.text }]}>
+          {historyLabels.title}
+        </Text>
+
+        {dayGroups.length === 0 ? (
+          <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+            <Text style={[styles.empty, rtlText, { color: theme.mutedText }]}>
+              {dictionary.history.emptyAll}
+            </Text>
+          </View>
         ) : (
-          <Text style={[styles.empty, rtl ? styles.rtlText : null, { color: theme.mutedText }]}>
-            {dictionary.history.emptyAll}
-          </Text>
+          dayGroups.map((day) => {
+            const dayHeading = formatDayHeading(day.representativeIso, family.language);
+            return (
+              <View key={day.dayKey} style={styles.dayBlock}>
+                <Text style={[styles.dayHeading, rtlText, { color: theme.mutedText }]}>
+                  {dayHeading}
+                </Text>
+                <View
+                  style={[
+                    styles.card,
+                    { backgroundColor: theme.surface, borderColor: theme.border },
+                  ]}
+                >
+                  {day.entries.map((entry) => {
+                    const label = kindLabel(entry.kind);
+                    // "Weight: 8.2 kg" / "משקל: 8.2 ק"ג"
+                    const primary = historyLabels.inDayRow(label, entry.value, entry.unit);
+                    const child = isTwins ? childById.get(entry.childId) : undefined;
+                    const accent = accentForEntry(entry.childId, entry.kind);
+
+                    return (
+                      <HistoryListRow
+                        key={entry.id}
+                        primary={primary}
+                        secondary={child?.displayName}
+                        accentColor={accent}
+                        rtl={rtl}
+                      />
+                    );
+                  })}
+                </View>
+              </View>
+            );
+          })
         )}
-      </View>
-    </Screen>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safe: { flex: 1 },
+  content: {
+    padding: 16,
+    paddingBottom: 40,
+  },
   title: {
     fontSize: 28,
     fontWeight: '900',
     marginBottom: 16,
+  },
+  dayBlock: {
+    marginBottom: 20,
+  },
+  dayHeading: {
+    fontSize: 15,
+    fontStyle: 'italic',
+    fontWeight: '600',
+    marginBottom: 8,
+    paddingHorizontal: 4,
   },
   card: {
     borderRadius: 18,
@@ -111,7 +151,6 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   empty: {
-    color: '#6B7D91',
     lineHeight: 20,
     paddingVertical: 12,
   },
