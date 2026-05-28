@@ -15,8 +15,8 @@ export type StructuredRecipe = {
 function stripCodeFence(text: string) {
   return text
     .trim()
-    .replace(/^```(?:json)?/i, '')
-    .replace(/```$/i, '')
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/```\s*$/i, '')
     .trim();
 }
 
@@ -29,6 +29,25 @@ function findJsonArray(text: string): string | null {
   }
 
   return text.slice(start, end + 1);
+}
+
+function findJsonObject(text: string): string | null {
+  const start = text.indexOf('{');
+  const end = text.lastIndexOf('}');
+
+  if (start === -1 || end === -1 || end <= start) {
+    return null;
+  }
+
+  return text.slice(start, end + 1);
+}
+
+/**
+ * Remove trailing commas from JSON-ish text (e.g. `[1,2,3,]` or `{"a":1,}`).
+ * LLMs occasionally emit these even when asked for strict JSON.
+ */
+function stripTrailingCommas(text: string): string {
+  return text.replace(/,(\s*[}\]])/g, '$1');
 }
 
 function asString(value: unknown): string {
@@ -81,9 +100,24 @@ export function parseRecipes(text: string, limit = 6): StructuredRecipe[] {
   const stripped = stripCodeFence(text);
   candidates.push(stripped);
 
-  const extracted = findJsonArray(stripped);
-  if (extracted) {
-    candidates.push(extracted);
+  const extractedArray = findJsonArray(stripped);
+  if (extractedArray) {
+    candidates.push(extractedArray);
+  }
+
+  const extractedObject = findJsonObject(stripped);
+  if (extractedObject && extractedObject !== stripped) {
+    candidates.push(extractedObject);
+  }
+
+  // Add trailing-comma-stripped variants. JSON.parse rejects `[1,2,]` but
+  // LLMs occasionally emit that despite explicit instructions. We only add
+  // these as fallback candidates so strict-valid inputs still parse first.
+  for (const base of [...candidates]) {
+    const cleaned = stripTrailingCommas(base);
+    if (cleaned !== base) {
+      candidates.push(cleaned);
+    }
   }
 
   for (const candidate of candidates) {
