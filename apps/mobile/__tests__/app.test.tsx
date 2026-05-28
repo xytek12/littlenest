@@ -113,11 +113,10 @@ describe('app shell', () => {
 
     fireEvent.press(getByLabelText(he.home.feedTitle));
     expect(getByText(he.feed.title)).toBeTruthy();
-    // The primary feed action is now a Storybook pill ("רישום סעודה") with
-    // the legacy actionTitle exposed via accessibilityLabel for tests / SR.
-    expect(getByLabelText(he.feed.actionTitle)).toBeTruthy();
+    // FeedScreen now uses SectionCard — the "+" button label is "Add <title>".
+    expect(getByLabelText(`Add ${he.feed.title}`)).toBeTruthy();
 
-    fireEvent.press(getByLabelText(he.common.backHomeLabel));
+    // Navigate to growth via the bottom tab (FeedScreen no longer has a back button).
     fireEvent.press(getByLabelText(`${he.tabs.growth} tab`));
 
     expect(getAllByText(he.growth.title).length).toBeGreaterThan(0);

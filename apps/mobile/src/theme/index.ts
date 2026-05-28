@@ -176,3 +176,68 @@ export const typography = {
 // ---------- Re-exports & helpers ----------
 export { legacyColors };
 export const surfaces = paletteBase;
+
+// ---------- NEW: Gendered background tokens (Watercolor Nursery / Moonlit Jewel) ----------
+/** Light-mode gendered screen backgrounds. */
+export const genderedBg = {
+  boy: {
+    bgFrom: '#DDEDF6',
+    bgTo: '#F4FAFD',
+    headerFrom: '#ADCEE5',
+    headerMid: '#C9E1F0',
+  },
+  girl: {
+    bgFrom: '#F8DCD6',
+    bgTo: '#FCEFEC',
+    headerFrom: '#EDB7AE',
+    headerMid: '#F4D2C9',
+  },
+} as const;
+
+/** Dark-mode jewel-tone canvas palette. */
+export const jewelDark = {
+  bgFrom: '#1B0F2C',
+  bgMid: '#2A1346',
+  bgTo: '#0F2A2C',
+  surface: 'rgba(56, 30, 78, 0.55)',
+  surfaceSolid: '#2B1844',
+  border: 'rgba(241, 226, 199, 0.16)',
+  text: '#FBF1DC',
+  mutedText: '#D9C8B6',
+  accent: '#C8A0FF',
+} as const;
+
+/** Section accent colors used in SectionCard banners. */
+export const sectionAccents = {
+  sleep: {
+    light: { bg: '#E2D5EE', ink: '#3B2762' },
+    dark: { from: '#5D3AAD', to: '#321A6A', text: '#F7EDFF' },
+  },
+  feed: {
+    light: { bg: '#F6D7BD', ink: '#6E3A18' },
+    dark: { from: '#B95A2C', to: '#6B2A12', text: '#FFE5C8' },
+  },
+  food: {
+    light: { bg: '#D2E2BD', ink: '#34522C' },
+    dark: { from: '#4F8B45', to: '#1F4A2D', text: '#ECF6D8' },
+  },
+  learn: {
+    light: { bg: '#F2E2C7', ink: '#5A4225' },
+    dark: { from: '#C9923C', to: '#6A4818', text: '#FFF0D8' },
+  },
+} as const;
+
+export type SectionType = keyof typeof sectionAccents;
+
+/** New accent tokens for light-mode boy/girl. Match lookbook "boyAccent" / "girlAccent". */
+export const accentTokens = {
+  boy: { accent: '#4F89BC', accentDeep: '#2D5A86' },
+  girl: { accent: '#D4736A', accentDeep: '#98423A' },
+} as const;
+
+/** New typography tokens for Hebrew fonts. Added additively. */
+export const typographyHe = {
+  displayHe: 'FrankRuhlLibre_700Bold',
+  bodyHe: 'Heebo_400Regular',
+  bodyBoldHe: 'Heebo_700Bold',
+} as const;

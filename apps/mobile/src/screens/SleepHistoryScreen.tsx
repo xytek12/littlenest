@@ -8,7 +8,7 @@ import { usePrototypeState } from '../state/PrototypeState';
 import type { PrototypeSleepSession } from '../state/PrototypeState';
 import { useAppTheme } from '../theme/useAppTheme';
 import { colors } from '../theme/colors';
-import { formatDurationSeconds, formatDurationHuman } from '../utils/formatDuration';
+import { formatDurationHuman } from '../utils/formatDuration';
 import { formatHistoryDate, formatHistoryTime } from '../utils/formatHistoryDate';
 import { entriesInLast90Days } from '../utils/historyFilters';
 
@@ -89,7 +89,7 @@ export function SleepHistoryScreen() {
     <Screen testID="screen-sleep-history" scroll>
       <HistoryBackButton />
       <Text style={[styles.title, rtlText, { color: theme.text }]}>
-        {historyLabels.title}
+        {dictionary.homeSleep.sleepHistoryTitle}
       </Text>
       <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         {recent.length > 0 ? (

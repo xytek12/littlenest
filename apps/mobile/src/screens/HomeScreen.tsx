@@ -1,8 +1,9 @@
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, Text, View } from 'react-native';
-import { Screen } from '../components/Screen';
-import { StorybookCard } from '../components/StorybookCard';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { GenderedBackground } from '../components/GenderedBackground';
+import { SectionCard } from '../components/SectionCard';
 import { TwinPickerCards } from '../components/TwinPickerCards';
 import { WatercolorHeader } from '../components/WatercolorHeader';
 import { getDictionary, isRtlLanguage } from '../i18n';
@@ -11,6 +12,7 @@ import { usePrototypeState } from '../state/PrototypeState';
 import { getPalette, typography } from '../theme';
 import { useAppTheme } from '../theme/useAppTheme';
 import { getAgeLabel } from '../utils/age';
+import { formatDateLong } from '../utils/formatDateLong';
 
 // Render a string so that any digit runs (e.g. "14" inside "14 ימי מעקב")
 // get an explicit larger / bolder style. Fixes iOS substituting a smaller
@@ -45,13 +47,16 @@ export function HomeScreen() {
   const {
     activeChild,
     activeSleepStartedAt,
+    endSleep,
     family,
     feedEntries,
     sleepSessions,
+    startSleep,
   } = usePrototypeState();
   const dictionary = getDictionary(family.language);
   const labels = dictionary.home;
   const story = dictionary.storybook;
+  const homeSleep = dictionary.homeSleep;
   const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
   const isTwins = family.mode === 'twins' && family.children.length >= 2;
   const palette = getPalette(
@@ -77,86 +82,117 @@ export function HomeScreen() {
       ? undefined
       : getAgeLabel(activeChild.dateOfBirth, new Date(), family.language);
 
+  // Last sleep session (for idle state)
+  const lastSleep = sleepSessions.length > 0 ? sleepSessions[sleepSessions.length - 1] : null;
+
+  const insets = useSafeAreaInsets();
+
   return (
-    <Screen testID="screen-home" scroll>
-      <WatercolorHeader
-        title={storybookTitle}
-        subtitle={subtitle}
-        accent={palette.primary}
-        accentSoft={palette.primarySoft}
-      />
-
-      <View
-        style={[
-          styles.learningCard,
-          { borderColor: palette.primary, backgroundColor: theme.surface },
-        ]}
+    <GenderedBackground>
+      <ScrollView
+        testID="screen-home"
+        contentContainerStyle={[styles.content, { paddingBottom: 16 + insets.bottom }]}
+        keyboardShouldPersistTaps="handled"
       >
-        <Text style={[styles.learningKicker, { color: palette.primaryDeep }]}>
-          {learningReady ? labels.suggestionKicker : labels.learningKicker}
-        </Text>
-        <Text style={[styles.learningTitle, rtlText, { color: theme.text }]}>
-          {learningReady
-            ? labels.suggestionTitle
-            : renderWithStyledDigits(labels.learningTitle, styles.learningTitleNumber)}
-        </Text>
-        <Text style={[styles.learningBody, rtlText, { color: theme.mutedText }]}>
-          {learningReady
-            ? labels.suggestionBody(activeChild.displayName)
-            : renderWithStyledDigits(
-                labels.learningBody(trackedDays),
-                styles.learningBodyNumber,
-              )}
-        </Text>
-      </View>
+        <WatercolorHeader
+          title={storybookTitle}
+          subtitle={subtitle}
+          accent={palette.primary}
+          accentSoft={palette.primarySoft}
+        />
 
-      <TwinPickerCards />
+        <View
+          style={[
+            styles.learningCard,
+            { borderColor: palette.primary, backgroundColor: theme.surface },
+          ]}
+        >
+          <Text style={[styles.learningKicker, { color: palette.primaryDeep }]}>
+            {learningReady ? labels.suggestionKicker : labels.learningKicker}
+          </Text>
+          <Text style={[styles.learningTitle, rtlText, { color: theme.text }]}>
+            {learningReady
+              ? labels.suggestionTitle
+              : renderWithStyledDigits(labels.learningTitle, styles.learningTitleNumber)}
+          </Text>
+          <Text style={[styles.learningBody, rtlText, { color: theme.mutedText }]}>
+            {learningReady
+              ? labels.suggestionBody(activeChild.displayName)
+              : renderWithStyledDigits(
+                  labels.learningBody(trackedDays),
+                  styles.learningBodyNumber,
+                )}
+          </Text>
+        </View>
 
+        <TwinPickerCards />
 
-      <StorybookCard
-        sectionTitle={labels.sleepTitle}
-        kicker={story.kickers.sleep}
-        title={
-          activeSleepStartedAt
-            ? story.status.sleepRunning(activeChild.displayName, labels.sleepTitle)
-            : isTwins
-              ? story.status.sleepIdleTwins
-              : story.status.sleepIdleSingle(activeChild.displayName)
-        }
-        subtitle={labels.sleepSubtitle}
-        primaryAction={{
-          label: story.actions.beginDream,
-          accessibilityLabel: labels.sleepTitle,
-          onPress: () => navigation.navigate('SleepFlow'),
-        }}
-      />
-      <StorybookCard
-        sectionTitle={labels.feedTitle}
-        kicker={story.kickers.nursing}
-        title={story.status.feedIdle(activeChild.displayName)}
-        subtitle={labels.feedSubtitle}
-        primaryAction={{
-          label: story.actions.logFeast,
-          accessibilityLabel: labels.feedTitle,
-          onPress: () => navigation.navigate('FeedFlow'),
-        }}
-      />
-      <StorybookCard
-        sectionTitle={labels.foodTastingTitle}
-        kicker={story.kickers.allergen}
-        title={story.status.foodTastingIdle(activeChild.displayName)}
-        subtitle={labels.foodTastingSubtitle}
-        primaryAction={{
-          label: story.actions.startTasting,
-          accessibilityLabel: labels.foodTastingTitle,
-          onPress: () => navigation.navigate('FoodTastingFlow'),
-        }}
-      />
-    </Screen>
+        {/* Sleep SectionCard — active vs. idle */}
+        {activeSleepStartedAt ? (
+          <SectionCard
+            sectionType="sleep"
+            title={homeSleep.sectionSleep}
+            iconEmoji="🌙"
+            label={homeSleep.activeSleepLabel}
+            value={homeSleep.activeSleepSince(formatDateLong(activeSleepStartedAt, family.language))}
+            footerLabel={homeSleep.viewHistory}
+            onFooterPress={() => navigation.navigate('SleepFlow')}
+            onPlusPress={() => {
+              endSleep({ wakeCount: 0 });
+            }}
+            plusAccessibilityLabel={labels.sleepTitle}
+          />
+        ) : (
+          <SectionCard
+            sectionType="sleep"
+            title={homeSleep.sectionSleep}
+            iconEmoji="🌙"
+            label={homeSleep.idleSleepLabel}
+            value={
+              lastSleep
+                ? formatDateLong(lastSleep.startedAt, family.language)
+                : homeSleep.noSessionYet
+            }
+            footerLabel={homeSleep.viewHistory}
+            onFooterPress={() => navigation.navigate('SleepFlow')}
+            onPlusPress={() => {
+              startSleep();
+              navigation.navigate('SleepFlow');
+            }}
+            plusAccessibilityLabel={labels.sleepTitle}
+          />
+        )}
+
+        {/* Feed SectionCard */}
+        <SectionCard
+          sectionType="feed"
+          title={homeSleep.sectionFeed}
+          iconEmoji="🍼"
+          footerLabel={homeSleep.viewHistory}
+          onFooterPress={() => navigation.navigate('FeedFlow')}
+          onPlusPress={() => navigation.navigate('FeedFlow')}
+          plusAccessibilityLabel={labels.feedTitle}
+        />
+
+        {/* Food tasting SectionCard */}
+        <SectionCard
+          sectionType="food"
+          title={homeSleep.sectionFood}
+          iconEmoji="🥕"
+          footerLabel={homeSleep.viewHistory}
+          onFooterPress={() => navigation.navigate('FoodTastingFlow')}
+          onPlusPress={() => navigation.navigate('FoodTastingFlow')}
+          plusAccessibilityLabel={labels.foodTastingTitle}
+        />
+      </ScrollView>
+    </GenderedBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  content: {
+    padding: 16,
+  },
   learningCard: {
     borderRadius: 22,
     borderWidth: 1,

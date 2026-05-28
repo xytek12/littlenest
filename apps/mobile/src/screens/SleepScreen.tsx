@@ -8,7 +8,7 @@ import {
   type GroupedHistoryDay,
 } from '../components/GroupedHistoryCard';
 import { Screen } from '../components/Screen';
-import { StorybookCard } from '../components/StorybookCard';
+import { SectionCard } from '../components/SectionCard';
 import { TwinPickerCards } from '../components/TwinPickerCards';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import type { SleepStackParamList } from '../navigation/RootNavigator';
@@ -16,15 +16,11 @@ import { usePrototypeState } from '../state/PrototypeState';
 import { getChildAccent, getPalette } from '../theme';
 import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
-import { formatDurationHuman, formatDurationSeconds } from '../utils/formatDuration';
+import { formatDurationHuman } from '../utils/formatDuration';
+import { formatDateLong } from '../utils/formatDateLong';
 import { formatHistoryTime } from '../utils/formatHistoryDate';
 import { entriesInLastDays, groupEntriesByDay } from '../utils/historyFilters';
 import { useTickEverySecond } from '../utils/useTickEverySecond';
-
-function formatTimestamp(value: string) {
-  const date = new Date(value);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-}
 
 function getRunningDuration(startedAt: string, language = 'he') {
   return formatDurationHuman(
@@ -32,6 +28,7 @@ function getRunningDuration(startedAt: string, language = 'he') {
     language,
   );
 }
+
 
 export function SleepScreen() {
   const theme = useAppTheme();
@@ -47,7 +44,7 @@ export function SleepScreen() {
   const dictionary = getDictionary(family.language);
   const labels = dictionary.sleep;
   const commonLabels = dictionary.common;
-  const story = dictionary.storybook;
+  const homeSleep = dictionary.homeSleep;
   const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
   const isTwins = family.mode === 'twins';
   const palette = getPalette(
@@ -129,54 +126,75 @@ export function SleepScreen() {
     setWakeCountDraft('0');
   }
 
+  // Active sleep card body — human-readable duration (for test matching) + Stop button
+  const activeSleepBody = activeSleepStartedAt ? (
+    <View style={styles.activeSleepBody}>
+      <View style={styles.activeSleepLeft}>
+        <Text style={[styles.activeSleepLabel, { color: theme.mutedText }]}>
+          {homeSleep.activeSleepLabel}
+        </Text>
+        {/* Human-readable duration — text matches what tests query for (e.g. "5 seconds") */}
+        <Text style={[styles.activeSleepTimer, { color: theme.text }]}>
+          {getRunningDuration(activeSleepStartedAt, family.language)}
+        </Text>
+        <Text style={[styles.activeSleepSince, { color: theme.mutedText }]}>
+          {homeSleep.activeSleepSince(formatDateLong(activeSleepStartedAt, family.language))}
+        </Text>
+      </View>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={labels.end}
+        onPress={handleEndSleep}
+        style={[styles.stopButton, { backgroundColor: activeAccent.primary }]}
+      >
+        <Text style={[styles.stopButtonText, { color: '#fff' }]}>
+          {homeSleep.activeSleepStopButton}
+        </Text>
+      </Pressable>
+    </View>
+  ) : null;
+
+  // Idle sleep card — last session date or "no session" placeholder
+  const lastSleep = filteredSessions.length > 0 ? filteredSessions[filteredSessions.length - 1] : null;
+
   return (
     <Screen testID="screen-sleep" scroll>
       <FlowHeader
         title={labels.title}
         subtitle={labels.subtitle(activeChild.displayName)}
-        storybookTitle={story.sleep}
+        storybookTitle={dictionary.storybook.sleep}
       />
 
       <TwinPickerCards compact />
 
-      <StorybookCard
-        kicker={story.kickers.sleep}
-        title={
-          activeSleepStartedAt
-            ? story.status.sleepRunning(
-                activeChild.displayName,
-                getRunningDuration(activeSleepStartedAt, family.language),
-              )
-            : isTwins
-              ? story.status.sleepIdleTwins
-              : story.status.sleepIdleSingle(activeChild.displayName)
-        }
-        subtitle={
-          activeSleepStartedAt
-            ? labels.runningSubtitle(
-                formatTimestamp(activeSleepStartedAt),
-                getRunningDuration(activeSleepStartedAt, family.language),
-              )
-            : undefined
-        }
-        primaryAction={{
-          label: activeSleepStartedAt
-            ? story.actions.closeDream
-            : story.actions.beginDream,
-          accessibilityLabel: activeSleepStartedAt
-            ? labels.end
-            : labels.start,
-          onPress: activeSleepStartedAt ? handleEndSleep : handleStartSleep,
-        }}
-        secondaryAction={
-          activeSleepStartedAt
-            ? {
-                label: story.actions.openTimer,
-                onPress: () => setShowTimerSheet(true),
-              }
-            : undefined
-        }
-      />
+      {/* Active sleep SectionCard */}
+      {activeSleepStartedAt ? (
+        <SectionCard
+          sectionType="sleep"
+          title={homeSleep.sectionSleep}
+          iconEmoji="🌙"
+          footerLabel={homeSleep.viewHistory}
+          onFooterPress={() => navigation.navigate('SleepHistory')}
+        >
+          {activeSleepBody}
+        </SectionCard>
+      ) : (
+        <SectionCard
+          sectionType="sleep"
+          title={homeSleep.sectionSleep}
+          iconEmoji="🌙"
+          label={homeSleep.idleSleepLabel}
+          value={
+            lastSleep
+              ? formatDateLong(lastSleep.startedAt, family.language)
+              : homeSleep.noSessionYet
+          }
+          onPlusPress={handleStartSleep}
+          plusAccessibilityLabel={labels.start}
+          footerLabel={homeSleep.viewHistory}
+          onFooterPress={() => navigation.navigate('SleepHistory')}
+        />
+      )}
 
       <Modal
         animationType="slide"
@@ -262,6 +280,44 @@ export function SleepScreen() {
 }
 
 const styles = StyleSheet.create({
+  // Active sleep card body
+  activeSleepBody: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  activeSleepLeft: {
+    flex: 1,
+    gap: 4,
+  },
+  activeSleepLabel: {
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+  },
+  activeSleepTimer: {
+    fontSize: 28,
+    fontWeight: '900',
+    letterSpacing: 1,
+  },
+  activeSleepSince: {
+    fontSize: 12,
+    lineHeight: 16,
+  },
+  stopButton: {
+    alignItems: 'center',
+    borderRadius: 14,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  stopButtonText: {
+    fontSize: 14,
+    fontWeight: '900',
+  },
+  // Modal / sheet styles (unchanged from original)
   modalOverlay: {
     flex: 1,
     justifyContent: 'flex-end',

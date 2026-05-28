@@ -119,7 +119,7 @@ describe('interaction flows', () => {
   it('opens bottle mode with presets and saves the chosen amount', () => {
     const { getByLabelText, getByText, queryAllByText } = renderFeed();
 
-    fireEvent.press(getByLabelText('Bottle / nursing'));
+    fireEvent.press(getByLabelText('Add Feed'));
     fireEvent.press(getByText('Bottle'));
     fireEvent.press(getByText('120'));
     fireEvent.press(getByText('Save bottle feed'));
@@ -132,7 +132,7 @@ describe('interaction flows', () => {
   it('opens nursing mode with left and right controls', () => {
     const { getByLabelText, getByText } = renderFeed();
 
-    fireEvent.press(getByLabelText('Bottle / nursing'));
+    fireEvent.press(getByLabelText('Add Feed'));
     fireEvent.press(getByText('Nursing'));
 
     expect(getByText('Start left')).toBeTruthy();
@@ -162,7 +162,7 @@ describe('interaction flows', () => {
   it('ticks the nursing left side display every second while running', () => {
     const { getByLabelText, getByText, queryAllByText } = renderFeed();
 
-    fireEvent.press(getByLabelText('Bottle / nursing'));
+    fireEvent.press(getByLabelText('Add Feed'));
     fireEvent.press(getByText('Nursing'));
     fireEvent.press(getByText('Start left'));
 
@@ -182,7 +182,7 @@ describe('interaction flows', () => {
   it('saves nursing history with seconds for each side and the total duration', () => {
     const { getByLabelText, getByText, queryAllByText } = renderFeed();
 
-    fireEvent.press(getByLabelText('Bottle / nursing'));
+    fireEvent.press(getByLabelText('Add Feed'));
     fireEvent.press(getByText('Nursing'));
 
     fireEvent.press(getByText('Start left'));

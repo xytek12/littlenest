@@ -44,14 +44,16 @@ export function WatercolorHeader({
         pointerEvents="none"
         style={[
           styles.layerTop,
-          { backgroundColor: tintTop, opacity: theme.isDark ? 0.42 : 0.72 },
+          // Dark-mode: raised to 0.55 so the header wash is clearly visible
+          // against the jewel canvas (was 0.42, which blended into the page).
+          { backgroundColor: tintTop, opacity: theme.isDark ? 0.55 : 0.72 },
         ]}
       />
       <View
         pointerEvents="none"
         style={[
           styles.layerMid,
-          { backgroundColor: accent, opacity: theme.isDark ? 0.26 : 0.22 },
+          { backgroundColor: accent, opacity: theme.isDark ? 0.32 : 0.22 },
         ]}
       />
       {/* layerBottom (a strip of page background) was removed so the wash
