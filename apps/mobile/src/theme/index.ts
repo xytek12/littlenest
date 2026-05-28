@@ -6,8 +6,8 @@ export const paletteBase = {
   paperCream: '#FBF6F0',
   cardWash: '#FFFCF7',
   cardWashAlt: 'rgba(255, 252, 247, 0.85)',
-  ink: '#3F3A3A',
-  inkSoft: '#6F6664',
+  ink: '#2D2828',     // darker text on cream for ~12:1 contrast
+  inkSoft: '#574F4D',  // muted text bumped from #6F6664 for ~6.5:1 contrast (was ~4.7:1)
   sage: '#A7BFA3',
   sageSoft: '#E1ECDF',
   border: '#EADFD2',

@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   },
   sheetTitle: {
     flex: 1,
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '900',
     textAlign: 'center',
   },
@@ -391,12 +391,12 @@ const styles = StyleSheet.create({
     fontSize: 36,
   },
   choiceLabel: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '900',
   },
   // Bottle
   sectionTitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '900',
     marginBottom: 10,
   },
@@ -413,16 +413,17 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   presetText: {
+    fontSize: 15,
     fontWeight: '800',
   },
   input: {
     borderRadius: 14,
     borderWidth: 1,
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
     marginBottom: 12,
     paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingVertical: 14,
   },
   primaryButton: {
     alignItems: 'center',
@@ -430,7 +431,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   primaryButtonText: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '900',
   },
   // Nursing
@@ -447,14 +448,14 @@ const styles = StyleSheet.create({
     padding: 14,
   },
   sideTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '900',
   },
   sideHint: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0.5,
-    lineHeight: 20,
+    lineHeight: 22,
   },
   sideButton: {
     alignItems: 'center',
@@ -464,6 +465,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   sideButtonText: {
+    fontSize: 15,
     fontWeight: '900',
   },
   rtlText: { textAlign: 'right', writingDirection: 'rtl' },

@@ -174,16 +174,16 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '900',
   },
   viewAll: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: '800',
-    opacity: 0.7,
+    opacity: 0.85,
   },
   dayBlock: {
-    marginTop: 8,
+    marginTop: 10,
   },
   dayHeader: {
     alignItems: 'center',
@@ -191,30 +191,30 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     flexDirection: 'row',
     gap: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
   dayCaret: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '900',
-    width: 14,
+    width: 16,
   },
   dayHeaderBody: {
     flex: 1,
   },
   dayDate: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '900',
   },
   dayCount: {
-    fontSize: 12,
+    fontSize: 13,
     marginTop: 2,
   },
   row: {
     alignItems: 'center',
     flexDirection: 'row',
     gap: 10,
-    marginTop: 8,
+    marginTop: 10,
     paddingHorizontal: 4,
   },
   marker: {
@@ -224,15 +224,18 @@ const styles = StyleSheet.create({
   },
   rowBody: { flex: 1 },
   rowPrimary: {
+    fontSize: 16,
     fontWeight: '700',
-    lineHeight: 20,
+    lineHeight: 22,
   },
   rowSecondary: {
-    lineHeight: 18,
+    fontSize: 14,
+    lineHeight: 20,
     marginTop: 2,
   },
   empty: {
-    lineHeight: 20,
+    fontSize: 15,
+    lineHeight: 22,
   },
   rtlText: { textAlign: 'right', writingDirection: 'rtl' },
 });

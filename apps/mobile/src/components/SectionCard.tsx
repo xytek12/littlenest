@@ -183,24 +183,24 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   bannerEmoji: {
-    fontSize: 20,
+    fontSize: 22,
   },
   bannerTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '900',
     letterSpacing: 0.4,
   },
   plusButton: {
     alignItems: 'center',
     borderRadius: 999,
-    height: 36,
+    height: 40,
     justifyContent: 'center',
-    width: 36,
+    width: 40,
   },
   plusText: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: '900',
-    lineHeight: 26,
+    lineHeight: 28,
   },
   body: {
     paddingHorizontal: 16,
@@ -221,16 +221,16 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   bodyLabel: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '900',
     letterSpacing: 1.2,
     textTransform: 'uppercase',
   },
   bodyValue: {
-    fontSize: 16,
+    fontSize: 18,
     fontStyle: 'italic',
     fontWeight: '700',
-    lineHeight: 22,
+    lineHeight: 24,
   },
   bodyRight: {
     alignItems: 'flex-end',
@@ -240,24 +240,24 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   bodyRightLabel: {
-    fontSize: 16,
+    fontSize: 18,
     fontStyle: 'italic',
     fontWeight: '700',
   },
   bodyRightSublabel: {
-    fontSize: 12,
+    fontSize: 13,
   },
   footer: {
     borderTopColor: 'rgba(0,0,0,0.06)',
     borderTopWidth: 1,
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 12,
   },
   footerRtl: {
     alignItems: 'flex-end',
   },
   footerText: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: '700',
   },
   rtlText: { textAlign: 'right', writingDirection: 'rtl' },

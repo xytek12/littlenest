@@ -2,18 +2,20 @@ import { useColorScheme } from 'react-native';
 import { paletteBase, jewelDark } from './index';
 
 // Indigo Dream dark palette (lookbook variant 6).
-// mutedText bumped from #A8A2C9 → #D9C8B6 for legibility on jewel canvas.
+// mutedText bumped twice: #A8A2C9 → #D9C8B6 → #E8DAC8 for legibility on
+// the jewel canvas — the previous value tested ~7:1 against surface but
+// looked dim in actual phone use, so we lift it further toward warm white.
 const indigoDream = {
   background: '#161629',
   surface: '#1F1F38',
   text: '#EFEAFF',
-  mutedText: '#D9C8B6',   // bumped per design spec
-  border: '#363659',
+  mutedText: '#E8DAC8',
+  border: '#4A4A78',     // brighter so card edges read on the dark canvas
   // Dock pill — pastel lilac highlight on indigo bg.
   dockActiveBg: '#9FB7E8',
   dockActiveText: '#161629',
-  // Inactive label = body text at 0.7 opacity, baked into a single rgba.
-  dockInactiveText: 'rgba(239, 234, 255, 0.7)',
+  // Inactive label boosted from 0.7 → 0.85 for legibility.
+  dockInactiveText: 'rgba(239, 234, 255, 0.85)',
 };
 
 export function useAppTheme() {
