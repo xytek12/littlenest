@@ -6,16 +6,25 @@
 - GitHub: `xytek12/littlenest` · Supabase project ref: `lolesbmajbrhbsmvxgos`
 - Test user: `test@gmail.com` / `Test1234!`
 
-## Commands (Windows — Node at `C:\Program Files\nodejs`)
+## Commands
 
-Work from `.worktrees/littlenest-ai-prototype/apps/mobile/`:
+Work from `.worktrees/littlenest-ai-prototype/apps/mobile/`.
 
+**macOS** (Node via Homebrew at `/opt/homebrew/bin/`):
+```bash
+npm test                        # 69 Jest tests
+npx tsc --noEmit                # TypeScript check
+npx expo start --tunnel --clear # dev server (QR → Expo Go)
+```
+First-time macOS setup: `brew install node cocoapods` · install Xcode from App Store · `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer` · `supabase link --project-ref lolesbmajbrhbsmvxgos`
+
+**Windows** (Node at `C:\Program Files\nodejs` — must prepend PATH):
 ```powershell
 $env:Path = "C:\Program Files\nodejs;" + $env:Path
-& "C:\Program Files\nodejs\npm.cmd" test          # 69 Jest tests
-& "C:\Program Files\nodejs\npx.cmd" tsc --noEmit  # TypeScript check
-# Start tunnel:
-Start-Process cmd -ArgumentList "/k", "cd /d ""...\apps\mobile"" && set Path=C:\Program Files\nodejs;%Path% && npx expo start --tunnel --clear"
+& "C:\Program Files\nodejs\npm.cmd" test
+& "C:\Program Files\nodejs\npx.cmd" tsc --noEmit
+# Tunnel (opens a new cmd window):
+Start-Process cmd -ArgumentList "/k", "cd /d ""<worktree>\apps\mobile"" && set Path=C:\Program Files\nodejs;%Path% && npx expo start --tunnel --clear"
 ```
 
 ## Architecture rules — never break these
