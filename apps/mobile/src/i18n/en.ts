@@ -275,6 +275,11 @@ export const en = {
       nursingRowInDay: (time: string, total: string, left: string, right: string) =>
         `${time}  ·  Nursing  ·  ${total} (L ${left} / R ${right})`,
     },
+    // --- FEED REDESIGN KEYS ---
+    feed_redesign_lastLabel: 'LAST FEED',
+    feed_redesign_noneLabel: 'NO FEED YET',
+    feed_redesign_noFeedYet: 'No feed recorded yet',
+    feed_redesign_viewHistory: 'View feed history ›',
   },
   foodTasting: {
     title: 'Food tasting',
@@ -284,5 +289,44 @@ export const en = {
     complete: 'All checks complete',
     progress: (count: number) => `${count}/3 allergy checks complete`,
     footer: 'Reference list loads from Supabase when the app is connected.',
+  },
+
+  // ── NEW: Nara-card UI strings (Home + Sleep redesign) ──────────────────────
+  naraCard: {
+    viewHistory: 'View history ›',
+    stopSleep: 'Stop',
+    sleepBannerTitle: 'Sleep',
+    feedBannerTitle: 'Feed',
+    foodBannerTitle: 'Food tasting',
+    sleepLastSession: 'Last session',
+    sleepNoSession: 'No session yet',
+    sleepStartedSince: (dateStr: string) => `Started ${dateStr}`,
+  },
+
+  // --- TASTINGS REDESIGN KEYS ---
+  tastingsRedesign: {
+    whisperHint: (name: string) =>
+      `Each allergen gets three small tastes for ${name}. Tap a pill to record a taste.`,
+    viewAll: 'View all ›',
+    sectionEmpty: 'No allergens in this category yet.',
+  },
+
+  // --- HOME/SLEEP REDESIGN ---
+  homeSleep: {
+    /** SectionCard banner title */
+    sectionSleep: 'Sleep',
+    sectionFeed: 'Feed',
+    sectionFood: 'Food tasting',
+    /** Active sleep card */
+    activeSleepLabel: 'NOW SLEEPING',
+    activeSleepStopButton: 'Stop',
+    activeSleepSince: (dateStr: string) => `Since ${dateStr}`,
+    /** Idle sleep card */
+    idleSleepLabel: 'LAST SESSION',
+    noSessionYet: 'No session recorded yet',
+    /** View history footer */
+    viewHistory: 'View History ›',
+    /** Sleep history screen heading */
+    sleepHistoryTitle: 'Sleep History',
   },
 };

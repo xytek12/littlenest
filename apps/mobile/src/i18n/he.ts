@@ -269,6 +269,11 @@ export const he = {
       nursingRowInDay: (time: string, total: string, left: string, right: string) =>
         `${time}  ·  הנקה  ·  ${total} (שמאל ${left} / ימין ${right})`,
     },
+    // --- FEED REDESIGN KEYS ---
+    feed_redesign_lastLabel: 'האכלה האחרונה',
+    feed_redesign_noneLabel: 'עדיין לא הוזנה',
+    feed_redesign_noFeedYet: 'עדיין לא נרשמה האכלה',
+    feed_redesign_viewHistory: 'היסטוריית האכלה ›',
   },
   foodTasting: {
     title: 'טעימות',
@@ -277,5 +282,39 @@ export const he = {
     complete: 'כל הבדיקות הושלמו',
     progress: (count: number) => `${count}/3 בדיקות הושלמו`,
     footer: 'רשימת הייחוס נטענת מ-Supabase כשהאפליקציה מחוברת.',
+  },
+
+  // ── NEW: Nara-card UI strings (Home + Sleep redesign) ──────────────────────
+  naraCard: {
+    viewHistory: 'היסטוריה ›',
+    stopSleep: 'עצור',
+    sleepBannerTitle: 'שינה',
+    feedBannerTitle: 'האכלה',
+    foodBannerTitle: 'טעימות',
+    sleepLastSession: 'שינה אחרונה',
+    sleepNoSession: 'עדיין לא נרשמה שינה',
+    sleepStartedSince: (dateStr: string) => `התחיל ${dateStr}`,
+  },
+
+  // --- TASTINGS REDESIGN KEYS ---
+  tastingsRedesign: {
+    whisperHint: (name: string) =>
+      `כל אלרגן מקבל שלוש טעימות קטנות עבור ${name}. לחצו על גלולה לרישום טעימה.`,
+    viewAll: 'הצגת הכול ›',
+    sectionEmpty: 'אין אלרגנים בקטגוריה זו עדיין.',
+  },
+
+  // --- HOME/SLEEP REDESIGN ---
+  homeSleep: {
+    sectionSleep: 'שינה',
+    sectionFeed: 'האכלה',
+    sectionFood: 'טעימות',
+    activeSleepLabel: 'ישן/ה עכשיו',
+    activeSleepStopButton: 'עצור',
+    activeSleepSince: (dateStr: string) => `מאז ${dateStr}`,
+    idleSleepLabel: 'שינה אחרונה',
+    noSessionYet: 'עדיין לא נרשמה שינה',
+    viewHistory: 'היסטוריה ›',
+    sleepHistoryTitle: 'היסטוריית שינה',
   },
 };

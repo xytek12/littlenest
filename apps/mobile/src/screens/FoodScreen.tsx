@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { GenderedBackground } from '../components/GenderedBackground';
 import { RecipeIdeaCard } from '../components/RecipeIdeaCard';
 import { Screen } from '../components/Screen';
+import { SectionCard } from '../components/SectionCard';
 import { TwinPickerCards } from '../components/TwinPickerCards';
-import { WatercolorHeader } from '../components/WatercolorHeader';
-import { getPalette } from '../theme';
+import { getPalette, sectionAccents } from '../theme';
 import {
   RecipeFetchLimitError,
   canFetchRecipes,
@@ -15,7 +16,6 @@ import { getDailyRecipeIdeas } from '../data/recipeIdeas';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import { hasSupabaseEnv } from '../services/supabase';
 import { usePrototypeState } from '../state/PrototypeState';
-import { colors } from '../theme/colors';
 import { useAppTheme } from '../theme/useAppTheme';
 import { getAgeInMonths, getAgeLabel } from '../utils/age';
 
@@ -70,13 +70,18 @@ export function FoodScreen() {
   const { activeChild, family } = usePrototypeState();
   const dictionary = getDictionary(family.language);
   const labels = dictionary.recipes;
-  const story = dictionary.storybook;
   const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
   const palette = getPalette(
     family.mode === 'twins'
       ? { mode: 'twins', twinType: family.twinType }
       : { mode: 'single', sex: activeChild.sex },
   );
+
+  // Sage accent from food section tokens
+  const foodAccent = theme.isDark
+    ? sectionAccents.food.dark.text
+    : sectionAccents.food.light.ink;
+
   const [query, setQuery] = useState('');
   const [refreshNonce, setRefreshNonce] = useState(0);
   const months = getAgeInMonths(activeChild.dateOfBirth);
@@ -166,93 +171,89 @@ export function FoodScreen() {
   const visibleRecipes = recipes.length > 0 ? recipes : seedRecipes;
 
   return (
-    <Screen testID="screen-recipes" scroll>
-      <WatercolorHeader
-        title={story.recipes}
-        subtitle={labels.subtitle}
-        accent={palette.primary}
-        accentSoft={palette.primarySoft}
-      />
+    <GenderedBackground>
+      <Screen testID="screen-recipes" scroll>
+        <TwinPickerCards compact />
 
-      <TwinPickerCards compact />
-
-      <Text style={[styles.title, rtlText, { color: theme.text }]}>
-        {labels.title}
-      </Text>
-
-      <View style={[styles.searchCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-        <Text style={[styles.searchLabel, rtlText, { color: theme.text }]}>{labels.searchLabel}</Text>
-        <TextInput
-          onChangeText={setQuery}
-          placeholder={labels.queryPlaceholder}
-          placeholderTextColor={theme.mutedText}
-          style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
-          value={query}
+        {/* Food / Recipes section card — no "+" (browse only) */}
+        <SectionCard
+          sectionType="food"
+          title={labels.title}
+          iconEmoji="🥗"
+          label={getAgeLabel(activeChild.dateOfBirth, new Date(), family.language)}
+          value={labels.helper(activeChild.displayName, getAgeLabel(activeChild.dateOfBirth, new Date(), family.language))}
         />
-        <Pressable
-          accessibilityRole="button"
-          accessibilityState={{ disabled: refreshDisabled }}
-          disabled={refreshDisabled}
-          onPress={handleRefresh}
-          style={[styles.button, refreshDisabled ? styles.buttonDisabled : null]}
-        >
-          <Text style={styles.buttonText}>{labels.refresh}</Text>
-        </Pressable>
-      </View>
 
-      <Text style={[styles.helperText, rtlText, { color: theme.mutedText }]}>
-        {labels.helper(activeChild.displayName, getAgeLabel(activeChild.dateOfBirth, new Date(), family.language))}
-      </Text>
-
-      {limitReached ? (
-        <Text style={[styles.noticeText, rtlText, { color: theme.mutedText }]} testID="recipes-limit">
-          {labels.limitReached}
-        </Text>
-      ) : null}
-      {usedFallback && !limitReached ? (
-        <Text style={[styles.noticeText, rtlText, { color: theme.mutedText }]} testID="recipes-fallback">
-          {hasSupabaseEnv() ? labels.error : labels.offlineNote}
-        </Text>
-      ) : null}
-
-      <Text style={[styles.resultsHeader, rtlText, { color: theme.text }]}>{labels.resultsHeader}</Text>
-
-      {loading ? (
-        <View style={styles.loadingRow} testID="recipes-loading">
-          <ActivityIndicator color={colors.blue} />
-          <Text style={[styles.loadingText, rtlText, { color: theme.mutedText }]}>{labels.loading}</Text>
-        </View>
-      ) : visibleRecipes.length === 0 ? (
-        <Text style={[styles.noticeText, rtlText, { color: theme.mutedText }]} testID="recipes-empty">
-          {labels.empty}
-        </Text>
-      ) : (
-        visibleRecipes.map((recipe) => (
-          <RecipeIdeaCard
-            key={recipe.id}
-            childSex={activeChild.sex}
-            imageUrl={recipe.imageUrl}
-            summary={recipe.summary}
-            tag={recipe.tag}
-            title={recipe.title}
-            ctaLabel={labels.openSource}
-            dailyLabel={labels.dailyLabel}
-            onPress={() => Linking.openURL(recipe.url)}
+        {/* Search card — rounded with sage accent border on focus */}
+        <View style={[styles.searchCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+          <Text style={[styles.searchLabel, rtlText, { color: theme.text }]}>{labels.searchLabel}</Text>
+          <TextInput
+            onChangeText={setQuery}
+            placeholder={labels.queryPlaceholder}
+            placeholderTextColor={theme.mutedText}
+            style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
+            value={query}
           />
-        ))
-      )}
-    </Screen>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityState={{ disabled: refreshDisabled }}
+            disabled={refreshDisabled}
+            onPress={handleRefresh}
+            style={[
+              styles.button,
+              { backgroundColor: foodAccent },
+              refreshDisabled ? styles.buttonDisabled : null,
+            ]}
+          >
+            <Text style={[styles.buttonText, { color: theme.isDark ? '#0F2A2C' : '#FFFFFF' }]}>
+              {labels.refresh}
+            </Text>
+          </Pressable>
+        </View>
+
+        {limitReached ? (
+          <Text style={[styles.noticeText, rtlText, { color: theme.mutedText }]} testID="recipes-limit">
+            {labels.limitReached}
+          </Text>
+        ) : null}
+        {usedFallback && !limitReached ? (
+          <Text style={[styles.noticeText, rtlText, { color: theme.mutedText }]} testID="recipes-fallback">
+            {hasSupabaseEnv() ? labels.error : labels.offlineNote}
+          </Text>
+        ) : null}
+
+        <Text style={[styles.resultsHeader, rtlText, { color: theme.text }]}>{labels.resultsHeader}</Text>
+
+        {loading ? (
+          <View style={styles.loadingRow} testID="recipes-loading">
+            <ActivityIndicator color={foodAccent} />
+            <Text style={[styles.loadingText, rtlText, { color: theme.mutedText }]}>{labels.loading}</Text>
+          </View>
+        ) : visibleRecipes.length === 0 ? (
+          <Text style={[styles.noticeText, rtlText, { color: theme.mutedText }]} testID="recipes-empty">
+            {labels.empty}
+          </Text>
+        ) : (
+          visibleRecipes.map((recipe) => (
+            <RecipeIdeaCard
+              key={recipe.id}
+              childSex={activeChild.sex}
+              imageUrl={recipe.imageUrl}
+              summary={recipe.summary}
+              tag={recipe.tag}
+              title={recipe.title}
+              ctaLabel={labels.openSource}
+              dailyLabel={labels.dailyLabel}
+              onPress={() => Linking.openURL(recipe.url)}
+            />
+          ))
+        )}
+      </Screen>
+    </GenderedBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 28, fontWeight: '900' },
-  subtitle: {
-    color: '#6B7D91',
-    lineHeight: 20,
-    marginBottom: 16,
-    marginTop: 8,
-  },
   searchCard: {
     borderRadius: 20,
     borderWidth: 1,
@@ -268,30 +269,24 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     fontSize: 16,
+    marginBottom: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
   },
   button: {
     alignItems: 'center',
-    backgroundColor: colors.warning,
     borderRadius: 16,
-    marginTop: 12,
     paddingVertical: 13,
   },
   buttonDisabled: {
     opacity: 0.5,
   },
   buttonText: {
-    color: '#4F3B0A',
     fontSize: 15,
     fontWeight: '800',
   },
-  helperText: {
-    color: '#6B7D91',
-    marginBottom: 12,
-  },
   noticeText: {
-    color: '#6B7D91',
+    lineHeight: 20,
     marginBottom: 12,
   },
   resultsHeader: {
@@ -307,7 +302,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   loadingText: {
-    color: '#6B7D91',
+    lineHeight: 20,
   },
   rtlText: { textAlign: 'right', writingDirection: 'rtl' },
 });

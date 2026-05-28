@@ -58,7 +58,8 @@ describe('FeedHistoryScreen', () => {
   it('saves a bottle feed and lists it on the history screen', () => {
     const { getByLabelText, getByTestId, getByText, queryAllByText } = renderFeedFlow();
 
-    fireEvent.press(getByLabelText('Bottle / nursing'));
+    // SectionCard "+" button has accessibilityLabel="Add Feed" in the redesigned UI
+    fireEvent.press(getByLabelText('Add Feed'));
     fireEvent.press(getByText('Bottle'));
     fireEvent.press(getByText('120'));
     fireEvent.press(getByText('Save bottle feed'));
