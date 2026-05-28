@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GenderedBackground } from '../components/GenderedBackground';
 import { SectionCard } from '../components/SectionCard';
@@ -9,14 +10,24 @@ import { WatercolorHeader } from '../components/WatercolorHeader';
 import { getDictionary, isRtlLanguage } from '../i18n';
 import type { RootTabParamList } from '../navigation/RootNavigator';
 import { usePrototypeState } from '../state/PrototypeState';
-import { getPalette, typography } from '../theme';
+import { getPalette, typography, typographyHe } from '../theme';
 import { useAppTheme } from '../theme/useAppTheme';
 import { getAgeLabel } from '../utils/age';
 import { formatDateLong } from '../utils/formatDateLong';
+import { formatDurationHuman } from '../utils/formatDuration';
+import { useTickEverySecond } from '../utils/useTickEverySecond';
+
+function getRunningDuration(startedAt: string, language = 'he') {
+  return formatDurationHuman(
+    Math.max(0, Math.round((Date.now() - Date.parse(startedAt)) / 1000)),
+    language,
+  );
+}
 
 // Render a string so that any digit runs (e.g. "14" inside "14 ימי מעקב")
-// get an explicit larger / bolder style. Fixes iOS substituting a smaller
-// fallback font for digits when they sit next to Hebrew glyphs.
+// get an explicit larger / bolder style, using the correct font for the active
+// language. Fixes iOS substituting a smaller fallback font for digits next to
+// Hebrew glyphs, and ensures visual consistency with Frank Ruhl Libre.
 function renderWithStyledDigits(text: string, digitStyle: object) {
   return text.split(/(\d+)/).map((part, index) =>
     /^\d+$/.test(part) ? (
@@ -57,7 +68,9 @@ export function HomeScreen() {
   const labels = dictionary.home;
   const story = dictionary.storybook;
   const homeSleep = dictionary.homeSleep;
-  const rtlText = isRtlLanguage(family.language) ? styles.rtlText : null;
+  const commonLabels = dictionary.common;
+  const isRtl = isRtlLanguage(family.language);
+  const rtlText = isRtl ? styles.rtlText : null;
   const isTwins = family.mode === 'twins' && family.children.length >= 2;
   const palette = getPalette(
     isTwins
@@ -67,14 +80,15 @@ export function HomeScreen() {
   const trackedDays = countTrackedDays(sleepSessions, feedEntries);
   const learningReady = trackedDays >= 14;
 
+  const [showSleepModal, setShowSleepModal] = useState(false);
+
+  // Keep ticker active so the sleep modal shows a live timer when open
+  useTickEverySecond(activeSleepStartedAt != null);
+
   const storybookTitle = isTwins
     ? story.homeTwins(family.children[0].displayName, family.children[1].displayName)
     : story.homeSingle(activeChild.displayName);
 
-  // When a sleep session is currently running, swap the subtitle for a
-  // gender-aware "sleeping peacefully" line (Hebrew: ישן / ישנה). The active
-  // sleep is global (not per-child) so in twin mode the sleeping child is
-  // whichever child is currently active.
   const sleepingChild = activeSleepStartedAt ? activeChild : null;
   const subtitle = sleepingChild
     ? labels.sleepingStatus(sleepingChild.displayName, sleepingChild.sex)
@@ -82,10 +96,19 @@ export function HomeScreen() {
       ? undefined
       : getAgeLabel(activeChild.dateOfBirth, new Date(), family.language);
 
-  // Last sleep session (for idle state)
   const lastSleep = sleepSessions.length > 0 ? sleepSessions[sleepSessions.length - 1] : null;
 
   const insets = useSafeAreaInsets();
+
+  // Language-aware digit styles for the learning-card "14 days" copy.
+  // Hebrew mode: Frank Ruhl Libre (same font used for the surrounding Hebrew
+  // text) — avoids iOS falling back to a mismatched system font for the digit.
+  const digitTitleStyle = isRtl
+    ? { ...styles.learningTitleNumber, fontFamily: typographyHe.displayHe }
+    : styles.learningTitleNumber;
+  const digitBodyStyle = isRtl
+    ? { ...styles.learningBodyNumber, fontFamily: typographyHe.bodyBoldHe }
+    : styles.learningBodyNumber;
 
   return (
     <GenderedBackground>
@@ -113,21 +136,21 @@ export function HomeScreen() {
           <Text style={[styles.learningTitle, rtlText, { color: theme.text }]}>
             {learningReady
               ? labels.suggestionTitle
-              : renderWithStyledDigits(labels.learningTitle, styles.learningTitleNumber)}
+              : renderWithStyledDigits(labels.learningTitle, digitTitleStyle)}
           </Text>
           <Text style={[styles.learningBody, rtlText, { color: theme.mutedText }]}>
             {learningReady
               ? labels.suggestionBody(activeChild.displayName)
               : renderWithStyledDigits(
                   labels.learningBody(trackedDays),
-                  styles.learningBodyNumber,
+                  digitBodyStyle,
                 )}
           </Text>
         </View>
 
         <TwinPickerCards />
 
-        {/* Sleep SectionCard — active vs. idle */}
+        {/* Sleep SectionCard — both states open the sleep modal */}
         {activeSleepStartedAt ? (
           <SectionCard
             sectionType="sleep"
@@ -137,9 +160,7 @@ export function HomeScreen() {
             value={homeSleep.activeSleepSince(formatDateLong(activeSleepStartedAt, family.language))}
             footerLabel={homeSleep.viewHistory}
             onFooterPress={() => navigation.navigate('SleepFlow')}
-            onPlusPress={() => {
-              endSleep({ wakeCount: 0 });
-            }}
+            onPlusPress={() => setShowSleepModal(true)}
             plusAccessibilityLabel={labels.sleepTitle}
           />
         ) : (
@@ -155,10 +176,7 @@ export function HomeScreen() {
             }
             footerLabel={homeSleep.viewHistory}
             onFooterPress={() => navigation.navigate('SleepFlow')}
-            onPlusPress={() => {
-              startSleep();
-              navigation.navigate('SleepFlow');
-            }}
+            onPlusPress={() => setShowSleepModal(true)}
             plusAccessibilityLabel={labels.sleepTitle}
           />
         )}
@@ -185,6 +203,87 @@ export function HomeScreen() {
           plusAccessibilityLabel={labels.foodTastingTitle}
         />
       </ScrollView>
+
+      {/* Sleep start / stop popup */}
+      <Modal
+        animationType="slide"
+        onRequestClose={() => setShowSleepModal(false)}
+        transparent
+        visible={showSleepModal}
+      >
+        <View style={styles.modalOverlay}>
+          <Pressable
+            accessibilityLabel="Close sleep popup"
+            onPress={() => setShowSleepModal(false)}
+            style={styles.modalBackdrop}
+          />
+          <View style={[styles.sheetCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+            <Text style={[styles.sheetTitle, rtlText, { color: theme.text }]}>
+              {homeSleep.sectionSleep}
+            </Text>
+
+            {activeSleepStartedAt ? (
+              <>
+                <Text style={[styles.sheetBody, rtlText, { color: theme.mutedText }]}>
+                  {homeSleep.activeSleepSince(formatDateLong(activeSleepStartedAt, family.language))}
+                </Text>
+                <Text style={[styles.timerDisplay, { color: theme.text }]}>
+                  {getRunningDuration(activeSleepStartedAt, family.language)}
+                </Text>
+                <View style={styles.sheetActions}>
+                  <Pressable
+                    onPress={() => setShowSleepModal(false)}
+                    style={[styles.secondaryBtn, { borderColor: theme.border }]}
+                  >
+                    <Text style={[styles.secondaryBtnText, { color: theme.text }]}>
+                      {commonLabels.cancel}
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={() => {
+                      endSleep({ wakeCount: 0 });
+                      setShowSleepModal(false);
+                    }}
+                    style={[styles.primaryBtn, { backgroundColor: palette.primary }]}
+                  >
+                    <Text style={[styles.primaryBtnText, { color: palette.primaryDeep }]}>
+                      {homeSleep.activeSleepStopButton}
+                    </Text>
+                  </Pressable>
+                </View>
+              </>
+            ) : (
+              <>
+                <Text style={[styles.sheetBody, rtlText, { color: theme.mutedText }]}>
+                  {homeSleep.startPrompt}
+                </Text>
+                <View style={styles.sheetActions}>
+                  <Pressable
+                    onPress={() => setShowSleepModal(false)}
+                    style={[styles.secondaryBtn, { borderColor: theme.border }]}
+                  >
+                    <Text style={[styles.secondaryBtnText, { color: theme.text }]}>
+                      {commonLabels.cancel}
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={() => {
+                      startSleep();
+                      setShowSleepModal(false);
+                      navigation.navigate('SleepFlow');
+                    }}
+                    style={[styles.primaryBtn, { backgroundColor: palette.primary }]}
+                  >
+                    <Text style={[styles.primaryBtnText, { color: palette.primaryDeep }]}>
+                      {dictionary.sleep.start}
+                    </Text>
+                  </Pressable>
+                </View>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
     </GenderedBackground>
   );
 }
@@ -219,8 +318,6 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     marginTop: 10,
   },
-  // Match parent body font size so the digit baseline aligns with the
-  // surrounding Hebrew glyphs (iOS otherwise substitutes a bigger fallback).
   learningBodyNumber: {
     fontFamily: typography.bodyBlack,
     fontSize: 15,
@@ -232,4 +329,62 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   rtlText: { textAlign: 'right', writingDirection: 'rtl' },
+  // Sleep modal
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  modalBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.42)',
+  },
+  sheetCard: {
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    borderWidth: 1,
+    padding: 20,
+    paddingBottom: 32,
+  },
+  sheetTitle: {
+    fontFamily: typography.displayBold,
+    fontSize: 20,
+    fontWeight: '900',
+    marginBottom: 8,
+  },
+  sheetBody: {
+    fontSize: 15,
+    lineHeight: 22,
+    marginBottom: 12,
+  },
+  timerDisplay: {
+    fontFamily: typography.displayBold,
+    fontSize: 36,
+    fontWeight: '900',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  sheetActions: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 4,
+  },
+  secondaryBtn: {
+    alignItems: 'center',
+    borderRadius: 14,
+    borderWidth: 1,
+    flex: 1,
+    paddingVertical: 14,
+  },
+  secondaryBtnText: {
+    fontWeight: '800',
+  },
+  primaryBtn: {
+    alignItems: 'center',
+    borderRadius: 14,
+    flex: 1,
+    paddingVertical: 14,
+  },
+  primaryBtnText: {
+    fontWeight: '900',
+  },
 });

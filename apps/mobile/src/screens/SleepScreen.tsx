@@ -1,7 +1,17 @@
 import { useMemo, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { FlowHeader } from '../components/FlowHeader';
 import {
   GroupedHistoryCard,
@@ -28,7 +38,6 @@ function getRunningDuration(startedAt: string, language = 'he') {
     language,
   );
 }
-
 
 export function SleepScreen() {
   const theme = useAppTheme();
@@ -60,11 +69,13 @@ export function SleepScreen() {
   const [timerPaused, setTimerPaused] = useState(false);
   const isSleepActive = activeSleepStartedAt != null && !timerPaused;
   useTickEverySecond(isSleepActive);
+
   const childById = useMemo(() => {
     const map = new Map<string, (typeof family.children)[number]>();
     family.children.forEach((child) => map.set(child.id, child));
     return map;
   }, [family.children]);
+
   const filteredSessions = useMemo(() => {
     if (!isTwins) return sleepSessions;
     return sleepSessions.filter((session) => session.childId === activeChild.id);
@@ -72,11 +83,7 @@ export function SleepScreen() {
 
   const grouped = dictionary.groupedHistory;
   const historyDays = useMemo<GroupedHistoryDay[]>(() => {
-    const windowed = entriesInLastDays(
-      filteredSessions,
-      (session) => session.startedAt,
-      7,
-    );
+    const windowed = entriesInLastDays(filteredSessions, (session) => session.startedAt, 7);
     return groupEntriesByDay(windowed, (session) => session.startedAt).map((day) => ({
       dayKey: day.dayKey,
       representativeIso: day.representativeIso,
@@ -99,23 +106,25 @@ export function SleepScreen() {
       }),
     }));
   }, [childById, family.children, family.language, filteredSessions, isTwins, labels.history, palette]);
-  const canEnd = Boolean(activeSleepStartedAt);
 
-  function handleStartSleep() {
-    startSleep();
+  const lastSleep = filteredSessions.length > 0 ? filteredSessions[filteredSessions.length - 1] : null;
+
+  // Open the timer sheet without starting sleep — user confirms inside.
+  function handleOpenSheet() {
     setShowTimerSheet(true);
     setShowWakePrompt(false);
     setTimerPaused(false);
     setWakeCountDraft('0');
   }
 
-  function handleEndSleep() {
-    if (!canEnd) {
-      return;
-    }
+  function handleConfirmStart() {
+    startSleep();
+    setTimerPaused(false);
+  }
 
+  function handleEndSleep() {
+    if (!activeSleepStartedAt) return;
     setShowWakePrompt(true);
-    setShowTimerSheet(true);
   }
 
   function handleSaveSleep() {
@@ -126,36 +135,10 @@ export function SleepScreen() {
     setWakeCountDraft('0');
   }
 
-  // Active sleep card body — human-readable duration (for test matching) + Stop button
-  const activeSleepBody = activeSleepStartedAt ? (
-    <View style={styles.activeSleepBody}>
-      <View style={styles.activeSleepLeft}>
-        <Text style={[styles.activeSleepLabel, { color: theme.mutedText }]}>
-          {homeSleep.activeSleepLabel}
-        </Text>
-        {/* Human-readable duration — text matches what tests query for (e.g. "5 seconds") */}
-        <Text style={[styles.activeSleepTimer, { color: theme.text }]}>
-          {getRunningDuration(activeSleepStartedAt, family.language)}
-        </Text>
-        <Text style={[styles.activeSleepSince, { color: theme.mutedText }]}>
-          {homeSleep.activeSleepSince(formatDateLong(activeSleepStartedAt, family.language))}
-        </Text>
-      </View>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={labels.end}
-        onPress={handleEndSleep}
-        style={[styles.stopButton, { backgroundColor: activeAccent.primary }]}
-      >
-        <Text style={[styles.stopButtonText, { color: '#fff' }]}>
-          {homeSleep.activeSleepStopButton}
-        </Text>
-      </Pressable>
-    </View>
-  ) : null;
-
-  // Idle sleep card — last session date or "no session" placeholder
-  const lastSleep = filteredSessions.length > 0 ? filteredSessions[filteredSessions.length - 1] : null;
+  function handleCloseSheet() {
+    setShowTimerSheet(false);
+    setShowWakePrompt(false);
+  }
 
   return (
     <Screen testID="screen-sleep" scroll>
@@ -167,17 +150,20 @@ export function SleepScreen() {
 
       <TwinPickerCards compact />
 
-      {/* Active sleep SectionCard */}
+      {/* Sleep SectionCard — "+" always opens the timer sheet */}
       {activeSleepStartedAt ? (
         <SectionCard
           sectionType="sleep"
           title={homeSleep.sectionSleep}
           iconEmoji="🌙"
+          label={homeSleep.activeSleepLabel}
+          value={getRunningDuration(activeSleepStartedAt, family.language)}
+          rightLabel={homeSleep.activeSleepSince(formatDateLong(activeSleepStartedAt, family.language))}
+          onPlusPress={handleOpenSheet}
+          plusAccessibilityLabel={labels.end}
           footerLabel={homeSleep.viewHistory}
           onFooterPress={() => navigation.navigate('SleepHistory')}
-        >
-          {activeSleepBody}
-        </SectionCard>
+        />
       ) : (
         <SectionCard
           sectionType="sleep"
@@ -189,85 +175,130 @@ export function SleepScreen() {
               ? formatDateLong(lastSleep.startedAt, family.language)
               : homeSleep.noSessionYet
           }
-          onPlusPress={handleStartSleep}
+          onPlusPress={handleOpenSheet}
           plusAccessibilityLabel={labels.start}
           footerLabel={homeSleep.viewHistory}
           onFooterPress={() => navigation.navigate('SleepHistory')}
         />
       )}
 
+      {/* Timer sheet — pre-start, running, and wake-count states */}
       <Modal
         animationType="slide"
-        onRequestClose={() => setShowTimerSheet(false)}
+        onRequestClose={handleCloseSheet}
         transparent
-        visible={showTimerSheet && Boolean(activeSleepStartedAt)}
+        visible={showTimerSheet}
       >
-        <View style={styles.modalOverlay}>
-          <Pressable
-            accessibilityLabel="Close sleep timer"
-            onPress={() => setShowTimerSheet(false)}
-            style={styles.modalBackdrop}
-          />
-          <View style={[styles.sheetCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-            <Text style={[styles.promptTitle, rtlText, { color: theme.text }]}>
-              {showWakePrompt ? labels.wakePrompt : labels.timerTitle}
-            </Text>
-            {showWakePrompt ? (
-              <>
-                <TextInput
-                  value={wakeCountDraft}
-                  onChangeText={setWakeCountDraft}
-                  keyboardType="number-pad"
-                  placeholder="0"
-                  placeholderTextColor={theme.mutedText}
-                  style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
-                />
-                <View style={styles.promptActions}>
-                  <Pressable
-                    onPress={() => setShowWakePrompt(false)}
-                    style={[styles.secondaryButton, { borderColor: theme.border }]}
-                  >
-                    <Text style={[styles.secondaryButtonText, { color: theme.text }]}>
-                      {commonLabels.cancel}
+        <KeyboardAvoidingView
+          style={styles.flex}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <View style={styles.modalOverlay}>
+            <Pressable
+              accessibilityLabel="Close sleep timer"
+              onPress={handleCloseSheet}
+              style={styles.modalBackdrop}
+            />
+            <View style={[styles.sheetCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+              <ScrollView keyboardShouldPersistTaps="handled" bounces={false}>
+
+                {/* PRE-START: timer not yet running */}
+                {!activeSleepStartedAt && !showWakePrompt ? (
+                  <>
+                    <Text style={[styles.promptTitle, rtlText, { color: theme.text }]}>
+                      {labels.timerTitle}
                     </Text>
-                  </Pressable>
-                  <Pressable onPress={handleSaveSleep} style={styles.primaryButton}>
-                    <Text style={styles.primaryButtonText}>{labels.save}</Text>
-                  </Pressable>
-                </View>
-              </>
-            ) : (
-              <>
-                <Text style={[styles.timerStatus, rtlText, { color: theme.mutedText }]}>
-                  {timerPaused
-                    ? labels.timerPaused
-                    : activeSleepStartedAt
-                      ? labels.timerRunning(getRunningDuration(activeSleepStartedAt, family.language))
-                      : ''}
-                </Text>
-                <View style={styles.promptActions}>
-                  <Pressable
-                    onPress={() => setTimerPaused((current) => !current)}
-                    style={[styles.secondaryButton, { borderColor: theme.border }]}
-                  >
-                    <Text style={[styles.secondaryButtonText, { color: theme.text }]}>
-                      {timerPaused ? labels.resume : labels.pause}
+                    <Text style={[styles.timerStatus, rtlText, { color: theme.mutedText }]}>
+                      {labels.startSubtitle}
                     </Text>
-                  </Pressable>
-                  <Pressable
-                    accessibilityLabel="End sleep session"
-                    onPress={handleEndSleep}
-                    style={styles.primaryButton}
-                  >
-                    <Text style={styles.primaryButtonText}>{labels.end}</Text>
-                  </Pressable>
-                </View>
-              </>
-            )}
+                    <View style={styles.promptActions}>
+                      <Pressable
+                        onPress={handleCloseSheet}
+                        style={[styles.secondaryButton, { borderColor: theme.border }]}
+                      >
+                        <Text style={[styles.secondaryButtonText, { color: theme.text }]}>
+                          {commonLabels.cancel}
+                        </Text>
+                      </Pressable>
+                      <Pressable
+                        onPress={handleConfirmStart}
+                        style={[styles.primaryButton, { backgroundColor: activeAccent.primary }]}
+                      >
+                        <Text style={[styles.primaryButtonText, { color: activeAccent.primaryDeep }]}>
+                          {labels.start}
+                        </Text>
+                      </Pressable>
+                    </View>
+                  </>
+
+                ) : showWakePrompt ? (
+                  /* WAKE COUNT: how many times did baby wake? */
+                  <>
+                    <Text style={[styles.promptTitle, rtlText, { color: theme.text }]}>
+                      {labels.wakePrompt}
+                    </Text>
+                    <TextInput
+                      value={wakeCountDraft}
+                      onChangeText={setWakeCountDraft}
+                      keyboardType="number-pad"
+                      placeholder="0"
+                      placeholderTextColor={theme.mutedText}
+                      style={[styles.input, rtlText, { color: theme.text, borderColor: theme.border }]}
+                    />
+                    <View style={styles.promptActions}>
+                      <Pressable
+                        onPress={() => setShowWakePrompt(false)}
+                        style={[styles.secondaryButton, { borderColor: theme.border }]}
+                      >
+                        <Text style={[styles.secondaryButtonText, { color: theme.text }]}>
+                          {commonLabels.cancel}
+                        </Text>
+                      </Pressable>
+                      <Pressable onPress={handleSaveSleep} style={styles.primaryButton}>
+                        <Text style={styles.primaryButtonText}>{labels.save}</Text>
+                      </Pressable>
+                    </View>
+                  </>
+
+                ) : (
+                  /* RUNNING: timer active */
+                  <>
+                    <Text style={[styles.promptTitle, rtlText, { color: theme.text }]}>
+                      {labels.timerTitle}
+                    </Text>
+                    <Text style={[styles.timerStatus, rtlText, { color: theme.mutedText }]}>
+                      {timerPaused
+                        ? labels.timerPaused
+                        : activeSleepStartedAt
+                          ? labels.timerRunning(getRunningDuration(activeSleepStartedAt, family.language))
+                          : ''}
+                    </Text>
+                    <View style={styles.promptActions}>
+                      <Pressable
+                        onPress={() => setTimerPaused((cur) => !cur)}
+                        style={[styles.secondaryButton, { borderColor: theme.border }]}
+                      >
+                        <Text style={[styles.secondaryButtonText, { color: theme.text }]}>
+                          {timerPaused ? labels.resume : labels.pause}
+                        </Text>
+                      </Pressable>
+                      <Pressable
+                        accessibilityLabel="End sleep session"
+                        onPress={handleEndSleep}
+                        style={styles.primaryButton}
+                      >
+                        <Text style={styles.primaryButtonText}>{labels.end}</Text>
+                      </Pressable>
+                    </View>
+                  </>
+                )}
+              </ScrollView>
+            </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
 
+      {/* Inline 7-day history preview — tap to open full history */}
       <GroupedHistoryCard
         days={historyDays}
         windowLabel={grouped.lastWeek}
@@ -280,44 +311,7 @@ export function SleepScreen() {
 }
 
 const styles = StyleSheet.create({
-  // Active sleep card body
-  activeSleepBody: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  activeSleepLeft: {
-    flex: 1,
-    gap: 4,
-  },
-  activeSleepLabel: {
-    fontSize: 11,
-    fontWeight: '900',
-    letterSpacing: 1.2,
-    textTransform: 'uppercase',
-  },
-  activeSleepTimer: {
-    fontSize: 28,
-    fontWeight: '900',
-    letterSpacing: 1,
-  },
-  activeSleepSince: {
-    fontSize: 12,
-    lineHeight: 16,
-  },
-  stopButton: {
-    alignItems: 'center',
-    borderRadius: 14,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  stopButtonText: {
-    fontSize: 14,
-    fontWeight: '900',
-  },
-  // Modal / sheet styles (unchanged from original)
+  flex: { flex: 1 },
   modalOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -331,7 +325,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 24,
     borderWidth: 1,
     padding: 18,
-    paddingBottom: 26,
+    paddingBottom: 32,
   },
   promptTitle: {
     fontSize: 16,
@@ -347,8 +341,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   timerStatus: {
-    color: '#6B7D91',
     lineHeight: 20,
+    marginBottom: 4,
   },
   promptActions: {
     flexDirection: 'row',

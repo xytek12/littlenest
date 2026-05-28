@@ -43,6 +43,8 @@ describe('app shell', () => {
     expect(queryByRole('button', { name: /Sleep, tab/i })).toBeNull();
 
     fireEvent.press(getByLabelText('Sleep'));
+    // Modal opens → confirm start to navigate to SleepFlow
+    fireEvent.press(getByText('Start sleep'));
 
     expect(getByTestId('screen-sleep')).toBeTruthy();
     expect(getByLabelText('Home tab')).toBeTruthy();

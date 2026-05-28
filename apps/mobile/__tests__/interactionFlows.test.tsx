@@ -70,6 +70,8 @@ describe('interaction flows', () => {
       renderSleep();
 
     fireEvent.press(getByLabelText('Start sleep'));
+    // Modal opens in pre-start state → confirm to begin timing
+    fireEvent.press(getByText('Start sleep'));
     expect(getByText('Sleep timer')).toBeTruthy();
 
     fireEvent.press(getByText('Pause'));
@@ -140,9 +142,11 @@ describe('interaction flows', () => {
   });
 
   it('ticks the sleep timer display every second while a session is active', () => {
-    const { getByLabelText, queryAllByText } = renderSleep();
+    const { getByLabelText, getByText, queryAllByText } = renderSleep();
 
     fireEvent.press(getByLabelText('Start sleep'));
+    // Modal opens in pre-start state → confirm to begin timing
+    fireEvent.press(getByText('Start sleep'));
 
     // advanceTimersByTime also advances the mocked system clock, so Date.now()
     // moves forward by the same amount and getRunningDuration reports it.

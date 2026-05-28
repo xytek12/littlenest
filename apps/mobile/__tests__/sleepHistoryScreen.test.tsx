@@ -60,6 +60,8 @@ describe('SleepHistoryScreen', () => {
       renderSleepFlow();
 
     fireEvent.press(getByLabelText('Start sleep'));
+    // Modal opens in pre-start state → confirm to begin timing
+    fireEvent.press(getByText('Start sleep'));
     fireEvent.press(getByLabelText('End sleep session'));
     fireEvent.changeText(getByPlaceholderText('0'), '2');
     jest.setSystemTime(new Date('2026-05-24T11:35:27.000Z'));

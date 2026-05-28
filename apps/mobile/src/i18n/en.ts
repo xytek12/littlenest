@@ -328,5 +328,7 @@ export const en = {
     viewHistory: 'View History ›',
     /** Sleep history screen heading */
     sleepHistoryTitle: 'Sleep History',
+    /** Sleep start popup hint */
+    startPrompt: "Tap Start to begin timing your baby's sleep.",
   },
 };

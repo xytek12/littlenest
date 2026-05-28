@@ -6,6 +6,7 @@ import {
   GroupedHistoryCard,
   type GroupedHistoryDay,
 } from '../components/GroupedHistoryCard';
+import { GenderedBackground } from '../components/GenderedBackground';
 import { Screen } from '../components/Screen';
 import { StorybookCard } from '../components/StorybookCard';
 import { TwinPickerCards } from '../components/TwinPickerCards';
@@ -161,6 +162,7 @@ export function GrowthScreen() {
   }
 
   return (
+    <GenderedBackground>
     <Screen testID="screen-growth" scroll>
       <WatercolorHeader
         title={story.growth}
@@ -275,6 +277,7 @@ export function GrowthScreen() {
         testID="growth-inline-history"
       />
     </Screen>
+    </GenderedBackground>
   );
 }
 

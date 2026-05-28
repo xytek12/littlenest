@@ -316,5 +316,6 @@ export const he = {
     noSessionYet: 'עדיין לא נרשמה שינה',
     viewHistory: 'היסטוריה ›',
     sleepHistoryTitle: 'היסטוריית שינה',
+    startPrompt: 'לחצו על "התחלה" כדי למדוד את שינת התינוק.',
   },
 };

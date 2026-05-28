@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AiSuggestionCard } from '../components/AiSuggestionCard';
 import { StorybookCard } from '../components/StorybookCard';
 import { ConfidenceBadge } from '../components/ConfidenceBadge';
+import { GenderedBackground } from '../components/GenderedBackground';
 import { Screen } from '../components/Screen';
 import { WatercolorHeader } from '../components/WatercolorHeader';
 import { getPalette } from '../theme';
@@ -75,6 +76,7 @@ export function AiScreen() {
   }
 
   return (
+    <GenderedBackground>
     <Screen testID="screen-ai" scroll>
       <WatercolorHeader
         title={story.ai}
@@ -143,6 +145,7 @@ export function AiScreen() {
         </ScrollView>
       ) : null}
     </Screen>
+    </GenderedBackground>
   );
 }
 
