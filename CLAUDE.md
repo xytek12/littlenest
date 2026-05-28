@@ -162,8 +162,11 @@ Introduced in the last session. Central file: `src/theme/index.ts`.
 - **Boy**: cornflower `#7FA6C9` accent, sky `#CFE0EE` highlight  
 - **Twins**: pink for twin A + blue for twin B, lavender `#C9BBD9` shared
 - Fonts: Fraunces (display) + Nunito (body) + Cormorant Garamond italic (storybook headers)
+- **Hebrew fonts**: Frank Ruhl Libre (display) + Heebo (body) — packages `@expo-google-fonts/frank-ruhl-libre` + `@expo-google-fonts/heebo`
 - Bottom dock bar: Sticker Pop style (chunky, hard shadow, active pill)
 - Screen headers: Magical Storybook gradient with ⋆ stars (via `WatercolorHeader` component)
+- New tokens in `src/theme/index.ts`: `genderedBg`, `jewelDark`, `sectionAccents`, `typographyHe`
+- Dark mode canvas: Indigo Dream — `#161629` bg, `#EFEAFF` text, `#D9C8B6` mutedText
 
 ---
 
@@ -232,6 +235,25 @@ PATH="/opt/homebrew/bin:$PATH" npx jest          # run all (69 tests)
 PATH="/opt/homebrew/bin:$PATH" npx tsc --noEmit  # TypeScript check
 ```
 All 69 tests passing. TypeScript clean.
+
+---
+
+## New Components (2026-05-27 redesign)
+
+| Component | File | Notes |
+|---|---|---|
+| SectionCard | `src/components/SectionCard.tsx` | Nara-style card with colored banner, "+" pill, last-event row, "View History ›" footer |
+| GenderedBackground | `src/components/GenderedBackground.tsx` | Reads `family`+`activeChild` from PrototypeState; light=pastel, dark=jewel canvas |
+| formatDateLong | `src/utils/formatDateLong.ts` | Explicit dates (not relative); EN + HE formats |
+
+## Supabase Edge Functions
+
+| Function | Version | Notes |
+|---|---|---|
+| `ai-router` | v17 | Gemini 2.5-flash; structured error logging; `Promise.allSettled` |
+| `recipe-search` | v23 | Per-stage logging; parser tolerates fences + object wrapper + trailing commas |
+
+Gemini model: `gemini-2.5-flash` (set in `supabase/functions/_shared/aiProviders.ts` + Supabase secret)
 
 ---
 
