@@ -113,12 +113,14 @@ describe('app shell', () => {
     fireEvent.press(getByText('HE'));
     fireEvent.press(getByLabelText(`${he.tabs.home} tab`));
 
+    // Pressing the Feed "+" on Home opens the FeedComposerSheet popup
+    // (no longer navigates to the FeedFlow screen). Popup must be localized.
     fireEvent.press(getByLabelText(he.home.feedTitle));
-    expect(getByText(he.feed.title)).toBeTruthy();
-    // FeedScreen now uses SectionCard — the "+" button label is "Add <title>".
-    expect(getByLabelText(`Add ${he.feed.title}`)).toBeTruthy();
+    expect(getByText(he.feed.sheetTitle)).toBeTruthy();
+    expect(getByText(he.feed.bottle)).toBeTruthy();
+    expect(getByText(he.feed.nursing)).toBeTruthy();
 
-    // Navigate to growth via the bottom tab (FeedScreen no longer has a back button).
+    // Navigate to growth via the bottom tab.
     fireEvent.press(getByLabelText(`${he.tabs.growth} tab`));
 
     expect(getAllByText(he.growth.title).length).toBeGreaterThan(0);

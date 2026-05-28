@@ -3,6 +3,7 @@ import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FeedComposerSheet } from '../components/FeedComposerSheet';
 import { GenderedBackground } from '../components/GenderedBackground';
 import { SectionCard } from '../components/SectionCard';
 import { TwinPickerCards } from '../components/TwinPickerCards';
@@ -54,6 +55,7 @@ export function HomeScreen() {
   const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
   const {
     activeChild,
+    activeNursingSession,
     activeSleepStartedAt,
     endSleep,
     family,
@@ -78,6 +80,11 @@ export function HomeScreen() {
   const learningReady = trackedDays >= 14;
 
   const [showSleepModal, setShowSleepModal] = useState(false);
+  const [showFeedSheet, setShowFeedSheet] = useState(false);
+
+  const isNursingActive =
+    activeNursingSession.leftStartedAt != null || activeNursingSession.rightStartedAt != null;
+  const lastFeed = feedEntries[0];
 
   // Keep ticker active so the active-sleep card and modal update each minute
   useTickEverySecond(activeSleepStartedAt != null);
@@ -118,6 +125,10 @@ export function HomeScreen() {
   function openSleepHistory() {
     // Navigate into the nested SleepStack and land directly on SleepHistory.
     navigation.navigate('SleepFlow', { screen: 'SleepHistory' });
+  }
+
+  function openFeedHistory() {
+    navigation.navigate('FeedFlow', { screen: 'FeedHistory' });
   }
 
   return (
@@ -244,16 +255,52 @@ export function HomeScreen() {
           </SectionCard>
         )}
 
-        {/* Feed SectionCard */}
+        {/* Feed SectionCard — "+" opens chooser popup. The card body is
+            tappable when a nursing session is in progress so the parent can
+            resume the live timers without losing state. */}
         <SectionCard
           sectionType="feed"
           title={homeSleep.sectionFeed}
           iconEmoji="🍼"
           footerLabel={homeSleep.viewHistory}
-          onFooterPress={() => navigation.navigate('FeedFlow')}
-          onPlusPress={() => navigation.navigate('FeedFlow')}
+          onFooterPress={openFeedHistory}
+          onPlusPress={() => setShowFeedSheet(true)}
           plusAccessibilityLabel={labels.feedTitle}
-        />
+        >
+          <Pressable
+            testID="home-feed-resume"
+            onPress={() => setShowFeedSheet(true)}
+            // Make the body tappable so the user can reopen the popup from a
+            // minimized state — only meaningful when there's something to resume.
+            disabled={!isNursingActive && !lastFeed}
+            style={styles.feedBody}
+          >
+            {isNursingActive ? (
+              <>
+                <Text style={[styles.feedActiveLabel, rtlText, { color: palette.primaryDeep }]}>
+                  {homeSleep.feedActiveLabel}
+                </Text>
+                <Text style={[styles.feedActiveValue, rtlText, { color: theme.text }]}>
+                  {dictionary.feed.nursingSession}
+                </Text>
+                <Text style={[styles.feedActiveHint, rtlText, { color: theme.mutedText }]}>
+                  {homeSleep.feedActiveResume}
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text style={[styles.feedActiveLabel, rtlText, { color: theme.mutedText }]}>
+                  {homeSleep.feedLastLabel}
+                </Text>
+                <Text style={[styles.feedActiveValue, rtlText, { color: theme.text }]}>
+                  {lastFeed
+                    ? formatDateLong(lastFeed.timestamp, family.language)
+                    : homeSleep.feedNoneYet}
+                </Text>
+              </>
+            )}
+          </Pressable>
+        </SectionCard>
 
         {/* Food tasting SectionCard */}
         <SectionCard
@@ -266,6 +313,14 @@ export function HomeScreen() {
           plusAccessibilityLabel={labels.foodTastingTitle}
         />
       </ScrollView>
+
+      {/* Feed composer sheet — minimizable. Closing keeps internal state so
+          the user can resume the nursing timer or finish a bottle draft. */}
+      <FeedComposerSheet
+        visible={showFeedSheet}
+        onMinimize={() => setShowFeedSheet(false)}
+        onCommitted={() => setShowFeedSheet(false)}
+      />
 
       {/* Sleep start / end popup */}
       <Modal
@@ -450,6 +505,27 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     lineHeight: 22,
+  },
+  // Feed card body (inside SectionCard)
+  feedBody: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  feedActiveLabel: {
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+  },
+  feedActiveValue: {
+    fontSize: 17,
+    fontWeight: '800',
+    marginTop: 6,
+  },
+  feedActiveHint: {
+    fontSize: 13,
+    fontWeight: '700',
+    marginTop: 4,
   },
   recentSleepRange: {
     fontSize: 17,

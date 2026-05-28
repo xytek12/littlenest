@@ -349,5 +349,10 @@ export const en = {
     endSleepConfirm: 'End sleep',
     /** Render "{start} – {end}" — locked LTR so start is on the left */
     sleepTimeRange: (start: string, end: string) => `${start} – ${end}`,
+    /** Feed card "tap to resume" affordance when a nursing draft is active */
+    feedActiveLabel: 'FEED IN PROGRESS',
+    feedActiveResume: 'Tap to resume',
+    feedLastLabel: 'LAST FEED',
+    feedNoneYet: 'No feed recorded yet',
   },
 };

@@ -329,5 +329,9 @@ export const he = {
       `השינה תישמר כ-${minutes} ${minutes === 1 ? 'דקה' : 'דקות'}.`,
     endSleepConfirm: 'סיום שינה',
     sleepTimeRange: (start: string, end: string) => `${start} – ${end}`,
+    feedActiveLabel: 'האכלה פעילה',
+    feedActiveResume: 'לחצו לחזרה לטיימר',
+    feedLastLabel: 'האכלה אחרונה',
+    feedNoneYet: 'עדיין לא נרשמה האכלה',
   },
 };
