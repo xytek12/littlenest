@@ -2,50 +2,50 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "Expo Dev Server (Metro)",
-      "runtimeExecutable": "/opt/homebrew/bin/node",
-      "runtimeArgs": ["node_modules/.bin/expo", "start", "--port", "8081"],
+      "name": "Expo — Tunnel (scan QR in Expo Go)",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["expo", "start", "--tunnel", "--clear"],
       "port": 8081,
       "cwd": "apps/mobile"
     },
     {
-      "name": "Expo Web",
-      "runtimeExecutable": "/opt/homebrew/bin/node",
-      "runtimeArgs": ["node_modules/.bin/expo", "start", "--web", "--port", "8081"],
+      "name": "Expo — LAN (same Wi-Fi, fallback)",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["expo", "start", "--lan", "--clear"],
       "port": 8081,
       "cwd": "apps/mobile"
     },
     {
-      "name": "Expo iOS Simulator",
-      "runtimeExecutable": "/opt/homebrew/bin/node",
-      "runtimeArgs": ["node_modules/.bin/expo", "start", "--ios", "--dev-client", "--clear"],
+      "name": "Expo — Web browser",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["expo", "start", "--web"],
       "port": 8081,
       "cwd": "apps/mobile"
     },
     {
-      "name": "Expo Android Emulator",
-      "runtimeExecutable": "/opt/homebrew/bin/node",
-      "runtimeArgs": ["node_modules/.bin/expo", "start", "--android"],
+      "name": "Expo — iOS Simulator",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["expo", "start", "--ios", "--clear"],
       "port": 8081,
       "cwd": "apps/mobile"
     },
     {
-      "name": "Supabase Local Stack (Studio)",
-      "runtimeExecutable": "/opt/homebrew/bin/node",
-      "runtimeArgs": ["/opt/homebrew/bin/npx", "supabase", "start"],
+      "name": "Expo — Android Emulator",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["expo", "start", "--android"],
+      "port": 8081,
+      "cwd": "apps/mobile"
+    },
+    {
+      "name": "Supabase Studio (local)",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["supabase", "start"],
       "port": 54323,
       "cwd": "."
     },
     {
-      "name": "Supabase Local API",
-      "runtimeExecutable": "/opt/homebrew/bin/node",
-      "runtimeArgs": ["/opt/homebrew/bin/npx", "supabase", "start"],
-      "port": 54321,
-      "cwd": "."
-    },
-    {
-      "name": "UI Lookbook",
-      "runtimeExecutable": "/usr/bin/python3",
+      "name": "UI Lookbook (static HTML preview)",
+      "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "4321"],
       "port": 4321,
       "cwd": "ui-lookbook"

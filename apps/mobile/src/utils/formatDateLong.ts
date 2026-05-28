@@ -51,6 +51,32 @@ export function formatDateLong(iso: string, language: AppLanguage): string {
 }
 
 /**
+ * Returns a date-only string (no time) in the same style as formatDateLong.
+ *   EN → "Wed · May 27"
+ *   HE → "יום ד׳ · 27.5"
+ */
+export function formatDateOnly(iso: string, language: AppLanguage): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return iso;
+
+  const dayNum = date.getDate();
+  const month = date.getMonth() + 1;
+
+  if (language === 'he') {
+    const dayName = HEBREW_DAYS[date.getDay()] ?? '';
+    return `יום ${dayName} · ${dayNum}.${month}`;
+  }
+
+  try {
+    const weekday = new Intl.DateTimeFormat('en', { weekday: 'short' }).format(date);
+    const monthName = new Intl.DateTimeFormat('en', { month: 'short' }).format(date);
+    return `${weekday} · ${monthName} ${dayNum}`;
+  } catch {
+    return `${date.getFullYear()}-${pad(month)}-${pad(dayNum)}`;
+  }
+}
+
+/**
  * Returns only the time portion: "19:14"
  */
 export function formatTimeShort(iso: string): string {

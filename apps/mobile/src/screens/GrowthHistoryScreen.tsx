@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { HistoryListRow } from '../components/HistoryListRow';
@@ -13,7 +14,17 @@ import { entriesInLast90Days, groupEntriesByDay } from '../utils/historyFilters'
 
 export function GrowthHistoryScreen() {
   const theme = useAppTheme();
+  const navigation = useNavigation();
   const { family, growthEntries } = usePrototypeState();
+
+  function handleClose() {
+    const parent = navigation.getParent<any>();
+    if (parent) {
+      parent.navigate('Home');
+    } else {
+      navigation.goBack();
+    }
+  }
   const dictionary = getDictionary(family.language);
   const labels = dictionary.growth;
   const historyLabels = labels.history;
@@ -71,7 +82,7 @@ export function GrowthHistoryScreen() {
         contentContainerStyle={[styles.content, { backgroundColor: theme.background }]}
         style={{ backgroundColor: theme.background }}
       >
-        <HistoryBackButton />
+        <HistoryBackButton onPress={handleClose} />
         <Text style={[styles.title, rtlText, { color: theme.text }]}>
           {historyLabels.title}
         </Text>

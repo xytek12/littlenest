@@ -282,12 +282,18 @@ export const en = {
         `${date}, ${time}  ·  Nursing  ·  ${total} (L ${left} / R ${right})`,
       nursingRowPrimary: (date: string, time: string) => `${date}, ${time}  ·  Nursing`,
       nursingRowSides: (left: string, right: string) => `left: ${left}   right: ${right}`,
+      /** New: "10:30 – 11:05 · Nursing" primary line */
+      nursingTimeRange: (start: string, end: string) => `${start} – ${end}  ·  Nursing`,
       bottleRowPrimary: (date: string, time: string) => `${date}, ${time}  ·  Bottle`,
       bottleRowAmount: (amount: number, unit: string) => `${amount} ${unit}`,
       bottleRowInDay: (time: string, amount: number, unit: string) =>
         `${time}  ·  Bottle  ·  ${amount} ${unit}`,
       nursingRowInDay: (time: string, total: string, left: string, right: string) =>
         `${time}  ·  Nursing  ·  ${total} (L ${left} / R ${right})`,
+      /** Bottle edit modal */
+      editBottleTitle: 'Edit bottle amount',
+      editBottleAmountLabel: 'Amount',
+      editBottleSave: 'Save changes',
     },
     // --- FEED REDESIGN KEYS ---
     feed_redesign_lastLabel: 'LAST FEED',
@@ -361,6 +367,10 @@ export const en = {
     endSleepBody: (minutes: number) =>
       `This will save the session as ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`,
     endSleepConfirm: 'End sleep',
+    /** Step-2 wake-count question — gender-aware */
+    endSleepWakesLabel: (name: string, _sex: 'boy' | 'girl') =>
+      `How many times did ${name} wake?`,
+    endSleepWakesDone: 'Save',
     /** Render "{start} – {end}" — locked LTR so start is on the left */
     sleepTimeRange: (start: string, end: string) => `${start} – ${end}`,
     /** Feed card "tap to resume" affordance when a nursing draft is active */
@@ -368,6 +378,9 @@ export const en = {
     feedActiveResume: 'Tap to resume',
     feedLastLabel: 'LAST FEED',
     feedNoneYet: 'No feed recorded yet',
+    /** Feed card detail line — type + duration/amount */
+    feedNursingDetail: (duration: string) => `Nursing · ${duration}`,
+    feedBottleDetail: (amount: number, unit: string) => `Bottle · ${amount} ${unit}`,
     /** Growth card on Home — title shown on the banner */
     sectionGrowth: 'Growth',
     growthLatestLabel: 'LATEST',

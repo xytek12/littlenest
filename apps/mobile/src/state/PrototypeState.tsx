@@ -104,6 +104,11 @@ type RecordBottleFeedInput = {
   note?: string;
 };
 
+type EditBottleFeedInput = {
+  id: string;
+  amount: number;
+};
+
 type SaveGrowthEntryInput = {
   kind: PrototypeGrowthKind;
   value: number;
@@ -133,6 +138,7 @@ type PrototypeStateValue = {
   endSleep: (input: EndSleepInput) => void;
   editSleepSession: (input: EditSleepSessionInput) => void;
   recordBottleFeed: (input: RecordBottleFeedInput) => void;
+  editBottleFeedAmount: (input: EditBottleFeedInput) => void;
   startNursing: (side: NursingSide) => void;
   stopNursing: (side: NursingSide) => void;
   finishNursingSession: (note?: string) => void;
@@ -477,6 +483,14 @@ export function PrototypeStateProvider({ children }: PropsWithChildren) {
           },
           ...current,
         ]);
+      },
+      editBottleFeedAmount({ id, amount }) {
+        setFeedEntries((current) =>
+          current.map((entry) => {
+            if (entry.id !== id || entry.kind !== 'bottle') return entry;
+            return { ...entry, amount };
+          }),
+        );
       },
       startNursing(side) {
         const startedAt = new Date().toISOString();

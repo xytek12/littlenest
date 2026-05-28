@@ -1,0 +1,1947 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LittleNest Family OS + Day Timeline Prototype</title>
+  <style>
+    :root {
+      --page: #eef3f1;
+      --page-2: #f8faf7;
+      --ink: #11181c;
+      --muted: #65747b;
+      --line: #d6dfdc;
+      --panel: #ffffff;
+      --shadow: 0 24px 80px rgba(12, 24, 28, .16);
+      --radius: 22px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--page);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(31, 122, 140, .16), transparent 26%),
+        radial-gradient(circle at 86% 20%, rgba(196, 69, 105, .14), transparent 24%),
+        linear-gradient(135deg, var(--page), var(--page-2));
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .shell {
+      display: grid;
+      grid-template-columns: minmax(300px, 360px) minmax(420px, 1fr);
+      gap: 24px;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .panel {
+      align-self: start;
+      background: rgba(255,255,255,.78);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      position: sticky;
+      top: 24px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 {
+      font-size: 28px;
+      line-height: 1;
+      letter-spacing: 0;
+      max-width: 280px;
+    }
+
+    .lede {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      margin-top: 12px;
+    }
+
+    .control-block {
+      border-top: 1px solid var(--line);
+      margin-top: 18px;
+      padding-top: 18px;
+    }
+
+    .control-block h2 {
+      color: #29454d;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .seg {
+      background: #edf3f1;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      display: grid;
+      gap: 5px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      padding: 5px;
+    }
+
+    .seg.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .seg button {
+      background: transparent;
+      border: 0;
+      border-radius: 12px;
+      color: #506269;
+      font-size: 13px;
+      font-weight: 900;
+      min-height: 38px;
+      padding: 8px;
+    }
+
+    .seg button.active {
+      background: #11282e;
+      color: #ffffff;
+    }
+
+    .note-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .note {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .note strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .note span {
+      color: var(--muted);
+      display: block;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .stage {
+      align-items: start;
+      display: grid;
+      justify-items: center;
+      min-width: 0;
+    }
+
+    .phone {
+      --bg: #f7faf6;
+      --surface: #ffffff;
+      --surface-2: #edf4f1;
+      --text: #11181c;
+      --muted-phone: #5f7077;
+      --line-phone: #d7e0dd;
+      --primary: #1f7a8c;
+      --primary-soft: #dceff1;
+      --secondary: #bf4342;
+      --secondary-soft: #f5ddde;
+      --shared: #c9a227;
+      --shared-soft: #f8efcf;
+      --ari: #1f7a8c;
+      --ari-soft: #dceff1;
+      --noa: #bf4342;
+      --noa-soft: #f5ddde;
+      aspect-ratio: 414 / 896;
+      background: var(--bg);
+      border: 12px solid #111417;
+      border-radius: 48px;
+      box-shadow: var(--shadow);
+      color: var(--text);
+      overflow: hidden;
+      position: relative;
+      width: min(100%, 414px);
+    }
+
+    .phone.dark {
+      --bg: #071015;
+      --surface: #101b21;
+      --surface-2: #16282f;
+      --text: #f8fbf9;
+      --muted-phone: #c6d4d8;
+      --line-phone: #2c454e;
+      color: var(--text);
+    }
+
+    .phone::before {
+      background: #111417;
+      border-radius: 0 0 18px 18px;
+      content: "";
+      height: 28px;
+      left: 50%;
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+      width: 128px;
+      z-index: 10;
+    }
+
+    .screen {
+      background:
+        radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--primary) 18%, transparent), transparent 30%),
+        radial-gradient(circle at 92% 16%, color-mix(in srgb, var(--secondary) 15%, transparent), transparent 30%),
+        var(--bg);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 30px 16px 14px;
+    }
+
+    .status {
+      align-items: center;
+      color: var(--muted-phone);
+      display: flex;
+      font-size: 11px;
+      font-weight: 900;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .app-scroll {
+      flex: 1;
+      overflow: auto;
+      padding-bottom: 12px;
+      scrollbar-width: none;
+    }
+
+    .app-scroll::-webkit-scrollbar { display: none; }
+
+    .top {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 13px;
+    }
+
+    .top-actions {
+      display: flex;
+      flex: 0 0 auto;
+      gap: 8px;
+    }
+
+    .top h2 {
+      font-size: 24px;
+      letter-spacing: 0;
+      line-height: 1.04;
+    }
+
+    .top p {
+      color: var(--muted-phone);
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1.35;
+      margin-top: 4px;
+    }
+
+    .icon-button {
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--line-phone);
+      border-radius: 16px;
+      color: var(--text);
+      display: grid;
+      flex: 0 0 auto;
+      font-size: 14px;
+      font-weight: 950;
+      height: 44px;
+      justify-items: center;
+      width: 44px;
+    }
+
+    .child-switch {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(var(--child-count, 2), minmax(0, 1fr));
+      margin-bottom: 12px;
+    }
+
+    .child-chip {
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--line-phone);
+      border-radius: 18px;
+      color: var(--text);
+      display: flex;
+      gap: 9px;
+      min-height: 56px;
+      padding: 9px;
+      text-align: left;
+    }
+
+    .child-chip.active {
+      border-color: var(--chip-color);
+      background: color-mix(in srgb, var(--chip-color) 15%, var(--surface));
+    }
+
+    .avatar {
+      align-items: center;
+      background: var(--chip-color);
+      border-radius: 15px;
+      color: #071015;
+      display: grid;
+      flex: 0 0 auto;
+      font-size: 18px;
+      font-weight: 950;
+      height: 38px;
+      justify-items: center;
+      width: 38px;
+    }
+
+    .child-chip strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.1;
+    }
+
+    .child-chip > span:not(.avatar) {
+      color: var(--muted-phone);
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      margin-top: 3px;
+    }
+
+    .child-chip > span:not(.avatar) > span {
+      color: var(--muted-phone);
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      margin-top: 3px;
+    }
+
+    .os-grid {
+      display: grid;
+      gap: 9px;
+      grid-template-columns: 1.1fr .9fr;
+      margin-bottom: 12px;
+    }
+
+    .os-card, .card, .timeline, .recipe-card, .ai-card, .settings-card {
+      background: var(--surface);
+      border: 1px solid var(--line-phone);
+      border-radius: 20px;
+      color: var(--text);
+    }
+
+    .os-card {
+      min-height: 118px;
+      padding: 13px;
+    }
+
+    .os-card.main {
+      background: linear-gradient(145deg, color-mix(in srgb, var(--primary) 18%, var(--surface)), var(--surface));
+      border-color: color-mix(in srgb, var(--primary) 55%, var(--line-phone));
+      grid-row: span 2;
+    }
+
+    .label {
+      color: var(--muted-phone);
+      display: block;
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: .08em;
+      margin-bottom: 7px;
+      text-transform: uppercase;
+    }
+
+    .os-card b, .card b, .timeline b, .recipe-card b, .ai-card b, .settings-card b {
+      display: block;
+      font-size: 15px;
+      line-height: 1.15;
+    }
+
+    .os-card .big {
+      color: var(--primary);
+      display: block;
+      font-size: 34px;
+      font-weight: 950;
+      letter-spacing: -.01em;
+      line-height: .95;
+      margin: 12px 0 5px;
+    }
+
+    .phone.dark .os-card .big { color: color-mix(in srgb, var(--primary) 76%, #ffffff); }
+
+    .muted {
+      color: var(--muted-phone);
+      font-size: 12px;
+      font-weight: 720;
+      line-height: 1.35;
+      margin-top: 5px;
+    }
+
+    .bar {
+      background: var(--surface-2);
+      border-radius: 999px;
+      height: 8px;
+      margin-top: 11px;
+      overflow: hidden;
+    }
+
+    .bar span {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: inherit;
+      display: block;
+      height: 100%;
+      width: var(--w, 60%);
+    }
+
+    .quick-actions {
+      display: grid;
+      gap: 9px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-bottom: 12px;
+    }
+
+    .quick-actions.compact {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .action {
+      background: var(--surface);
+      border: 1px solid var(--line-phone);
+      border-radius: 18px;
+      color: var(--text);
+      min-height: 78px;
+      padding: 12px;
+      text-align: left;
+    }
+
+    .action.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #061113;
+    }
+
+    .action.shared {
+      background: var(--shared);
+      border-color: var(--shared);
+      color: #1e1600;
+    }
+
+    .action strong {
+      display: block;
+      font-size: 15px;
+      font-weight: 950;
+    }
+
+    .action span {
+      display: block;
+      font-size: 12px;
+      font-weight: 780;
+      line-height: 1.25;
+      margin-top: 6px;
+      opacity: .84;
+    }
+
+    .timeline {
+      padding: 13px;
+    }
+
+    .timeline-head {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 11px;
+    }
+
+    .timeline-head h3 {
+      font-size: 17px;
+      line-height: 1.1;
+    }
+
+    .timeline-tools {
+      display: flex;
+      gap: 6px;
+      margin: 10px 0 12px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+
+    .timeline-tools::-webkit-scrollbar { display: none; }
+
+    .timeline-tools button {
+      background: var(--surface-2);
+      border: 1px solid var(--line-phone);
+      border-radius: 999px;
+      color: var(--text);
+      flex: 0 0 auto;
+      font-size: 11px;
+      font-weight: 950;
+      padding: 7px 10px;
+    }
+
+    .timeline-tools button.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #061113;
+    }
+
+    .timeline-summary {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-bottom: 12px;
+    }
+
+    .mini-stat {
+      background: var(--surface-2);
+      border: 1px solid var(--line-phone);
+      border-radius: 15px;
+      color: var(--text);
+      padding: 9px;
+      text-align: left;
+    }
+
+    .mini-stat strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.05;
+    }
+
+    .mini-stat span {
+      color: var(--muted-phone);
+      display: block;
+      font-size: 10px;
+      font-weight: 900;
+      margin-top: 4px;
+    }
+
+    .time-row {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 52px 32px 1fr;
+      margin-bottom: 11px;
+      position: relative;
+    }
+
+    .time-row:not(:last-child)::after {
+      background: var(--line-phone);
+      content: "";
+      height: calc(100% + 11px);
+      left: 68px;
+      position: absolute;
+      top: 31px;
+      width: 2px;
+    }
+
+    .time {
+      color: var(--muted-phone);
+      font-size: 11px;
+      font-weight: 950;
+      padding-top: 7px;
+    }
+
+    .event-dot {
+      align-items: center;
+      background: var(--event);
+      border-radius: 13px;
+      color: #061113;
+      display: grid;
+      font-size: 13px;
+      font-weight: 950;
+      height: 32px;
+      justify-items: center;
+      position: relative;
+      width: 32px;
+      z-index: 2;
+    }
+
+    .event-card {
+      background: var(--surface-2);
+      border: 1px solid color-mix(in srgb, var(--event-type-color) 42%, var(--line-phone));
+      border-left: 5px solid var(--event-type-color);
+      border-radius: 15px;
+      color: var(--text);
+      padding: 10px;
+      text-align: left;
+      width: 100%;
+    }
+
+    .event-card:active, .log-item:active {
+      transform: translateY(1px);
+    }
+
+    .event-card strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.15;
+    }
+
+    .event-card span {
+      color: var(--muted-phone);
+      display: block;
+      font-size: 11px;
+      font-weight: 760;
+      line-height: 1.3;
+      margin-top: 4px;
+    }
+
+    .event-meta {
+      align-items: center;
+      display: flex;
+      gap: 6px;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .event-type {
+      background: color-mix(in srgb, var(--event-type-color) 18%, var(--surface));
+      border-radius: 999px;
+      color: var(--event-type-color);
+      font-size: 9px;
+      font-weight: 950;
+      padding: 4px 7px;
+      text-transform: uppercase;
+    }
+
+    .event-child {
+      align-items: center;
+      color: var(--text);
+      display: flex;
+      font-size: 13px;
+      font-weight: 950;
+      gap: 6px;
+      line-height: 1.1;
+    }
+
+    .event-child i {
+      background: var(--event);
+      border-radius: 8px;
+      display: inline-block;
+      height: 16px;
+      width: 16px;
+    }
+
+    .log-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .log-item {
+      background: var(--surface);
+      border: 1px solid color-mix(in srgb, var(--log-color) 42%, var(--line-phone));
+      border-left: 5px solid var(--log-color);
+      border-radius: 16px;
+      color: var(--text);
+      padding: 12px;
+      text-align: left;
+    }
+
+    .log-item strong {
+      display: block;
+      font-size: 14px;
+      line-height: 1.15;
+    }
+
+    .log-item span {
+      color: var(--muted-phone);
+      display: block;
+      font-size: 12px;
+      font-weight: 780;
+      line-height: 1.35;
+      margin-top: 5px;
+    }
+
+    .nav {
+      align-items: center;
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      border: 1px solid var(--line-phone);
+      border-radius: 22px;
+      display: grid;
+      gap: 5px;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 7px;
+    }
+
+    .nav button {
+      background: transparent;
+      border: 0;
+      border-radius: 15px;
+      color: var(--muted-phone);
+      font-size: 11px;
+      font-weight: 950;
+      min-height: 42px;
+      padding: 7px 4px;
+    }
+
+    .nav button small {
+      display: block;
+      font-size: 9px;
+      font-weight: 950;
+      line-height: 1.1;
+      margin-top: 2px;
+    }
+
+    .nav button.active {
+      background: var(--primary);
+      color: #061113;
+    }
+
+    .recipe-card, .ai-card, .settings-card, .card {
+      margin-bottom: 10px;
+      padding: 14px;
+    }
+
+    .search {
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--line-phone);
+      border-radius: 18px;
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+    }
+
+    .search input {
+      background: transparent;
+      border: 0;
+      color: var(--text);
+      min-width: 0;
+      outline: 0;
+      width: 100%;
+    }
+
+    .recipe-visual {
+      background:
+        linear-gradient(135deg, color-mix(in srgb, var(--shared) 32%, var(--surface)), var(--surface-2));
+      border-radius: 16px;
+      height: 110px;
+      margin: 10px 0;
+      position: relative;
+    }
+
+    .recipe-visual::before, .recipe-visual::after {
+      background: color-mix(in srgb, var(--primary) 80%, #ffffff);
+      border-radius: 999px;
+      content: "";
+      position: absolute;
+    }
+
+    .recipe-visual::before { height: 54px; left: 34px; top: 28px; width: 92px; }
+    .recipe-visual::after { height: 44px; right: 42px; top: 34px; width: 70px; background: color-mix(in srgb, var(--secondary) 72%, #ffffff); }
+
+    .row {
+      align-items: center;
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .pill {
+      align-items: center;
+      background: var(--surface-2);
+      border: 1px solid var(--line-phone);
+      border-radius: 999px;
+      color: var(--text);
+      display: inline-flex;
+      font-size: 11px;
+      font-weight: 900;
+      gap: 6px;
+      padding: 7px 9px;
+      white-space: nowrap;
+    }
+
+    .live-sleep {
+      background: color-mix(in srgb, var(--primary) 15%, var(--surface));
+      border: 1px solid color-mix(in srgb, var(--primary) 48%, var(--line-phone));
+      border-radius: 18px;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 42px 1fr auto;
+      margin-bottom: 12px;
+      padding: 10px;
+    }
+
+    .live-sleep .avatar {
+      background: var(--sleep-color);
+    }
+
+    .live-sleep strong {
+      display: block;
+      font-size: 14px;
+      line-height: 1.1;
+    }
+
+    .live-sleep span {
+      color: var(--muted-phone);
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      margin-top: 3px;
+    }
+
+    .timer {
+      color: var(--primary);
+      font-size: 18px;
+      font-weight: 950;
+      line-height: 1;
+      padding-top: 7px;
+    }
+
+    .primary-button, .secondary-button {
+      border-radius: 15px;
+      font-size: 13px;
+      font-weight: 950;
+      min-height: 42px;
+      padding: 10px 12px;
+    }
+
+    .primary-button {
+      background: var(--primary);
+      border: 1px solid var(--primary);
+      color: #061113;
+    }
+
+    .secondary-button {
+      background: transparent;
+      border: 1px solid var(--line-phone);
+      color: var(--text);
+    }
+
+    .sheet-backdrop {
+      background: rgba(0, 0, 0, .48);
+      display: none;
+      inset: 0;
+      padding: 12px;
+      position: absolute;
+      z-index: 30;
+    }
+
+    .sheet-backdrop.open {
+      align-items: end;
+      display: flex;
+    }
+
+    .sheet {
+      background: var(--surface);
+      border: 1px solid var(--line-phone);
+      border-radius: 28px 28px 24px 24px;
+      color: var(--text);
+      max-height: 78%;
+      overflow: auto;
+      padding: 16px;
+      width: 100%;
+    }
+
+    .sheet h3 {
+      font-size: 21px;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .sheet-grid {
+      display: grid;
+      gap: 9px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin: 12px 0;
+    }
+
+    .choice {
+      background: var(--surface-2);
+      border: 1px solid var(--line-phone);
+      border-radius: 18px;
+      color: var(--text);
+      min-height: 86px;
+      padding: 12px;
+      text-align: left;
+    }
+
+    .choice.active {
+      background: color-mix(in srgb, var(--choice-color) 18%, var(--surface));
+      border-color: var(--choice-color);
+    }
+
+    .choice .avatar { margin-bottom: 9px; }
+
+    .breast-grid, .exposure-grid, .settings-grid {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 10px;
+    }
+
+    .exposure-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .breast-card, .exposure-card, .setting-card {
+      background: var(--surface-2);
+      border: 1px solid var(--line-phone);
+      border-radius: 16px;
+      color: var(--text);
+      padding: 11px;
+      text-align: left;
+    }
+
+    .breast-card.active, .exposure-card.active, .setting-card.active {
+      background: color-mix(in srgb, var(--primary) 16%, var(--surface));
+      border-color: var(--primary);
+    }
+
+    .breast-card b, .exposure-card b, .setting-card b {
+      display: block;
+      font-size: 13px;
+      line-height: 1.1;
+    }
+
+    .breast-card span, .exposure-card span, .setting-card span {
+      color: var(--muted-phone);
+      display: block;
+      font-size: 11px;
+      font-weight: 780;
+      margin-top: 5px;
+    }
+
+    .progress-dots {
+      display: flex;
+      gap: 6px;
+      margin-top: 9px;
+    }
+
+    .progress-dots i {
+      background: var(--line-phone);
+      border-radius: 50%;
+      display: block;
+      height: 10px;
+      width: 10px;
+    }
+
+    .progress-dots i.done {
+      background: var(--primary);
+    }
+
+    .form-row {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 10px;
+    }
+
+    .field {
+      background: var(--surface-2);
+      border: 1px solid var(--line-phone);
+      border-radius: 15px;
+      color: var(--text);
+      min-height: 44px;
+      padding: 10px 12px;
+      width: 100%;
+    }
+
+    textarea.field {
+      min-height: 82px;
+      resize: none;
+    }
+
+    .toast {
+      background: #11181c;
+      border-radius: 14px;
+      bottom: 78px;
+      color: white;
+      display: none;
+      font-size: 12px;
+      font-weight: 850;
+      left: 24px;
+      padding: 11px 13px;
+      position: absolute;
+      right: 24px;
+      text-align: center;
+      z-index: 50;
+    }
+
+    .toast.show { display: block; }
+
+    @media (max-width: 980px) {
+      .shell { grid-template-columns: 1fr; }
+      .panel { position: relative; top: auto; }
+    }
+
+    @media (max-width: 520px) {
+      .shell { padding: 12px; }
+      .panel { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="panel">
+      <h1>Family OS + Day Timeline</h1>
+      <p class="lede">A single mixed direction: Family OS gives the high-level intelligence, Day Timeline keeps every action understandable for tired parents and caregiver handoff.</p>
+
+      <div class="control-block">
+        <h2>Family setup color scheme</h2>
+        <div class="seg" id="setupControls">
+          <button data-setup="boy">Boy</button>
+          <button data-setup="girl">Girl</button>
+          <button data-setup="twins">Twins</button>
+        </div>
+      </div>
+
+      <div class="control-block">
+        <h2>Mode</h2>
+        <div class="seg two" id="modeControls">
+          <button data-mode="light">Light</button>
+          <button data-mode="dark">Dark</button>
+        </div>
+      </div>
+
+      <div class="control-block">
+        <h2>What to test</h2>
+        <div class="note-list">
+          <div class="note"><strong>Twins are separated for logs</strong><span>Sleep, feed, allergen, and growth ask for the child first. The first letter badge stays on the timeline.</span></div>
+          <div class="note"><strong>Recipes are shared</strong><span>Recipes are for the family pair, with age and allergen awareness shown as shared context.</span></div>
+          <div class="note"><strong>Low-tech and high-tech together</strong><span>Big buttons do the job fast. The OS cards and timeline give detail when parents want it.</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="stage">
+      <div id="phone" class="phone">
+        <div class="screen">
+          <div class="status"><span>9:41</span><span id="statusMode">Family OS</span></div>
+          <div id="appScroll" class="app-scroll"></div>
+          <nav class="nav" id="nav"></nav>
+        </div>
+        <div class="sheet-backdrop" id="sheetBackdrop"></div>
+        <div class="toast" id="toast"></div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const schemes = {
+      boy: {
+        label: "Boy setup",
+        bg: "#EEF5FF",
+        surface: "#FFFFFF",
+        surface2: "#E3EEFF",
+        text: "#0C1726",
+        muted: "#52667D",
+        line: "#C9D8EE",
+        primary: "#175CD3",
+        primarySoft: "#DCE8FF",
+        secondary: "#00A76F",
+        secondarySoft: "#DDF7EC",
+        shared: "#F59E0B",
+        sharedSoft: "#FEF0C7",
+        ari: "#175CD3",
+        ariSoft: "#DCE8FF",
+        noa: "#00A76F",
+        noaSoft: "#DDF7EC",
+        dark: {
+          bg: "#050D1C",
+          surface: "#0F1A2B",
+          surface2: "#172842",
+          text: "#F7FBFF",
+          muted: "#C8D8EF",
+          line: "#29456D"
+        }
+      },
+      girl: {
+        label: "Girl setup",
+        bg: "#FFF5F5",
+        surface: "#FFFFFF",
+        surface2: "#F8E8EC",
+        text: "#211519",
+        muted: "#765E66",
+        line: "#E5CDD4",
+        primary: "#C44569",
+        primarySoft: "#F6DDE5",
+        secondary: "#7B2CBF",
+        secondarySoft: "#EADCF8",
+        shared: "#D98C36",
+        sharedSoft: "#F8E7D3",
+        ari: "#C44569",
+        ariSoft: "#F6DDE5",
+        noa: "#7B2CBF",
+        noaSoft: "#EADCF8",
+        dark: {
+          bg: "#170A11",
+          surface: "#24131B",
+          surface2: "#341A27",
+          text: "#FFF8FA",
+          muted: "#E5C8D3",
+          line: "#513044"
+        }
+      },
+      twins: {
+        label: "Mixed twins setup",
+        bg: "#F5F8F4",
+        surface: "#FFFFFF",
+        surface2: "#EAF1EE",
+        text: "#111A18",
+        muted: "#61716C",
+        line: "#D5DEDA",
+        primary: "#1F7A8C",
+        primarySoft: "#DCEFF1",
+        secondary: "#BF4342",
+        secondarySoft: "#F5DDDE",
+        shared: "#C9A227",
+        sharedSoft: "#F8EFCF",
+        ari: "#1F7A8C",
+        ariSoft: "#DCEFF1",
+        noa: "#BF4342",
+        noaSoft: "#F5DDDE",
+        dark: {
+          bg: "#071015",
+          surface: "#101B21",
+          surface2: "#16282F",
+          text: "#F8FBF9",
+          muted: "#C6D4D8",
+          line: "#2C454E"
+        }
+      }
+    };
+
+    const baseChildren = {
+      boy: [{ id: "ari", name: "Ari", initial: "A", role: "Boy" }],
+      girl: [{ id: "noa", name: "Noa", initial: "N", role: "Girl" }],
+      twins: [
+        { id: "ari", name: "Ari", initial: "A", role: "Boy twin" },
+        { id: "noa", name: "Noa", initial: "N", role: "Girl twin" }
+      ]
+    };
+
+    const state = {
+      setup: "twins",
+      mode: "light",
+      tab: "home",
+      activeChild: "ari",
+      sheet: null,
+      sheetChild: "ari",
+      feedType: "Bottle",
+      feedAmount: "120",
+      nursing: {
+        ari: { leftSeconds: 0, rightSeconds: 0, leftStartedAt: null, rightStartedAt: null },
+        noa: { leftSeconds: 0, rightSeconds: 0, leftStartedAt: null, rightStartedAt: null }
+      },
+      allergen: "Egg",
+      exposure: "2",
+      sleepWakeups: "0",
+      language: "EN",
+      unitSystem: "Metric",
+      subscription: "Free",
+      timelineFilter: "all",
+      recipeQuery: "iron rich breakfast",
+      savedRecipes: [],
+      aiTopic: "Sleep",
+      aiQuestion: "What should I watch for before the next nap?",
+      aiAnswer: null,
+      editLogId: null,
+      pendingSleepChild: null,
+      growthKind: "Weight",
+      growthValue: "8.4",
+      activeSleep: {},
+      logs: [
+        { id: 1, day: "today", time: "07:10", child: "ari", type: "Sleep", start: "05:52", end: "07:10", wakeups: "1", detail: "05:52 - 07:10 with 1 wakeup" },
+        { id: 2, day: "today", time: "07:42", child: "noa", type: "Bottle", amount: "110", unit: "mL", detail: "110 mL" },
+        { id: 3, day: "today", time: "08:05", child: "both", type: "Recipe", detail: "Oat banana bowl saved for both" },
+        { id: 4, day: "today", time: "08:30", child: "ari", type: "Allergen", allergen: "Egg", exposure: "2", detail: "Egg exposure 2 of 3" }
+      ]
+    };
+
+    const navItems = ["Home", "Recipes", "AI", "Settings"];
+
+    function children() {
+      return baseChildren[state.setup];
+    }
+
+    function childById(id) {
+      return children().find((child) => child.id === id) || children()[0];
+    }
+
+    function colorForChild(id) {
+      const s = schemes[state.setup];
+      if (id === "ari") return s.ari;
+      if (id === "noa") return s.noa;
+      return s.shared;
+    }
+
+    function softForChild(id) {
+      const s = schemes[state.setup];
+      if (id === "ari") return s.ariSoft;
+      if (id === "noa") return s.noaSoft;
+      return s.sharedSoft;
+    }
+
+    function applyTheme() {
+      const phone = document.getElementById("phone");
+      const scheme = schemes[state.setup];
+      const mode = state.mode === "dark" ? { ...scheme, ...scheme.dark } : scheme;
+      phone.classList.toggle("dark", state.mode === "dark");
+      const vars = {
+        "--bg": mode.bg,
+        "--surface": mode.surface,
+        "--surface-2": mode.surface2,
+        "--text": mode.text,
+        "--muted-phone": mode.muted,
+        "--line-phone": mode.line,
+        "--primary": scheme.primary,
+        "--primary-soft": scheme.primarySoft,
+        "--secondary": scheme.secondary,
+        "--secondary-soft": scheme.secondarySoft,
+        "--shared": scheme.shared,
+        "--shared-soft": scheme.sharedSoft,
+        "--ari": scheme.ari,
+        "--ari-soft": scheme.ariSoft,
+        "--noa": scheme.noa,
+        "--noa-soft": scheme.noaSoft
+      };
+      Object.entries(vars).forEach(([key, value]) => phone.style.setProperty(key, value));
+      document.getElementById("statusMode").textContent = scheme.label;
+    }
+
+    function setSetup(setup) {
+      state.setup = setup;
+      state.activeChild = children()[0].id;
+      state.sheetChild = children()[0].id;
+      render();
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById("toast");
+      toast.textContent = text;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+
+    function timeNow() {
+      const d = new Date();
+      return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function durationSince(startedAt) {
+      const seconds = Math.max(0, Math.floor((Date.now() - startedAt) / 1000));
+      return formatTimer(seconds);
+    }
+
+    function formatTimer(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const rest = seconds % 60;
+      return `${minutes}:${String(rest).padStart(2, "0")}`;
+    }
+
+    function nursingState(childId) {
+      if (!state.nursing[childId]) {
+        state.nursing[childId] = { leftSeconds: 0, rightSeconds: 0, leftStartedAt: null, rightStartedAt: null };
+      }
+      return state.nursing[childId];
+    }
+
+    function nursingSeconds(childId, side) {
+      const session = nursingState(childId);
+      const base = session[`${side}Seconds`];
+      const startedAt = session[`${side}StartedAt`];
+      if (!startedAt) return base;
+      return base + Math.max(0, Math.floor((Date.now() - startedAt) / 1000));
+    }
+
+    function toggleNursingSide(childId, side) {
+      const session = nursingState(childId);
+      const startedKey = `${side}StartedAt`;
+      const secondsKey = `${side}Seconds`;
+      if (session[startedKey]) {
+        session[secondsKey] = nursingSeconds(childId, side);
+        session[startedKey] = null;
+      } else {
+        session[startedKey] = Date.now();
+      }
+      renderSheet();
+      renderNav();
+    }
+
+    function resetNursing(childId) {
+      state.nursing[childId] = { leftSeconds: 0, rightSeconds: 0, leftStartedAt: null, rightStartedAt: null };
+    }
+
+    function anyRunningNursing() {
+      return Object.values(state.nursing).some((session) => session.leftStartedAt || session.rightStartedAt);
+    }
+
+    function firstActiveSleep() {
+      const entry = Object.entries(state.activeSleep)[0];
+      if (!entry) return null;
+      return { child: childById(entry[0]), sleep: entry[1] };
+    }
+
+    function typeColor(type) {
+      const colors = {
+        Sleep: "#4C6FFF",
+        Bottle: "#008C95",
+        Nursing: "#F97316",
+        Allergen: "#16A34A",
+        Recipe: "#C9A227",
+        AI: "#D81B60"
+      };
+      return colors[type] || schemes[state.setup].primary;
+    }
+
+    function todayKey() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function todayLogs() {
+      const key = todayKey();
+      return state.logs.filter((log) => (log.day || key) === key || log.day === "today").slice(0, 24);
+    }
+
+    function detailForLog(log) {
+      if (log.type === "Sleep") {
+        const wakeText = Number(log.wakeups || 0) === 1 ? "1 wakeup" : `${log.wakeups || 0} wakeups`;
+        return `${log.start || "?"} - ${log.end || "?"} with ${wakeText}`;
+      }
+      if (log.type === "Bottle") return `${log.amount || ""} ${log.unit || (state.unitSystem === "Metric" ? "mL" : "oz")}`.trim();
+      if (log.type === "Nursing") return `Breast left ${formatTimer(Number(log.leftSeconds || 0))} / breast right ${formatTimer(Number(log.rightSeconds || 0))}`;
+      if (log.type === "Allergen") return `${log.allergen || "Allergen"} exposure ${log.exposure || 1} of 3`;
+      return log.detail || "";
+    }
+
+    function addLog(child, type, detail, extra = {}) {
+      state.logs.unshift({ id: Date.now(), day: todayKey(), time: timeNow(), child, type, detail, ...extra });
+      state.logs = todayLogs().slice(0, 24);
+    }
+
+    function updateLog(id, key, value) {
+      const log = state.logs.find((item) => item.id === id);
+      if (!log) return;
+      log[key] = value;
+      log.detail = detailForLog(log);
+    }
+
+    function openEditLog(id) {
+      state.editLogId = id;
+      state.sheet = "editLog";
+      renderSheet();
+    }
+
+    function setSetting(key, value) {
+      state[key] = value;
+      render();
+      showToast(`${key === "unitSystem" ? "Units" : key} set to ${value}`);
+    }
+
+    const recipeIdeas = [
+      { title: "Oat banana bowl with tahini swirl", tags: ["iron", "breakfast", "sesame"], summary: "Shared family recipe. Log sesame exposure separately per child if needed." },
+      { title: "Lentil carrot mash", tags: ["iron", "lunch", "fiber"], summary: "Soft texture, good for both twins, easy batch prep." },
+      { title: "Avocado egg toast fingers", tags: ["egg", "breakfast", "protein"], summary: "Great after egg is already being tested. Shows allergen reminder before serving." },
+      { title: "Greek yogurt berry cup", tags: ["dairy", "snack", "protein"], summary: "Dairy-aware idea with separate exposure tracking for each child." }
+    ];
+
+    function recipeResults() {
+      const query = state.recipeQuery.toLowerCase().trim();
+      if (!query) return recipeIdeas;
+      return recipeIdeas.filter((recipe) =>
+        recipe.title.toLowerCase().includes(query) ||
+        recipe.summary.toLowerCase().includes(query) ||
+        recipe.tags.some((tag) => tag.includes(query))
+      );
+    }
+
+    function saveRecipe(title) {
+      if (!state.savedRecipes.includes(title)) state.savedRecipes.push(title);
+      addLog("both", "Recipe", `${title} saved for both children`);
+      render();
+      showToast("Recipe saved for both children");
+    }
+
+    function askAi() {
+      const active = childById(state.activeChild);
+      const latest = todayLogs().filter((log) => log.child === active.id || log.child === "both").slice(0, 3);
+      const context = latest.map((log) => `${log.type}: ${detailForLog(log)}`).join(" / ") || "not enough logs yet";
+      state.aiAnswer = {
+        title: `${state.aiTopic} suggestion for ${active.name}`,
+        body: `${active.name}'s recent context is ${context}. Try one calm next step, then log the result so the timeline can learn the pattern.`,
+        compare: [
+          "Low-tech view: one next action, no extra setup.",
+          "High-tech view: compare timing against today timeline and sibling logs."
+        ]
+      };
+      addLog(active.id, "AI", `${state.aiTopic} guidance requested`);
+      render();
+      showToast("AI answer generated");
+    }
+
+    function render() {
+      applyTheme();
+      renderControls();
+      renderNav();
+      renderScreen();
+      renderSheet();
+    }
+
+    function renderControls() {
+      document.querySelectorAll("#setupControls button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.setup === state.setup);
+        button.onclick = () => setSetup(button.dataset.setup);
+      });
+      document.querySelectorAll("#modeControls button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.mode === state.mode);
+        button.onclick = () => {
+          state.mode = button.dataset.mode;
+          render();
+        };
+      });
+    }
+
+    function renderNav() {
+      const nav = document.getElementById("nav");
+      const activeSleep = firstActiveSleep();
+      nav.innerHTML = navItems.map((item) => `
+        <button class="${state.tab === item.toLowerCase() ? "active" : ""}" data-tab="${item.toLowerCase()}">${item}${item === "Home" && activeSleep ? `<small>${activeSleep.child.initial} sleep</small>` : ""}</button>
+      `).join("");
+      nav.querySelectorAll("button").forEach((button) => {
+        button.onclick = () => {
+          state.tab = button.dataset.tab;
+          renderScreen();
+          renderNav();
+        };
+      });
+    }
+
+    function renderTop(title, subtitle) {
+      return `
+        <div class="top">
+          <div>
+            <h2>${title}</h2>
+            <p>${subtitle}</p>
+          </div>
+          <div class="top-actions">
+            <button class="icon-button" onclick="state.tab='logs';render()">LOG</button>
+            <button class="icon-button" onclick="state.tab='settings';render()">SET</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderChildSwitch() {
+      const kids = children();
+      return `
+        <div class="child-switch" style="--child-count:${kids.length}">
+          ${kids.map((child) => `
+            <button class="child-chip ${state.activeChild === child.id ? "active" : ""}" style="--chip-color:${colorForChild(child.id)}" onclick="state.activeChild='${child.id}';render()">
+              <span class="avatar" style="--chip-color:${colorForChild(child.id)}">${child.initial}</span>
+              <span><strong>${child.name}</strong><span>${state.activeSleep[child.id] ? `Sleeping ${durationSince(state.activeSleep[child.id].startedAt)}` : child.role}</span></span>
+            </button>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function activeSleepLabel(childId) {
+      if (!state.activeSleep[childId]) return "No active sleep";
+      return "Sleeping now";
+    }
+
+    function childSummary(child) {
+      const logs = state.logs.filter((log) => log.child === child.id);
+      const lastFeed = logs.find((log) => log.type === "Bottle" || log.type === "Nursing");
+      const lastLog = logs[0];
+      const activeSleep = state.activeSleep[child.id];
+      return `
+        <div class="os-card">
+          <span class="label" style="color:${colorForChild(child.id)}">${child.initial} / ${child.name}</span>
+          <b>${activeSleep ? `Sleeping ${durationSince(activeSleep.startedAt)}` : lastLog ? `${lastLog.type} at ${lastLog.time}` : "No logs today"}</b>
+          <p class="muted">${activeSleep ? `Started at ${activeSleep.label}` : lastFeed ? `Last feed: ${detailForLog(lastFeed)}` : lastLog ? detailForLog(lastLog) : "Use Sleep, Feed, or Allergen below."}</p>
+          <div class="bar"><span style="--w:${activeSleep ? "82%" : "46%"};background:${colorForChild(child.id)}"></span></div>
+        </div>
+      `;
+    }
+
+    function renderHome() {
+      const kids = children();
+      const active = childById(state.activeChild);
+      const activeSleep = state.activeSleep[active.id];
+      const next = state.setup === "twins"
+        ? "Next: Ari bottle in 28m, Noa nap window in 42m"
+        : `Next: ${active.name} bottle in 28m`;
+      return `
+        ${renderTop("Family OS", "High-level signals on top. Full day timeline below.")}
+        ${renderChildSwitch()}
+        ${activeSleep ? `
+          <button class="live-sleep" style="--sleep-color:${colorForChild(active.id)}" onclick="openSheet('sleep')">
+            <span class="avatar" style="--chip-color:${colorForChild(active.id)}">${active.initial}</span>
+            <span><strong>${active.name} is sleeping now</strong><span>Started at ${activeSleep.label}. Tap to end or review.</span></span>
+            <span class="timer">${durationSince(activeSleep.startedAt)}</span>
+          </button>
+        ` : ""}
+        <section class="os-grid">
+          <div class="os-card main">
+            <span class="label">Learning engine</span>
+            <b>${next}</b>
+            <span class="big">6 / 14</span>
+            <p class="muted">Learning days collected before AI becomes confident.</p>
+            <div class="bar"><span style="--w:43%"></span></div>
+          </div>
+          ${kids.map(childSummary).join("")}
+        </section>
+        <section class="quick-actions compact">
+          <button class="action primary" onclick="openSheet('sleep')"><strong>${activeSleep ? `${active.initial} sleeping ${durationSince(activeSleep.startedAt)}` : "Start sleep"}</strong><span>${activeSleep ? `Started ${activeSleep.label}. Tap to end.` : "Pick child first, then start timer."}</span></button>
+          <button class="action" onclick="openSheet('feed')"><strong>Add feed</strong><span>Bottle or nursing for selected child.</span></button>
+          <button class="action" onclick="openSheet('allergen')"><strong>Allergen</strong><span>Track 1 of 3, 2 of 3, 3 of 3.</span></button>
+        </section>
+        <section class="timeline-summary">
+          <button class="mini-stat" onclick="state.tab='logs';render()"><strong>Edit logs</strong><span>24 per day</span></button>
+          <button class="mini-stat" onclick="state.tab='ai';render()"><strong>AI signal</strong><span>uses today</span></button>
+          <button class="mini-stat" onclick="state.tab='recipes';render()"><strong>Recipes</strong><span>shared food</span></button>
+        </section>
+        ${renderTimeline()}
+      `;
+    }
+
+    function renderTimeline() {
+      const sourceLogs = state.timelineFilter === "all"
+        ? todayLogs()
+        : todayLogs().filter((log) => log.child === state.timelineFilter || (state.timelineFilter === "both" && log.child === "both"));
+      const visibleLogs = sourceLogs.slice(0, 8);
+      const sleepCount = todayLogs().filter((log) => log.type === "Sleep").length;
+      const feedCount = todayLogs().filter((log) => log.type === "Bottle" || log.type === "Nursing").length;
+      const allergenCount = todayLogs().filter((log) => log.type === "Allergen").length;
+      const filters = [
+        { id: "all", label: "All" },
+        ...children().map((child) => ({ id: child.id, label: child.name })),
+        { id: "both", label: "Both" }
+      ];
+      return `
+        <section class="timeline">
+          <div class="timeline-head">
+            <div><h3>Today timeline</h3><p class="muted">Refined handoff log with child filter and live sleep.</p></div>
+            <span class="pill">${visibleLogs.length} logs</span>
+          </div>
+          <div class="timeline-summary">
+            <div class="mini-stat"><strong>${sleepCount}</strong><span>sleep logs</span></div>
+            <div class="mini-stat"><strong>${feedCount}</strong><span>feeds</span></div>
+            <div class="mini-stat"><strong>${allergenCount}</strong><span>allergens</span></div>
+          </div>
+          <div class="timeline-tools">
+            ${filters.map((filter) => `<button class="${state.timelineFilter === filter.id ? "active" : ""}" onclick="state.timelineFilter='${filter.id}';render()">${filter.label}</button>`).join("")}
+          </div>
+          ${visibleLogs.map((log) => {
+            const child = log.child === "both" ? { initial: "B", name: "Both" } : childById(log.child);
+            const childColor = colorForChild(log.child);
+            const eventTypeColor = typeColor(log.type);
+            return `
+              <div class="time-row">
+                <div class="time">${log.time}</div>
+                <div class="event-dot" style="--event:${childColor}">${child.initial}</div>
+                <button class="event-card" style="--event:${childColor};--event-type-color:${eventTypeColor}" onclick="openEditLog(${log.id})">
+                  <div class="event-meta"><strong class="event-child"><i></i>${child.name}</strong><span class="event-type">${log.type}</span></div>
+                  <span>${detailForLog(log)}</span>
+                  <span>Tap to edit</span>
+                </button>
+              </div>
+            `;
+          }).join("") || `<p class="muted">No logs for this filter yet.</p>`}
+        </section>
+      `;
+    }
+
+    function renderLogs() {
+      const logs = todayLogs();
+      return `
+        ${renderTop("Today logs", "00:00 to 24:00. Maximum 24 logs for one day.")}
+        <section class="timeline">
+          <div class="timeline-head">
+            <div><h3>${logs.length} / 24 logs</h3><p class="muted">Tap any saved log to edit it manually.</p></div>
+            <span class="pill">Midnight day</span>
+          </div>
+          <div class="log-list">
+            ${logs.map((log) => {
+              const child = log.child === "both" ? { initial: "B", name: "Both" } : childById(log.child);
+              return `
+                <button class="log-item" style="--log-color:${typeColor(log.type)}" onclick="openEditLog(${log.id})">
+                  <strong>${log.time} / ${log.type} / ${child.name}</strong>
+                  <span>${detailForLog(log)}</span>
+                </button>
+              `;
+            }).join("") || `<p class="muted">No logs saved today.</p>`}
+          </div>
+        </section>
+      `;
+    }
+
+    function renderRecipes() {
+      const results = recipeResults();
+      return `
+        ${renderTop("Recipes", "Shared for the family, not separated by child.")}
+        <div class="search"><span class="pill">Both</span><input value="${state.recipeQuery}" aria-label="Recipe search" oninput="state.recipeQuery=this.value;renderScreen()" /></div>
+        ${results.map((recipe, index) => `
+          <section class="recipe-card">
+            <span class="label">Shared recipe ${index + 1}</span>
+            <b>${recipe.title}</b>
+            <div class="recipe-visual"></div>
+            <p class="muted">${recipe.summary}</p>
+            <div class="row">
+              ${recipe.tags.slice(0, 2).map((tag) => `<span class="pill">${tag}</span>`).join("")}
+              <button class="primary-button" onclick="saveRecipe('${recipe.title.replace(/'/g, "\\'")}')">${state.savedRecipes.includes(recipe.title) ? "Saved" : "Save"}</button>
+            </div>
+          </section>
+        `).join("") || `<section class="recipe-card"><b>No recipes found</b><p class="muted">Try iron, egg, dairy, breakfast, lunch, or snack.</p></section>`}
+        <section class="recipe-card">
+          <span class="label">Why shared</span>
+          <b>One kitchen plan, two child histories</b>
+          <p class="muted">The meal idea is shared, but allergen exposure still gets logged per child from the allergen sheet.</p>
+        </section>
+      `;
+    }
+
+    function renderAi() {
+      const active = childById(state.activeChild);
+      return `
+        ${renderTop("LittleNest AI", "One recommendation first, comparison detail second.")}
+        ${renderChildSwitch()}
+        <section class="ai-card">
+          <span class="label">Ask about ${active.name}</span>
+          <b>${state.aiQuestion}</b>
+          <p class="muted">Uses recent timeline logs. Product-safe messages only; no raw provider/quota wording.</p>
+          <textarea class="field" onchange="state.aiQuestion=this.value" aria-label="AI question">${state.aiQuestion}</textarea>
+          <div class="row">
+            ${["Sleep", "Feed", "Food"].map((topic) => `<button class="${state.aiTopic === topic ? "primary-button" : "secondary-button"}" onclick="state.aiTopic='${topic}';renderScreen()">${topic}</button>`).join("")}
+            <button class="primary-button" onclick="askAi()">Ask</button>
+          </div>
+        </section>
+        ${state.aiAnswer ? `
+          <section class="ai-card">
+            <span class="label">Recommended answer</span>
+            <b>${state.aiAnswer.title}</b>
+            <p class="muted">${state.aiAnswer.body}</p>
+          </section>
+          <section class="ai-card">
+            <span class="label">Compare view</span>
+            <b>Why this works for two parent types</b>
+            <p class="muted">${state.aiAnswer.compare.join(" ")}</p>
+          </section>
+        ` : `
+          <section class="ai-card">
+            <span class="label">Ready</span>
+            <b>No answer yet</b>
+            <p class="muted">Ask a question to generate a prototype answer from the current timeline.</p>
+          </section>
+        `}
+      `;
+    }
+
+    function renderSettings() {
+      return `
+        ${renderTop("Settings", "Working controls for family, units, language, and plan.")}
+        <section class="settings-card">
+          <span class="label">Family setup</span>
+          <b>${schemes[state.setup].label}</b>
+          <p class="muted">Boy, girl, and twins now use clearly different palettes. Twins keep two equal child colors plus one shared recipe color.</p>
+          <div class="row">
+            <button class="secondary-button" onclick="setSetup('boy')">Boy</button>
+            <button class="secondary-button" onclick="setSetup('girl')">Girl</button>
+            <button class="primary-button" onclick="setSetup('twins')">Twins</button>
+          </div>
+        </section>
+        <section class="settings-card">
+          <span class="label">Language</span>
+          <b>${state.language}</b>
+          <p class="muted">Preview of the real app language control.</p>
+          <div class="settings-grid">
+            ${["EN", "HE", "RU"].map((lang) => `<button class="setting-card ${state.language === lang ? "active" : ""}" onclick="setSetting('language','${lang}')"><b>${lang}</b><span>${lang === "EN" ? "English" : lang === "HE" ? "Hebrew" : "Russian"}</span></button>`).join("")}
+          </div>
+        </section>
+        <section class="settings-card">
+          <span class="label">Units</span>
+          <b>${state.unitSystem}</b>
+          <p class="muted">Metric changes feeds to mL/kg/cm. Imperial changes feeds to oz/lb/in.</p>
+          <div class="settings-grid">
+            ${["Metric", "Imperial"].map((unit) => `<button class="setting-card ${state.unitSystem === unit ? "active" : ""}" onclick="setSetting('unitSystem','${unit}')"><b>${unit}</b><span>${unit === "Metric" ? "mL, kg, cm" : "oz, lb, in"}</span></button>`).join("")}
+          </div>
+        </section>
+        <section class="settings-card">
+          <span class="label">Subscription</span>
+          <b>${state.subscription}</b>
+          <p class="muted">Free keeps core tracking. Plus unlocks deeper AI comparison, caregiver exports, and long-range trends.</p>
+          <div class="settings-grid">
+            ${["Free", "Plus"].map((plan) => `<button class="setting-card ${state.subscription === plan ? "active" : ""}" onclick="setSetting('subscription','${plan}')"><b>${plan}</b><span>${plan === "Free" ? "Tracking basics" : "AI and exports"}</span></button>`).join("")}
+          </div>
+        </section>
+      `;
+    }
+
+    function renderScreen() {
+      const scroll = document.getElementById("appScroll");
+      if (state.tab === "recipes") scroll.innerHTML = renderRecipes();
+      else if (state.tab === "ai") scroll.innerHTML = renderAi();
+      else if (state.tab === "settings") scroll.innerHTML = renderSettings();
+      else if (state.tab === "logs") scroll.innerHTML = renderLogs();
+      else scroll.innerHTML = renderHome();
+    }
+
+    function openSheet(type) {
+      state.sheet = type;
+      state.sheetChild = state.activeChild;
+      renderSheet();
+    }
+
+    function closeSheet() {
+      state.sheet = null;
+      state.pendingSleepChild = null;
+      renderSheet();
+    }
+
+    function renderSheetChildChoices() {
+      return `
+        <div class="sheet-grid">
+          ${children().map((child) => `
+            <button class="choice ${state.sheetChild === child.id ? "active" : ""}" style="--choice-color:${colorForChild(child.id)}" onclick="state.sheetChild='${child.id}';renderSheet()">
+              <span class="avatar" style="--chip-color:${colorForChild(child.id)}">${child.initial}</span>
+              <b>${child.name}</b>
+              <p class="muted">${child.role}</p>
+            </button>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function renderSheet() {
+      const backdrop = document.getElementById("sheetBackdrop");
+      if (!state.sheet) {
+        backdrop.classList.remove("open");
+        backdrop.innerHTML = "";
+        return;
+      }
+      backdrop.classList.add("open");
+      const child = childById(state.sheetChild);
+      backdrop.innerHTML = `<section class="sheet">${sheetContent(state.sheet, child)}</section>`;
+      backdrop.onclick = (event) => {
+        if (event.target === backdrop) closeSheet();
+      };
+    }
+
+    function sheetContent(type, child) {
+      if (type === "editLog") {
+        const log = state.logs.find((item) => item.id === state.editLogId);
+        if (!log) return `<h3>Log not found</h3><button class="primary-button" onclick="closeSheet()">Close</button>`;
+        const unit = log.unit || (state.unitSystem === "Metric" ? "mL" : "oz");
+        return `
+          <h3>Edit ${log.type}</h3>
+          <p class="muted">Manual correction for today's 00:00-24:00 log. Changes save immediately in this prototype.</p>
+          <div class="form-row">
+            <input class="field" value="${log.time}" onchange="updateLog(${log.id},'time',this.value);render()" aria-label="Log time" />
+            <select class="field" onchange="updateLog(${log.id},'child',this.value);renderSheet();renderScreen()">
+              ${children().map((item) => `<option value="${item.id}" ${log.child === item.id ? "selected" : ""}>${item.name}</option>`).join("")}
+              <option value="both" ${log.child === "both" ? "selected" : ""}>Both</option>
+            </select>
+          </div>
+          ${log.type === "Sleep" ? `
+            <div class="form-row">
+              <input class="field" value="${log.start || ""}" onchange="updateLog(${log.id},'start',this.value);renderScreen()" aria-label="Sleep start" />
+              <input class="field" value="${log.end || ""}" onchange="updateLog(${log.id},'end',this.value);renderScreen()" aria-label="Sleep end" />
+            </div>
+            <input class="field" value="${log.wakeups || 0}" inputmode="numeric" onchange="updateLog(${log.id},'wakeups',this.value);renderScreen()" aria-label="Wakeups" />
+          ` : ""}
+          ${log.type === "Bottle" ? `
+            <div class="form-row">
+              <input class="field" value="${log.amount || ""}" inputmode="numeric" onchange="updateLog(${log.id},'amount',this.value);renderScreen()" aria-label="Bottle amount" />
+              <select class="field" onchange="updateLog(${log.id},'unit',this.value);renderScreen()"><option ${unit === "mL" ? "selected" : ""}>mL</option><option ${unit === "oz" ? "selected" : ""}>oz</option></select>
+            </div>
+          ` : ""}
+          ${log.type === "Nursing" ? `
+            <div class="form-row">
+              <input class="field" value="${Math.round(Number(log.leftSeconds || 0) / 60)}" inputmode="numeric" onchange="updateLog(${log.id},'leftSeconds',String(Number(this.value) * 60));renderScreen()" aria-label="Left breast minutes" />
+              <input class="field" value="${Math.round(Number(log.rightSeconds || 0) / 60)}" inputmode="numeric" onchange="updateLog(${log.id},'rightSeconds',String(Number(this.value) * 60));renderScreen()" aria-label="Right breast minutes" />
+            </div>
+          ` : ""}
+          ${log.type === "Allergen" ? `
+            <div class="form-row">
+              <select class="field" onchange="updateLog(${log.id},'allergen',this.value);renderScreen()"><option ${log.allergen === "Egg" ? "selected" : ""}>Egg</option><option ${log.allergen === "Peanut" ? "selected" : ""}>Peanut</option><option ${log.allergen === "Dairy" ? "selected" : ""}>Dairy</option><option ${log.allergen === "Sesame" ? "selected" : ""}>Sesame</option></select>
+              <select class="field" onchange="updateLog(${log.id},'exposure',this.value);renderScreen()"><option ${log.exposure === "1" ? "selected" : ""}>1</option><option ${log.exposure === "2" ? "selected" : ""}>2</option><option ${log.exposure === "3" ? "selected" : ""}>3</option></select>
+            </div>
+          ` : ""}
+          ${["Recipe", "AI"].includes(log.type) ? `<textarea class="field" onchange="updateLog(${log.id},'detail',this.value);renderScreen()">${log.detail || ""}</textarea>` : ""}
+          <div class="card">
+            <span class="label">Preview</span>
+            <b>${log.type}</b>
+            <p class="muted">${detailForLog(log)}</p>
+          </div>
+          <button class="primary-button" onclick="closeSheet();render()">Done</button>
+        `;
+      }
+
+      if (type === "sleepWakeups") {
+        const sleepChild = childById(state.pendingSleepChild);
+        const active = state.activeSleep[sleepChild.id];
+        return `
+          <h3>How many wakeups?</h3>
+          <p class="muted">This appears only after pressing End sleep.</p>
+          <div class="card">
+            <span class="label">${sleepChild.initial} / ${sleepChild.name}</span>
+            <b>${active ? `${active.label} - ${timeNow()}` : "Sleep ending"}</b>
+            <p class="muted">Choose wakeups before saving the sleep log.</p>
+          </div>
+          <div class="exposure-grid">
+            ${[0, 1, 2].map((count) => `<button class="exposure-card ${state.sleepWakeups === String(count) ? "active" : ""}" onclick="state.sleepWakeups='${count}';renderSheet()"><b>${count}</b><span>wakeups</span></button>`).join("")}
+          </div>
+          <input class="field" value="${state.sleepWakeups}" inputmode="numeric" onchange="state.sleepWakeups=this.value" aria-label="Wakeups count" />
+          <div class="form-row">
+            <button class="secondary-button" onclick="closeSheet()">Cancel</button>
+            <button class="primary-button" onclick="finishSleep()">Save sleep</button>
+          </div>
+        `;
+      }
+
+      if (type === "sleep") {
+        const active = state.activeSleep[child.id];
+        return `
+          <h3>${active ? "End sleep" : "Start sleep"}</h3>
+          <p class="muted">Choose the child first. The timeline will show the first letter badge.</p>
+          ${renderSheetChildChoices()}
+          <div class="card">
+            <span class="label">${child.initial} / ${child.name}</span>
+            <b>${active ? `Sleeping ${durationSince(active.startedAt)}` : "No active sleep"}</b>
+            <p class="muted">${active ? `Started at ${active.label}` : "Tap start to begin a live sleep state."}</p>
+          </div>
+          <div class="form-row">
+            <button class="secondary-button" onclick="closeSheet()">Cancel</button>
+            <button class="primary-button" onclick="commitSleep()">${active ? "End sleep" : "Start sleep"}</button>
+          </div>
+        `;
+      }
+      if (type === "feed") {
+        const unit = state.unitSystem === "Metric" ? "mL" : "oz";
+        const session = nursingState(child.id);
+        const leftRunning = Boolean(session.leftStartedAt);
+        const rightRunning = Boolean(session.rightStartedAt);
+        const leftTime = formatTimer(nursingSeconds(child.id, "left"));
+        const rightTime = formatTimer(nursingSeconds(child.id, "right"));
+        return `
+          <h3>Add feed</h3>
+          <p class="muted">Feed is child-specific. Nursing separates breast left and breast right.</p>
+          ${renderSheetChildChoices()}
+          <div class="form-row">
+            <select class="field" onchange="state.feedType=this.value;renderSheet()"><option ${state.feedType === "Bottle" ? "selected" : ""}>Bottle</option><option ${state.feedType === "Nursing" ? "selected" : ""}>Nursing</option></select>
+            ${state.feedType === "Bottle" ? `<input class="field" value="${state.feedAmount}" inputmode="numeric" onchange="state.feedAmount=this.value" aria-label="Feed amount" />` : `<span class="field">${leftTime} left / ${rightTime} right</span>`}
+          </div>
+          ${state.feedType === "Nursing" ? `
+            <div class="breast-grid">
+              <button class="breast-card ${leftRunning ? "active" : ""}" onclick="toggleNursingSide('${child.id}','left')"><b>Breast left</b><span>${leftTime} / ${leftRunning ? "running" : "stopped"}</span></button>
+              <button class="breast-card ${rightRunning ? "active" : ""}" onclick="toggleNursingSide('${child.id}','right')"><b>Breast right</b><span>${rightTime} / ${rightRunning ? "running" : "stopped"}</span></button>
+            </div>
+          ` : `<p class="muted">Bottle amount will save as ${state.feedAmount} ${unit}.</p>`}
+          <div class="form-row">
+            <button class="secondary-button" onclick="closeSheet()">Cancel</button>
+            <button class="primary-button" onclick="commitFeed()">Save feed</button>
+          </div>
+        `;
+      }
+      if (type === "allergen") {
+        const currentExposure = Number(state.exposure);
+        return `
+          <h3>Allergen exposure</h3>
+          <p class="muted">Allergen progress is separate for each twin, even when recipes are shared.</p>
+          ${renderSheetChildChoices()}
+          <div class="form-row">
+            <select class="field" onchange="state.allergen=this.value;renderSheet()"><option ${state.allergen === "Egg" ? "selected" : ""}>Egg</option><option ${state.allergen === "Peanut" ? "selected" : ""}>Peanut</option><option ${state.allergen === "Dairy" ? "selected" : ""}>Dairy</option><option ${state.allergen === "Sesame" ? "selected" : ""}>Sesame</option></select>
+            <span class="field">${currentExposure} of 3 exposures</span>
+          </div>
+          <div class="exposure-grid">
+            ${[1, 2, 3].map((count) => `<button class="exposure-card ${currentExposure === count ? "active" : ""}" onclick="state.exposure='${count}';renderSheet()"><b>Exposure ${count}</b><span>${count === 1 ? "First taste" : count === 2 ? "Repeat safely" : "Complete test"}</span><span class="progress-dots">${[1, 2, 3].map((dot) => `<i class="${dot <= count ? "done" : ""}"></i>`).join("")}</span></button>`).join("")}
+          </div>
+          <div class="card">
+            <span class="label">How it reads</span>
+            <b>${state.allergen} for ${child.name}: ${currentExposure}/3</b>
+            <p class="muted">The timeline keeps the child badge. Recipes can stay shared, while exposure history stays separate.</p>
+          </div>
+          <div class="form-row">
+            <button class="secondary-button" onclick="closeSheet()">Cancel</button>
+            <button class="primary-button" onclick="commitAllergen()">Save exposure</button>
+          </div>
+        `;
+      }
+      return "";
+    }
+
+    function commitSleep() {
+      const child = childById(state.sheetChild);
+      if (state.activeSleep[child.id]) {
+        state.pendingSleepChild = child.id;
+        state.sheet = "sleepWakeups";
+        renderSheet();
+      } else {
+        state.activeSleep[child.id] = { startedAt: Date.now(), label: timeNow() };
+        showToast(`${child.name} sleep started`);
+        closeSheet();
+        render();
+      }
+    }
+
+    function finishSleep() {
+      const child = childById(state.pendingSleepChild);
+      const active = state.activeSleep[child.id];
+      if (!active) {
+        closeSheet();
+        render();
+        return;
+      }
+      const endedAt = timeNow();
+      addLog(child.id, "Sleep", `${active.label} - ${endedAt} with ${state.sleepWakeups || 0} wakeups`, {
+        start: active.label,
+        end: endedAt,
+        wakeups: state.sleepWakeups || "0"
+      });
+      delete state.activeSleep[child.id];
+      state.sleepWakeups = "0";
+      state.pendingSleepChild = null;
+      showToast(`${child.name} sleep saved`);
+      closeSheet();
+      render();
+    }
+
+    function commitFeed() {
+      const child = childById(state.sheetChild);
+      const unit = state.unitSystem === "Metric" ? "mL" : "oz";
+      const left = nursingSeconds(child.id, "left");
+      const right = nursingSeconds(child.id, "right");
+      const detail = state.feedType === "Bottle" ? `${state.feedAmount} ${unit}` : `Breast left ${formatTimer(left)} / breast right ${formatTimer(right)}`;
+      addLog(child.id, state.feedType, detail, state.feedType === "Bottle"
+        ? { amount: state.feedAmount, unit }
+        : { leftSeconds: left, rightSeconds: right });
+      if (state.feedType === "Nursing") resetNursing(child.id);
+      showToast(`${child.name} feed saved`);
+      closeSheet();
+      render();
+    }
+
+    function commitAllergen() {
+      const child = childById(state.sheetChild);
+      addLog(child.id, "Allergen", `${state.allergen} exposure ${state.exposure} of 3`, {
+        allergen: state.allergen,
+        exposure: state.exposure
+      });
+      showToast(`${child.name} allergen saved`);
+      closeSheet();
+      render();
+    }
+
+    window.setInterval(() => {
+      if (Object.keys(state.activeSleep).length > 0 || anyRunningNursing()) {
+        render();
+      }
+    }, 1000);
+
+    render();
+  </script>
+</body>
+</html>

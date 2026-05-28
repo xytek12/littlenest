@@ -15,12 +15,17 @@ import { usePrototypeState } from '../state/PrototypeState';
 import { getPalette, typography, typographyHe } from '../theme';
 import { useAppTheme } from '../theme/useAppTheme';
 import { getAgeLabel } from '../utils/age';
-import { formatDateLong } from '../utils/formatDateLong';
+import { formatDateLong, formatDateOnly } from '../utils/formatDateLong';
+import { formatDurationHuman, formatDurationSeconds } from '../utils/formatDuration';
 import { formatHistoryTime } from '../utils/formatHistoryDate';
 import { useTickEverySecond } from '../utils/useTickEverySecond';
 
 function getRunningMinutes(startedAt: string) {
   return Math.max(0, Math.floor((Date.now() - Date.parse(startedAt)) / 60000));
+}
+
+function getRunningSeconds(startedAt: string) {
+  return Math.max(0, Math.floor((Date.now() - Date.parse(startedAt)) / 1000));
 }
 
 // Render a string so that any digit runs (e.g. "14" inside "14 ימי מעקב")
@@ -56,12 +61,10 @@ export function HomeScreen() {
   const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
   const {
     activeChild,
-    activeNursingSession,
     activeSleepStartedAt,
     endSleep,
     family,
     feedEntries,
-    growthEntries,
     sleepSessions,
     startSleep,
   } = usePrototypeState();
@@ -81,15 +84,13 @@ export function HomeScreen() {
   const trackedDays = countTrackedDays(sleepSessions, feedEntries);
   const learningReady = trackedDays >= 14;
 
-  const [showSleepModal, setShowSleepModal] = useState(false);
+  // 'off' | 'confirm' | 'wakes' — two-step sleep end flow
+  const [sleepModalStep, setSleepModalStep] = useState<'off' | 'confirm' | 'wakes'>('off');
+  const [sleepModalWakeCount, setSleepModalWakeCount] = useState(0);
   const [showFeedSheet, setShowFeedSheet] = useState(false);
   const [showGrowthSheet, setShowGrowthSheet] = useState(false);
 
-  const isNursingActive =
-    activeNursingSession.leftStartedAt != null || activeNursingSession.rightStartedAt != null;
   const lastFeed = feedEntries[0];
-  // Newest growth entry first (state stores them prepended on save).
-  const latestGrowth = growthEntries[0];
 
   // Keep ticker active so the active-sleep card and modal update each minute
   useTickEverySecond(activeSleepStartedAt != null);
@@ -140,14 +141,6 @@ export function HomeScreen() {
     navigation.navigate('Growth', { screen: 'GrowthHistory' });
   }
 
-  function getGrowthKindLabel(kind: 'weight' | 'height' | 'head') {
-    return kind === 'weight'
-      ? dictionary.growth.weight
-      : kind === 'height'
-        ? dictionary.growth.height
-        : dictionary.growth.head;
-  }
-
   return (
     <GenderedBackground>
       <ScrollView
@@ -190,11 +183,10 @@ export function HomeScreen() {
 
         {/* Sleep card — active vs idle */}
         {activeSleepStartedAt ? (
-          <Pressable
+          // Outer container is a View so we can place two independent Pressables
+          // side-by-side without nesting <button> inside <button> (invalid HTML).
+          <View
             testID="home-active-sleep-card"
-            onPress={() => setShowSleepModal(true)}
-            accessibilityRole="button"
-            accessibilityLabel={homeSleep.sleepingNowTitle(activeChild.displayName, activeChild.sex)}
             style={[
               styles.activeSleepCard,
               {
@@ -203,28 +195,37 @@ export function HomeScreen() {
               },
             ]}
           >
-            <Text style={styles.moonGlyph}>🌙</Text>
-            <Text
-              style={[
-                styles.activeSleepTitle,
-                rtlText,
-                { color: theme.text, fontFamily: isRtl ? typographyHe.displayHe : typography.displayBold },
-              ]}
+            {/* Main body — tap opens end-sleep modal */}
+            <Pressable
+              onPress={() => { setSleepModalWakeCount(0); setSleepModalStep('confirm'); }}
+              accessibilityRole="button"
+              accessibilityLabel={homeSleep.sleepingNowTitle(activeChild.displayName, activeChild.sex)}
+              style={styles.activeSleepCardBody}
             >
-              {homeSleep.sleepingNowTitle(activeChild.displayName, activeChild.sex)}
-            </Text>
-            <Text style={[styles.activeSleepSubtitle, rtlText, { color: theme.mutedText }]}>
-              {homeSleep.sleepingNowSubtitle(
-                formatHistoryTime(activeSleepStartedAt, family.language),
-                activeMinutes,
-              )}
-            </Text>
-            <Text style={[styles.activeSleepHint, rtlText, { color: palette.primaryDeep }]}>
-              {homeSleep.sleepingNowHint}
-            </Text>
+              <Text style={styles.moonGlyph}>🌙</Text>
+              <Text
+                style={[
+                  styles.activeSleepTitle,
+                  rtlText,
+                  { color: theme.text, fontFamily: isRtl ? typographyHe.displayHe : typography.displayBold },
+                ]}
+              >
+                {homeSleep.sleepingNowTitle(activeChild.displayName, activeChild.sex)}
+              </Text>
+              <Text style={[styles.activeSleepSubtitle, rtlText, { color: theme.mutedText }]}>
+                {homeSleep.sleepingNowSubtitle(
+                  formatHistoryTime(activeSleepStartedAt, family.language),
+                  activeMinutes,
+                )}
+              </Text>
+              <Text style={[styles.activeSleepHint, rtlText, { color: palette.primaryDeep }]}>
+                {homeSleep.sleepingNowHint}
+              </Text>
+            </Pressable>
+            {/* History link — sibling of the main pressable, not nested inside it */}
             <Pressable
               onPress={openSleepHistory}
-              accessibilityRole="button"
+              accessibilityRole="link"
               hitSlop={8}
               style={[styles.activeSleepHistoryRow, isRtl ? styles.alignEnd : null]}
             >
@@ -232,7 +233,7 @@ export function HomeScreen() {
                 {homeSleep.viewHistory}
               </Text>
             </Pressable>
-          </Pressable>
+          </View>
         ) : (
           <SectionCard
             sectionType="sleep"
@@ -240,7 +241,7 @@ export function HomeScreen() {
             iconEmoji="🌙"
             footerLabel={homeSleep.viewHistory}
             onFooterPress={openSleepHistory}
-            onPlusPress={() => setShowSleepModal(true)}
+            onPlusPress={() => { setSleepModalWakeCount(0); setSleepModalStep('confirm'); }}
             plusAccessibilityLabel={labels.sleepTitle}
           >
             <Text style={[styles.idleSleepLabel, rtlText, { color: theme.mutedText }]}>
@@ -254,7 +255,7 @@ export function HomeScreen() {
               recentSleeps.map((session) => {
                 const startTime = formatHistoryTime(session.startedAt, family.language);
                 const endTime = formatHistoryTime(session.endedAt, family.language);
-                const dateLabel = formatDateLong(session.startedAt, family.language);
+                  const dateLabel = formatDateOnly(session.startedAt, family.language);
                 return (
                   <View key={session.id} style={styles.recentSleepRow}>
                     <Text style={[styles.recentSleepDate, rtlText, { color: theme.text }]}>
@@ -272,9 +273,7 @@ export function HomeScreen() {
           </SectionCard>
         )}
 
-        {/* Feed SectionCard — "+" opens chooser popup. The card body is
-            tappable when a nursing session is in progress so the parent can
-            resume the live timers without losing state. */}
+        {/* Feed SectionCard — "+" opens chooser popup. */}
         <SectionCard
           sectionType="feed"
           title={homeSleep.sectionFeed}
@@ -284,38 +283,33 @@ export function HomeScreen() {
           onPlusPress={() => setShowFeedSheet(true)}
           plusAccessibilityLabel={labels.feedTitle}
         >
-          {/* Body is display-only; only the "+" button opens the composer. */}
           <View style={styles.feedBody}>
-            {isNursingActive ? (
+            <Text style={[styles.feedActiveLabel, rtlText, { color: theme.mutedText }]}>
+              {homeSleep.feedLastLabel}
+            </Text>
+            {lastFeed ? (
               <>
-                <Text style={[styles.feedActiveLabel, rtlText, { color: palette.primaryDeep }]}>
-                  {homeSleep.feedActiveLabel}
-                </Text>
                 <Text style={[styles.feedActiveValue, rtlText, { color: theme.text }]}>
-                  {dictionary.feed.nursingSession}
+                  {formatDateLong(lastFeed.timestamp, family.language)}
                 </Text>
-                <Text style={[styles.feedActiveHint, rtlText, { color: theme.mutedText }]}>
-                  {homeSleep.feedActiveResume}
+                <Text style={[styles.feedDetail, rtlText, { color: palette.primaryDeep }]}>
+                  {lastFeed.kind === 'nursing'
+                    ? homeSleep.feedNursingDetail(
+                        formatDurationHuman(lastFeed.totalSeconds, family.language),
+                      )
+                    : homeSleep.feedBottleDetail(lastFeed.amount, lastFeed.unit)}
                 </Text>
               </>
             ) : (
-              <>
-                <Text style={[styles.feedActiveLabel, rtlText, { color: theme.mutedText }]}>
-                  {homeSleep.feedLastLabel}
-                </Text>
-                <Text style={[styles.feedActiveValue, rtlText, { color: theme.text }]}>
-                  {lastFeed
-                    ? formatDateLong(lastFeed.timestamp, family.language)
-                    : homeSleep.feedNoneYet}
-                </Text>
-              </>
+              <Text style={[styles.feedActiveValue, rtlText, { color: theme.text }]}>
+                {homeSleep.feedNoneYet}
+              </Text>
             )}
           </View>
         </SectionCard>
 
         {/* Growth SectionCard — "+" opens the unified weight/height/head popup.
-            Growth is no longer a bottom-dock tab; it lives here so parents see
-            it alongside sleep and feed at a glance. */}
+            The card shows no summary — measurements are only visible in history. */}
         <SectionCard
           sectionType="learn"
           title={homeSleep.sectionGrowth}
@@ -324,34 +318,13 @@ export function HomeScreen() {
           onFooterPress={openGrowthHistory}
           onPlusPress={() => setShowGrowthSheet(true)}
           plusAccessibilityLabel={dictionary.growth.title}
-        >
-          <Pressable
-            testID="home-growth-card-body"
-            onPress={() => setShowGrowthSheet(true)}
-            style={styles.feedBody}
-          >
-            <Text style={[styles.feedActiveLabel, rtlText, { color: theme.mutedText }]}>
-              {homeSleep.growthLatestLabel}
-            </Text>
-            <Text style={[styles.feedActiveValue, rtlText, { color: theme.text }]}>
-              {latestGrowth
-                ? homeSleep.growthLatestValue(
-                    getGrowthKindLabel(latestGrowth.kind),
-                    latestGrowth.value,
-                    latestGrowth.unit,
-                  )
-                : homeSleep.growthNoMeasurementsYet}
-            </Text>
-          </Pressable>
-        </SectionCard>
+        />
 
-        {/* Food tasting SectionCard */}
+        {/* Food tasting SectionCard — only "+" to open the tasting flow; no history link. */}
         <SectionCard
           sectionType="food"
           title={homeSleep.sectionFood}
           iconEmoji="🥕"
-          footerLabel={homeSleep.viewHistory}
-          onFooterPress={() => navigation.navigate('FoodTastingFlow')}
           onPlusPress={() => navigation.navigate('FoodTastingFlow')}
           plusAccessibilityLabel={labels.foodTastingTitle}
         />
@@ -374,28 +347,36 @@ export function HomeScreen() {
       {/* Sleep start / end popup */}
       <Modal
         animationType="slide"
-        onRequestClose={() => setShowSleepModal(false)}
+        onRequestClose={() => { setSleepModalStep('off'); setSleepModalWakeCount(0); }}
         transparent
-        visible={showSleepModal}
+        visible={sleepModalStep !== 'off'}
       >
         <View style={styles.modalOverlay}>
           <Pressable
             accessibilityLabel="Close sleep popup"
-            onPress={() => setShowSleepModal(false)}
+            onPress={() => setSleepModalStep('off')}
             style={styles.modalBackdrop}
           />
           <View style={[styles.sheetCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-            {activeSleepStartedAt ? (
+            {/* Step 1 — confirm end sleep (shows live MM:SS clock) */}
+            {sleepModalStep === 'confirm' && activeSleepStartedAt ? (
               <>
                 <Text style={[styles.sheetTitle, rtlText, { color: theme.text }]}>
                   {homeSleep.endSleepTitle}
+                </Text>
+                {/* Live clock with seconds — updates every second via useTickEverySecond */}
+                <Text style={[styles.sheetClock, { color: palette.primary }]}>
+                  {formatDurationSeconds(
+                    getRunningSeconds(activeSleepStartedAt),
+                    getRunningSeconds(activeSleepStartedAt) >= 3600,
+                  )}
                 </Text>
                 <Text style={[styles.sheetBody, rtlText, { color: theme.mutedText }]}>
                   {homeSleep.endSleepBody(activeMinutes)}
                 </Text>
                 <View style={styles.sheetActions}>
                   <Pressable
-                    onPress={() => setShowSleepModal(false)}
+                    onPress={() => { setSleepModalStep('off'); setSleepModalWakeCount(0); }}
                     style={[styles.secondaryBtn, { borderColor: theme.border }]}
                   >
                     <Text style={[styles.secondaryBtnText, { color: theme.text }]}>
@@ -404,11 +385,7 @@ export function HomeScreen() {
                   </Pressable>
                   <Pressable
                     accessibilityLabel="End sleep session"
-                    onPress={() => {
-                      // Don't touch wake count — saved silently as 0 per user spec.
-                      endSleep({ wakeCount: 0 });
-                      setShowSleepModal(false);
-                    }}
+                    onPress={() => setSleepModalStep('wakes')}
                     style={[styles.primaryBtn, { backgroundColor: palette.primary }]}
                   >
                     <Text style={[styles.primaryBtnText, { color: palette.primaryDeep }]}>
@@ -417,7 +394,47 @@ export function HomeScreen() {
                   </Pressable>
                 </View>
               </>
+            ) : sleepModalStep === 'wakes' ? (
+              /* Step 2 — how many times did baby wake? (gender-aware) */
+              <>
+                <Text style={[styles.sheetTitle, rtlText, { color: theme.text }]}>
+                  {homeSleep.endSleepWakesLabel(activeChild.displayName, activeChild.sex)}
+                </Text>
+                <View style={styles.wakesStepper}>
+                  <Pressable
+                    onPress={() => setSleepModalWakeCount(Math.max(0, sleepModalWakeCount - 1))}
+                    style={[styles.stepperBtn, { borderColor: theme.border }]}
+                    accessibilityLabel="Decrease wake count"
+                  >
+                    <Text style={[styles.stepperBtnText, { color: theme.text }]}>−</Text>
+                  </Pressable>
+                  <Text style={[styles.stepperCount, { color: theme.text }]}>
+                    {sleepModalWakeCount}
+                  </Text>
+                  <Pressable
+                    onPress={() => setSleepModalWakeCount(sleepModalWakeCount + 1)}
+                    style={[styles.stepperBtn, { borderColor: theme.border }]}
+                    accessibilityLabel="Increase wake count"
+                  >
+                    <Text style={[styles.stepperBtnText, { color: theme.text }]}>+</Text>
+                  </Pressable>
+                </View>
+                <Pressable
+                  accessibilityLabel="Save wake count and end sleep"
+                  onPress={() => {
+                    endSleep({ wakeCount: sleepModalWakeCount });
+                    setSleepModalStep('off');
+                    setSleepModalWakeCount(0);
+                  }}
+                  style={[styles.primaryBtn, { backgroundColor: palette.primary, marginTop: 12 }]}
+                >
+                  <Text style={[styles.primaryBtnText, { color: palette.primaryDeep }]}>
+                    {homeSleep.endSleepWakesDone}
+                  </Text>
+                </Pressable>
+              </>
             ) : (
+              /* Start sleep dialog */
               <>
                 <Text style={[styles.sheetTitle, rtlText, { color: theme.text }]}>
                   {homeSleep.sectionSleep}
@@ -427,7 +444,7 @@ export function HomeScreen() {
                 </Text>
                 <View style={styles.sheetActions}>
                   <Pressable
-                    onPress={() => setShowSleepModal(false)}
+                    onPress={() => setSleepModalStep('off')}
                     style={[styles.secondaryBtn, { borderColor: theme.border }]}
                   >
                     <Text style={[styles.secondaryBtnText, { color: theme.text }]}>
@@ -437,7 +454,7 @@ export function HomeScreen() {
                   <Pressable
                     onPress={() => {
                       startSleep();
-                      setShowSleepModal(false);
+                      setSleepModalStep('off');
                     }}
                     style={[styles.primaryBtn, { backgroundColor: palette.primary }]}
                   >
@@ -497,13 +514,18 @@ const styles = StyleSheet.create({
   },
   rtlText: { textAlign: 'right', writingDirection: 'rtl' },
   alignEnd: { alignSelf: 'flex-end' },
-  // Active sleep card — big, tappable
+  // Active sleep card — outer View (no padding; inner Pressable handles it)
   activeSleepCard: {
     borderRadius: 22,
     borderWidth: 2,
     marginBottom: 12,
+    overflow: 'hidden',
+  },
+  // Inner Pressable that covers the main card body (emoji + text)
+  activeSleepCardBody: {
     paddingHorizontal: 20,
-    paddingVertical: 22,
+    paddingTop: 22,
+    paddingBottom: 4,
   },
   moonGlyph: {
     fontSize: 36,
@@ -528,7 +550,9 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   activeSleepHistoryRow: {
-    marginTop: 14,
+    marginTop: 10,
+    paddingHorizontal: 20,
+    paddingBottom: 18,
   },
   activeSleepHistoryText: {
     fontSize: 14,
@@ -576,6 +600,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginTop: 4,
   },
+  feedDetail: {
+    fontSize: 14,
+    fontWeight: '700',
+    marginTop: 4,
+  },
   recentSleepRange: {
     fontSize: 17,
     fontVariant: ['tabular-nums'],
@@ -586,6 +615,43 @@ const styles = StyleSheet.create({
     // Force LTR ordering so the chronological start is on the LEFT.
     writingDirection: 'ltr',
     textAlign: 'left',
+  },
+  // Live clock shown in end-sleep confirm step
+  sheetClock: {
+    fontSize: 36,
+    fontWeight: '900',
+    fontVariant: ['tabular-nums'],
+    letterSpacing: 2,
+    marginBottom: 4,
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  // Wake count stepper inside step-2 modal
+  wakesStepper: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 16,
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  stepperBtn: {
+    alignItems: 'center',
+    borderRadius: 999,
+    borderWidth: 1.5,
+    height: 40,
+    justifyContent: 'center',
+    width: 40,
+  },
+  stepperBtnText: {
+    fontSize: 22,
+    fontWeight: '700',
+    lineHeight: 26,
+  },
+  stepperCount: {
+    fontSize: 28,
+    fontWeight: '900',
+    minWidth: 40,
+    textAlign: 'center',
   },
   // Sleep modal
   modalOverlay: {

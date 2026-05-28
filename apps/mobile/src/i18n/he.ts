@@ -274,12 +274,16 @@ export const he = {
         `${date}, ${time}  ·  הנקה  ·  ${total} (שמאל ${left} / ימין ${right})`,
       nursingRowPrimary: (date: string, time: string) => `${date}, ${time}  ·  הנקה`,
       nursingRowSides: (left: string, right: string) => `שמאל: ${left}   ימין: ${right}`,
+      nursingTimeRange: (start: string, end: string) => `${start} – ${end}  ·  הנקה`,
       bottleRowPrimary: (date: string, time: string) => `${date}, ${time}  ·  בקבוק`,
       bottleRowAmount: (amount: number, unit: string) => `${amount} ${unit}`,
       bottleRowInDay: (time: string, amount: number, unit: string) =>
         `${time}  ·  בקבוק  ·  ${amount} ${unit}`,
       nursingRowInDay: (time: string, total: string, left: string, right: string) =>
         `${time}  ·  הנקה  ·  ${total} (שמאל ${left} / ימין ${right})`,
+      editBottleTitle: 'עריכת כמות בקבוק',
+      editBottleAmountLabel: 'כמות',
+      editBottleSave: 'שמירת שינויים',
     },
     // --- FEED REDESIGN KEYS ---
     feed_redesign_lastLabel: 'האכלה האחרונה',
@@ -340,11 +344,16 @@ export const he = {
     endSleepBody: (minutes: number) =>
       `השינה תישמר כ-${minutes} ${minutes === 1 ? 'דקה' : 'דקות'}.`,
     endSleepConfirm: 'סיום שינה',
+    endSleepWakesLabel: (name: string, sex: 'boy' | 'girl') =>
+      `כמה פעמים ${sex === 'girl' ? 'התעוררה' : 'התעורר'} ${name}?`,
+    endSleepWakesDone: 'שמירה',
     sleepTimeRange: (start: string, end: string) => `${start} – ${end}`,
     feedActiveLabel: 'האכלה פעילה',
     feedActiveResume: 'לחצו לחזרה לטיימר',
     feedLastLabel: 'האכלה אחרונה',
     feedNoneYet: 'עדיין לא נרשמה האכלה',
+    feedNursingDetail: (duration: string) => `הנקה · ${duration}`,
+    feedBottleDetail: (amount: number, unit: string) => `בקבוק · ${amount} ${unit}`,
     sectionGrowth: 'צמיחה',
     growthLatestLabel: 'אחרון',
     growthNoMeasurementsYet: 'עדיין אין מדידות',

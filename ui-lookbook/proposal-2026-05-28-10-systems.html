@@ -1,0 +1,1371 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LittleNest UI Systems - Working Lookbook</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --page: #f5f6f2;
+      --ink: #172126;
+      --muted: #617078;
+      --panel: #ffffff;
+      --panel-2: #eef2ee;
+      --line: #d7ddd7;
+      --focus: #0b6f6a;
+      --shadow: 0 24px 80px rgba(18, 28, 31, .14);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        linear-gradient(135deg, rgba(21, 83, 90, .08), transparent 34%),
+        linear-gradient(315deg, rgba(180, 58, 73, .08), transparent 40%),
+        var(--page);
+      color: var(--ink);
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .app {
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .rail {
+      background: rgba(255,255,255,.84);
+      border-right: 1px solid var(--line);
+      min-height: 100vh;
+      padding: 22px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: conic-gradient(from 180deg, #0b6f6a, #e56b6f, #e1b866, #2b83ba, #0b6f6a);
+      box-shadow: inset 0 0 0 7px rgba(255,255,255,.68);
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: 18px; line-height: 1.15; }
+    .brand p { color: var(--muted); font-size: 13px; margin-top: 3px; }
+
+    .source-box, .map-box, .system-button, .notes-card, .detail-card {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.75);
+      border-radius: 16px;
+    }
+
+    .source-box, .map-box {
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .source-box h2, .map-box h2 {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #31525a;
+      margin-bottom: 8px;
+    }
+
+    .source-box p, .map-box p, .source-box li {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .source-box ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+
+    .system-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .system-button {
+      color: var(--ink);
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 11px;
+      padding: 12px;
+      text-align: left;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+
+    .system-button:hover { transform: translateY(-1px); }
+    .system-button.active {
+      border-color: var(--button-accent, #0b6f6a);
+      background: color-mix(in srgb, var(--button-accent, #0b6f6a) 12%, #fff);
+    }
+
+    .swatch-dot {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--a), var(--b));
+      border: 1px solid rgba(0,0,0,.08);
+    }
+
+    .system-button strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.2;
+    }
+
+    .system-button span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      margin-top: 3px;
+    }
+
+    main {
+      min-width: 0;
+      padding: 26px;
+    }
+
+    .topbar {
+      align-items: start;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .topbar h2 {
+      font-size: clamp(28px, 4vw, 56px);
+      letter-spacing: 0;
+      line-height: .95;
+      max-width: 900px;
+    }
+
+    .topbar p {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.45;
+      max-width: 820px;
+      margin-top: 12px;
+    }
+
+    .controls {
+      display: grid;
+      gap: 10px;
+      justify-items: end;
+    }
+
+    .seg {
+      background: rgba(255,255,255,.82);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 4px;
+    }
+
+    .seg button {
+      border: 0;
+      border-radius: 10px;
+      color: var(--muted);
+      background: transparent;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 8px 10px;
+    }
+
+    .seg button.active {
+      background: var(--focus);
+      color: #fff;
+    }
+
+    .section-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .section-tabs button {
+      background: rgba(255,255,255,.78);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #314149;
+      font-size: 13px;
+      font-weight: 850;
+      padding: 10px 13px;
+    }
+
+    .section-tabs button.active {
+      background: #14272b;
+      border-color: #14272b;
+      color: #fff;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(760px, 900px) minmax(320px, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .phone-stage {
+      background: rgba(255,255,255,.58);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      min-height: 780px;
+      padding: 18px;
+    }
+
+    .phone-wrap {
+      display: grid;
+      gap: 18px;
+      justify-content: center;
+    }
+
+    .phone-wrap.both {
+      grid-template-columns: repeat(2, minmax(0, 390px));
+      justify-content: start;
+    }
+
+    .phone {
+      --bg: #f8faf7;
+      --surface: #ffffff;
+      --surface2: #edf4ef;
+      --text: #142128;
+      --muted: #63737b;
+      --line: #d8ded8;
+      --accent: #0b6f6a;
+      --accent2: #e56b6f;
+      --accent3: #e1b866;
+      --deep: #053d3a;
+      aspect-ratio: 390 / 820;
+      background: var(--bg);
+      border: 10px solid #101417;
+      border-radius: 42px;
+      box-shadow: 0 24px 56px rgba(0,0,0,.18);
+      color: var(--text);
+      overflow: hidden;
+      position: relative;
+      width: min(100%, 390px);
+    }
+
+    .phone.dark {
+      --bg: #081115;
+      --surface: #111c22;
+      --surface2: #172a31;
+      --text: #f7faf8;
+      --muted: #c6d3d7;
+      --line: #2d4851;
+      color: var(--text);
+    }
+
+    .phone::before {
+      content: "";
+      display: block;
+      height: 28px;
+      left: 50%;
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+      width: 126px;
+      z-index: 5;
+      background: #101417;
+      border-radius: 0 0 18px 18px;
+    }
+
+    .phone-screen {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 30px 16px 14px;
+      position: relative;
+    }
+
+    .phone.dark .phone-screen {
+      background:
+        radial-gradient(circle at 18% 10%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 27%),
+        radial-gradient(circle at 90% 24%, color-mix(in srgb, var(--accent2) 20%, transparent), transparent 25%),
+        var(--bg);
+    }
+
+    .phone.light .phone-screen {
+      background:
+        linear-gradient(180deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 34%),
+        linear-gradient(135deg, color-mix(in srgb, var(--accent2) 12%, transparent), transparent 45%),
+        var(--bg);
+    }
+
+    .status {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 850;
+      margin-bottom: 13px;
+    }
+
+    .chip, .pill, .mini-pill {
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      display: inline-flex;
+      font-weight: 850;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .chip { color: var(--text); background: var(--surface); font-size: 12px; padding: 7px 10px; }
+    .pill { color: var(--text); background: var(--surface2); font-size: 12px; padding: 8px 10px; }
+    .mini-pill { color: var(--muted); background: transparent; font-size: 10px; padding: 5px 8px; }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-block;
+    }
+
+    .top-row, .child-row, .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .top-row h3 {
+      font-size: 22px;
+      line-height: 1.05;
+      max-width: 220px;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-top: 5px;
+    }
+
+    .card, .tile, .hero, .sheet, .feed-card, .timeline-row, .recipe-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      color: var(--text);
+    }
+
+    .hero {
+      padding: 15px;
+      margin-top: 13px;
+    }
+
+    .hero strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1.05;
+    }
+
+    .hero p, .card p, .tile p, .sheet p, .timeline-row p, .recipe-card p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+      margin-top: 5px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .tile {
+      min-height: 88px;
+      padding: 12px;
+    }
+
+    .tile b, .card b {
+      display: block;
+      font-size: 14px;
+      line-height: 1.15;
+    }
+
+    .tile .big {
+      color: var(--accent);
+      display: block;
+      font-size: 25px;
+      font-weight: 950;
+      line-height: 1;
+      margin-top: 10px;
+    }
+
+    .bar {
+      height: 8px;
+      border-radius: 999px;
+      background: var(--surface2);
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      width: var(--w, 62%);
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: inherit;
+    }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .primary-action {
+      background: var(--accent);
+      border: 0;
+      border-radius: 15px;
+      color: var(--deep);
+      font-weight: 950;
+      padding: 12px 14px;
+    }
+
+    .phone.dark .primary-action { color: #061113; }
+
+    .secondary-action {
+      background: transparent;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      color: var(--text);
+      font-weight: 850;
+      padding: 11px 13px;
+    }
+
+    .nav {
+      background: color-mix(in srgb, var(--surface) 94%, transparent);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      margin-top: auto;
+      padding: 8px;
+    }
+
+    .nav span {
+      border-radius: 13px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      padding: 8px 9px;
+      text-align: center;
+      min-width: 55px;
+    }
+
+    .nav span.active {
+      background: var(--accent);
+      color: var(--deep);
+    }
+
+    .phone.dark .nav span.active { color: #061113; }
+
+    .layout-command .hero {
+      background:
+        linear-gradient(145deg, color-mix(in srgb, var(--accent) 17%, var(--surface)), var(--surface));
+      border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+    }
+
+    .layout-command .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .quick {
+      border-radius: 15px;
+      padding: 10px 6px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      text-align: center;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .layout-lanes .lane-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 13px;
+    }
+
+    .lane {
+      border-radius: 20px;
+      padding: 13px;
+      min-height: 300px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+    }
+
+    .lane:nth-child(2) { border-color: color-mix(in srgb, var(--accent2) 55%, var(--line)); }
+    .lane h4 { font-size: 15px; margin: 0 0 12px; }
+    .lane-step {
+      border-left: 3px solid var(--accent);
+      padding-left: 9px;
+      margin-bottom: 14px;
+    }
+
+    .layout-thumb .mega {
+      align-items: center;
+      aspect-ratio: 1;
+      background: var(--accent);
+      border-radius: 50%;
+      color: var(--deep);
+      display: grid;
+      font-size: 23px;
+      font-weight: 950;
+      justify-items: center;
+      line-height: 1.05;
+      margin: 28px auto 18px;
+      text-align: center;
+      width: 210px;
+      box-shadow: 0 22px 55px color-mix(in srgb, var(--accent) 32%, transparent);
+    }
+
+    .phone.dark.layout-thumb .mega { color: #061113; }
+    .layout-thumb .sheet {
+      margin-top: auto;
+      padding: 14px;
+      border-radius: 28px 28px 18px 18px;
+    }
+
+    .layout-pro .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 13px;
+    }
+
+    .layout-pro .chart {
+      height: 128px;
+      margin-top: 13px;
+      padding: 14px;
+      position: relative;
+    }
+
+    .spark {
+      position: absolute;
+      inset: 48px 14px 20px;
+      background:
+        linear-gradient(135deg, transparent 0 35%, var(--accent) 36% 39%, transparent 40% 52%, var(--accent2) 53% 56%, transparent 57%),
+        repeating-linear-gradient(0deg, transparent 0 28px, var(--line) 29px 30px);
+      border-radius: 10px;
+    }
+
+    .layout-cards .stack {
+      display: grid;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .layout-cards .stack .card {
+      min-height: 118px;
+      padding: 16px;
+      box-shadow: 0 12px 24px color-mix(in srgb, var(--accent) 13%, transparent);
+    }
+
+    .layout-timeline .time-ruler {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+      margin: 14px 0;
+    }
+
+    .time-ruler span {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding: 11px;
+    }
+
+    .timeline-row time {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .layout-notebook .paper {
+      background:
+        linear-gradient(90deg, color-mix(in srgb, var(--accent3) 16%, transparent) 0 54px, transparent 54px),
+        repeating-linear-gradient(0deg, var(--surface) 0 36px, color-mix(in srgb, var(--line) 70%, transparent) 37px 38px);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      margin-top: 13px;
+      min-height: 430px;
+      padding: 18px 15px 18px 66px;
+    }
+
+    .note-line {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .note-line::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      background: var(--accent);
+      border-radius: 50%;
+      left: -35px;
+      top: 4px;
+      position: absolute;
+    }
+
+    .layout-night .night-panel {
+      background: #0c171c;
+      border: 1px solid color-mix(in srgb, var(--accent) 48%, #263d45);
+      border-radius: 24px;
+      color: #f7fbf8;
+      margin-top: 13px;
+      padding: 18px;
+    }
+
+    .layout-night.light .night-panel {
+      background: #17292f;
+      color: #f7fbf8;
+    }
+
+    .night-panel p { color: #d3e1e4; }
+    .night-number {
+      color: var(--accent);
+      font-size: 58px;
+      font-weight: 950;
+      line-height: .92;
+      margin: 16px 0 5px;
+    }
+
+    .layout-setup .family-map {
+      border-radius: 24px;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 22%, var(--surface)), var(--surface));
+      border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--line));
+      margin-top: 13px;
+      padding: 16px;
+    }
+
+    .avatar-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .avatar {
+      width: 58px;
+      height: 58px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-weight: 950;
+    }
+
+    .layout-minimal .minimal-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .minimal-row {
+      align-items: center;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      border-radius: 14px;
+      display: grid;
+      grid-template-columns: 38px 1fr auto;
+      gap: 10px;
+      padding: 11px 8px;
+    }
+
+    .minimal-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      background: color-mix(in srgb, var(--accent) 18%, var(--surface2));
+    }
+
+    .detail-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .notes-card, .detail-card {
+      padding: 16px;
+    }
+
+    .notes-card h3, .detail-card h3 {
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .notes-card p, .detail-card p, .detail-card li {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .detail-card ul {
+      margin: 10px 0 0;
+      padding-left: 19px;
+    }
+
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .color-line {
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      display: flex;
+      gap: 9px;
+      min-width: 0;
+      padding: 8px;
+    }
+
+    .color-chip {
+      border-radius: 9px;
+      flex: 0 0 auto;
+      height: 26px;
+      width: 26px;
+      border: 1px solid rgba(0,0,0,.12);
+    }
+
+    .color-line span {
+      color: var(--muted);
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .section-map {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .section-mini {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px;
+      background: rgba(255,255,255,.62);
+    }
+
+    .section-mini b {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 3px;
+    }
+
+    .section-mini span {
+      color: var(--muted);
+      display: block;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    @media (max-width: 1180px) {
+      .app { grid-template-columns: 1fr; }
+      .rail { position: relative; height: auto; min-height: 0; }
+      .workspace { grid-template-columns: 1fr; }
+      .controls { justify-items: stretch; }
+      .topbar { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      main, .rail { padding: 16px; }
+      .phone-wrap.both { grid-template-columns: 1fr; }
+      .workspace { display: block; }
+      .detail-stack { margin-top: 18px; }
+      .section-map, .palette-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="rail">
+      <div class="brand">
+        <div class="mark" aria-hidden="true"></div>
+        <div>
+          <h1>LittleNest working UI lookbook</h1>
+          <p>10 distinct systems built around the real app flow.</p>
+        </div>
+      </div>
+
+      <section class="source-box">
+        <h2>Reference patterns used</h2>
+        <p>Nara: calm shared tracking, multiple children, routines. Huckleberry: one-touch logging, sleep prediction, AI guidance. Baby Daybook/Talli: quick logging, widgets, caregiver sync, dark night use.</p>
+        <ul>
+          <li>Low-tech parent: fewer decisions, big readable actions.</li>
+          <li>High-tech parent: summaries, comparisons, controls, automation.</li>
+        </ul>
+      </section>
+
+      <section class="map-box">
+        <h2>Current app model</h2>
+        <p><b>Tabs:</b> Recipes, Home, AI, Settings.</p>
+        <p><b>Home cards:</b> Sleep, Feed, Growth, Food Tasting, twin picker, 14-day learning card.</p>
+        <p><b>Hidden flows:</b> Sleep history, Feed composer/history, Growth composer/history, Food Tasting checklist.</p>
+      </section>
+
+      <div id="systemList" class="system-list" aria-label="Design systems"></div>
+    </aside>
+
+    <main>
+      <div class="topbar">
+        <div>
+          <h2 id="systemTitle">System title</h2>
+          <p id="systemIntro">System intro</p>
+        </div>
+        <div class="controls">
+          <div class="seg" id="modeSeg" aria-label="Mode">
+            <button data-mode="light">Light</button>
+            <button data-mode="dark">Dark</button>
+            <button data-mode="both">Both</button>
+          </div>
+          <div class="seg" id="childSeg" aria-label="Child setup">
+            <button data-child="girl">Girl</button>
+            <button data-child="boy">Boy</button>
+            <button data-child="twins">Mixed twins</button>
+          </div>
+        </div>
+      </div>
+
+      <nav id="sectionTabs" class="section-tabs" aria-label="Sections"></nav>
+
+      <section class="workspace">
+        <div class="phone-stage">
+          <div id="phoneWrap" class="phone-wrap"></div>
+        </div>
+        <div class="detail-stack">
+          <section class="notes-card">
+            <h3>What this system does</h3>
+            <p id="systemBehavior"></p>
+          </section>
+          <section class="detail-card">
+            <h3 id="sectionDetailTitle">Section behavior</h3>
+            <p id="sectionDetailBody"></p>
+            <ul id="sectionSteps"></ul>
+          </section>
+          <section class="detail-card">
+            <h3>Palette and child accents</h3>
+            <p id="paletteLogic"></p>
+            <div id="paletteGrid" class="palette-grid"></div>
+          </section>
+          <section class="detail-card">
+            <h3>All sections in this system</h3>
+            <div id="sectionMap" class="section-map"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const sections = [
+      { id: "home", label: "Home", short: "Control center", title: "Today for Ari and Noa", kicker: "14-day learning", primary: "Next likely need: bottle in 28 min", secondary: "Sleep idle, last feed 07:40, growth open from Home.", actions: ["Start sleep", "Add feed", "Add growth"], metrics: ["2 naps", "420 mL", "3 tastings"], steps: ["Shows the learning card until 14 tracked days are collected.", "Lets parent switch boy, girl, or mixed twins before logging.", "Keeps Sleep, Feed, Growth, and Food Tasting as Home actions."] },
+      { id: "sleep", label: "Sleep", short: "Timer and history", title: "Sleep session", kicker: "Live or idle", primary: "Sleeping now - 42 min", secondary: "Parent can start, end, or view recent sessions without losing bottom navigation.", actions: ["End sleep", "View history", "Add past sleep"], metrics: ["42 min", "Started 08:12", "0 wakes"], steps: ["Big active state when sleep is running.", "End action opens a confirmation sheet.", "History stays visible for parents who want detail."] },
+      { id: "feed", label: "Feed", short: "Bottle/nursing sheet", title: "Feed composer", kicker: "Minimizable", primary: "Choose bottle or nursing", secondary: "Bottle presets, custom amount, and nursing side timers stay available from the same sheet.", actions: ["Bottle", "Nursing", "Minimize"], metrics: ["120 mL", "Left 08:21", "Right paused"], steps: ["The plus button opens the feed sheet from Home.", "Nursing timers keep running if the sheet is minimized.", "Low-tech path is one tap to preset bottle amounts."] },
+      { id: "tastings", label: "Tastings", short: "Allergen checklist", title: "Food tasting", kicker: "Three exposures", primary: "Egg: 2 of 3 exposures", secondary: "Grouped allergen sections with tap-to-mark progress and a calm reminder card.", actions: ["Mark 1", "Mark 2", "Mark 3"], metrics: ["Egg 2/3", "Peanut 0/3", "Dairy done"], steps: ["Allergen items are grouped by category.", "Each item has a three-step progress selector.", "Dark mode uses high-contrast cards so the tasting status is readable."] },
+      { id: "recipes", label: "Recipes", short: "Search and sources", title: "Recipes", kicker: "Age aware", primary: "Iron-rich breakfast ideas", secondary: "Search, refresh, fallback ideas, image cards, and open-source links.", actions: ["Search", "Refresh", "Open source"], metrics: ["6 ideas", "9 months", "Safe texture"], steps: ["Recipes are a persistent tab.", "AI results fall back to seed ideas when needed.", "Every recipe keeps source access visible."] },
+      { id: "ai", label: "AI", short: "Guidance and compare", title: "Ask LittleNest AI", kicker: "Product-safe", primary: "Sleep, feed, or routine question", secondary: "Topic chips, one ask button, recommended answer, comparison cards, feedback.", actions: ["Sleep", "Feed", "Ask"], metrics: ["Recommended", "Sources", "Feedback"], steps: ["Parent chooses a topic before asking.", "The app hides raw provider errors behind product-safe copy.", "High-tech users can compare answers; low-tech users see one recommendation first."] },
+      { id: "growth", label: "Growth", short: "Measurements", title: "Growth", kicker: "Home popup", primary: "Weight, height, head", secondary: "Unified measurement sheet with metric/imperial toggle and history access.", actions: ["Metric", "Imperial", "Save"], metrics: ["8.4 kg", "70 cm", "43 cm"], steps: ["Growth is launched from Home rather than permanent tab.", "Parent can fill one field or all three.", "History supports trend review later."] },
+      { id: "settings", label: "Settings", short: "Family controls", title: "Settings", kicker: "Simple setup", primary: "Units, language, family setup", secondary: "Feed unit, app language, family setup, and subscription live in a quiet settings tab.", actions: ["mL", "oz", "Family"], metrics: ["EN", "HE", "RU"], steps: ["Settings is visible in the bottom navigation in the current repo.", "Controls use segmented buttons for low-confusion changes.", "Family setup keeps boy, girl, and mixed twins as first-class choices."] }
+    ];
+
+    const systems = [
+      {
+        id: "01-command-dock",
+        name: "01 Command Dock",
+        layout: "command",
+        accent: "#0B6F6A",
+        secondary: "#F05D5E",
+        tagline: "Closest to Nara, but more useful for LittleNest: Home is a calm command board.",
+        behavior: "Best for most parents. It keeps the current Home-card model, makes every action obvious, and adds a compact timeline so high-tech users still get signal without burying low-tech users.",
+        fit: "Recommended base direction.",
+        paletteLogic: "Warm white light mode, dark teal night mode, with boy/girl/twin accents applied only to actions and child identity.",
+        colors: { lightBg: "#F7F6EF", lightSurface: "#FFFFFF", darkBg: "#081416", darkSurface: "#102126", text: "#142128", darkText: "#F8FCFA", boy: "#2B83BA", girl: "#E56B6F", twin: "#0B6F6A", twin2: "#E1B866" }
+      },
+      {
+        id: "02-twin-lanes",
+        name: "02 Twin Lanes",
+        layout: "lanes",
+        accent: "#2364AA",
+        secondary: "#C44569",
+        tagline: "Built for mixed twins first: two parallel child lanes and one shared family command row.",
+        behavior: "Best if twins are a major product differentiator. It reduces wrong-child logging by keeping both children visible, while single-child families get one lane plus a shared routine queue.",
+        fit: "Strong for mixed twins and caregiver handoff.",
+        paletteLogic: "Clear blue/rose identity lanes plus amber shared-family status. Dark mode uses near-black navy with bright lane borders.",
+        colors: { lightBg: "#F3F7FB", lightSurface: "#FFFFFF", darkBg: "#07111F", darkSurface: "#101C2E", text: "#142033", darkText: "#F8FAFC", boy: "#2364AA", girl: "#C44569", twin: "#2364AA", twin2: "#D99A27" }
+      },
+      {
+        id: "03-one-hand",
+        name: "03 One-Hand Console",
+        layout: "thumb",
+        accent: "#32746D",
+        secondary: "#F4A261",
+        tagline: "For exhausted parents: one giant action and the rest lives in a thumb-friendly lower sheet.",
+        behavior: "Best for low-technology users and nighttime logging. It trades dashboard density for big targets, persistent resume states, and obvious next action.",
+        fit: "Lowest cognitive load.",
+        paletteLogic: "Sage and apricot in light mode, deep green and honey in dark mode, with very bright text for night readability.",
+        colors: { lightBg: "#F1F6F0", lightSurface: "#FFFFFF", darkBg: "#061512", darkSurface: "#10221E", text: "#182320", darkText: "#F7FFF9", boy: "#32746D", girl: "#D85C70", twin: "#32746D", twin2: "#F4A261" }
+      },
+      {
+        id: "04-family-os",
+        name: "04 Family OS",
+        layout: "pro",
+        accent: "#31572C",
+        secondary: "#9A348E",
+        tagline: "A high-end dashboard with charts, predictions, comparisons, and power controls.",
+        behavior: "Best for analytical parents. It keeps first actions accessible, then gives summaries, trends, and comparisons for parents who want to optimize routines.",
+        fit: "High-tech premium direction.",
+        paletteLogic: "Olive, magenta, and graphite create an adult premium palette without baby pastels. Dark mode is high-contrast charcoal.",
+        colors: { lightBg: "#F5F7F1", lightSurface: "#FFFFFF", darkBg: "#090D0B", darkSurface: "#151C18", text: "#161F19", darkText: "#F3FAF2", boy: "#3267A8", girl: "#9A348E", twin: "#31572C", twin2: "#E0A458" }
+      },
+      {
+        id: "05-care-cards",
+        name: "05 Care Cards",
+        layout: "cards",
+        accent: "#8A5A44",
+        secondary: "#2A9D8F",
+        tagline: "Physical card feeling: one task per card, large type, almost no dashboard complexity.",
+        behavior: "Best for parents who dislike apps. Each screen feels like a small card stack: what is happening, what to do next, and where history lives.",
+        fit: "Very approachable, less data-heavy.",
+        paletteLogic: "Clay, teal, and butter with dark mode shifted to espresso-black surfaces and cream text.",
+        colors: { lightBg: "#FAF4EA", lightSurface: "#FFFDF8", darkBg: "#15100D", darkSurface: "#211915", text: "#261B16", darkText: "#FFF8EA", boy: "#386FA4", girl: "#C8556D", twin: "#2A9D8F", twin2: "#E9C46A" }
+      },
+      {
+        id: "06-day-timeline",
+        name: "06 Day Timeline",
+        layout: "timeline",
+        accent: "#5E548E",
+        secondary: "#EA8C55",
+        tagline: "Everything is chronological, so caregivers can understand the day in seconds.",
+        behavior: "Best for shared caregiving. It answers: what happened, when, and what should happen next. Great for handoffs between parents, grandparents, and babysitters.",
+        fit: "Caregiver clarity.",
+        paletteLogic: "Violet is an accent, not a theme: paired with orange, ink, and paper. Dark mode uses bright lavender text accents on a readable base.",
+        colors: { lightBg: "#F8F5F1", lightSurface: "#FFFFFF", darkBg: "#111018", darkSurface: "#1D1A29", text: "#201F29", darkText: "#FAF8FF", boy: "#4776B4", girl: "#C65B7C", twin: "#5E548E", twin2: "#EA8C55" }
+      },
+      {
+        id: "07-kitchen-notebook",
+        name: "07 Kitchen Notebook",
+        layout: "notebook",
+        accent: "#3A7D44",
+        secondary: "#D1495B",
+        tagline: "A journal-led system for recipes, tastings, and everyday notes.",
+        behavior: "Best if food and recipes become a strong product pillar. The Home screen still launches tracking, but recipes and tastings feel like a coherent parent notebook.",
+        fit: "Food-forward brand.",
+        paletteLogic: "Leaf, tomato, oat, and ink. Dark mode keeps the notebook idea but uses slate paper with pale text.",
+        colors: { lightBg: "#F6F3E8", lightSurface: "#FFFDF4", darkBg: "#0D1410", darkSurface: "#19251D", text: "#172117", darkText: "#F6FFE8", boy: "#3973AC", girl: "#D1495B", twin: "#3A7D44", twin2: "#E6B655" }
+      },
+      {
+        id: "08-night-shift",
+        name: "08 Night Shift Pro",
+        layout: "night",
+        accent: "#7AE7C7",
+        secondary: "#F7A072",
+        tagline: "Dark-first, hospital-readable, designed for 3 a.m. logging.",
+        behavior: "Best for sleep/feed heavy newborn use. Light mode exists, but the system is judged by whether dark mode is readable, calm, and fast.",
+        fit: "Best dark mode.",
+        paletteLogic: "Black-green base, mint action color, coral warnings. Light mode remains crisp instead of washed out.",
+        colors: { lightBg: "#EFF7F4", lightSurface: "#FFFFFF", darkBg: "#020C0E", darkSurface: "#0E1A1D", text: "#102023", darkText: "#F5FFFC", boy: "#6DB7FF", girl: "#FF8CA1", twin: "#7AE7C7", twin2: "#F7A072" }
+      },
+      {
+        id: "09-setup-mirror",
+        name: "09 Setup Mirror",
+        layout: "setup",
+        accent: "#0A9396",
+        secondary: "#BB3E03",
+        tagline: "The first setup choice, boy/girl/twins, continues to shape the entire app.",
+        behavior: "Best for personalization. The app feels different for a boy, girl, or mixed twins without becoming a toy. It makes family setup feel important and persistent.",
+        fit: "Strong onboarding-to-product continuity.",
+        paletteLogic: "Teal, rust, golden sand, and ink. Twin mode uses two equal accents instead of one generic baby color.",
+        colors: { lightBg: "#F2F4ED", lightSurface: "#FFFFFF", darkBg: "#071314", darkSurface: "#102326", text: "#162321", darkText: "#F7FFFB", boy: "#277DA1", girl: "#BB3E70", twin: "#0A9396", twin2: "#CA6702" }
+      },
+      {
+        id: "10-premium-minimal",
+        name: "10 Premium Minimal",
+        layout: "minimal",
+        accent: "#1F7A8C",
+        secondary: "#BF4342",
+        tagline: "A mature, quiet system with strong hierarchy and almost no decoration.",
+        behavior: "Best if you want LittleNest to feel premium and trusted. It relies on spacing, typography, and precise components more than illustration.",
+        fit: "Most polished adult SaaS-style direction.",
+        paletteLogic: "Porcelain, ink, steel teal, oxblood, and gold. Dark mode uses off-black and bright neutral text.",
+        colors: { lightBg: "#F8F9F7", lightSurface: "#FFFFFF", darkBg: "#090B0C", darkSurface: "#151A1D", text: "#141719", darkText: "#F7F9F8", boy: "#1F7A8C", girl: "#BF4342", twin: "#1F7A8C", twin2: "#C9A227" }
+      }
+    ];
+
+    const state = { system: systems[0].id, section: "home", mode: "both", child: "twins" };
+
+    function activeSystem() {
+      return systems.find((item) => item.id === state.system) || systems[0];
+    }
+
+    function sectionById(id) {
+      return sections.find((item) => item.id === id) || sections[0];
+    }
+
+    function paletteFor(system, mode, child) {
+      const c = system.colors;
+      const accent = child === "boy" ? c.boy : child === "girl" ? c.girl : c.twin;
+      const accent2 = child === "twins" ? c.twin2 : system.secondary;
+      const isDark = mode === "dark";
+      return {
+        bg: isDark ? c.darkBg : c.lightBg,
+        surface: isDark ? c.darkSurface : c.lightSurface,
+        surface2: isDark ? mix(accent, isDark ? "#101A1D" : "#FFFFFF", isDark ? .28 : .14) : mix(accent, "#FFFFFF", .12),
+        text: isDark ? c.darkText : c.text,
+        muted: isDark ? "#C8D4D6" : "#5F6E73",
+        line: isDark ? mix(accent, "#263941", .32) : "#D9E0D9",
+        accent,
+        accent2,
+        accent3: c.twin2,
+        deep: isDark ? "#061113" : mix(accent, "#001010", .58)
+      };
+    }
+
+    function mix(hex1, hex2, amount) {
+      const a = parseHex(hex1), b = parseHex(hex2);
+      const c = a.map((v, i) => Math.round(v * amount + b[i] * (1 - amount)));
+      return "#" + c.map((v) => v.toString(16).padStart(2, "0")).join("");
+    }
+
+    function parseHex(hex) {
+      const clean = hex.replace("#", "");
+      return [0, 2, 4].map((i) => parseInt(clean.slice(i, i + 2), 16));
+    }
+
+    function childNames(child) {
+      if (child === "boy") return { title: "Ari", subtitle: "Boy setup", initials: ["A"] };
+      if (child === "girl") return { title: "Noa", subtitle: "Girl setup", initials: ["N"] };
+      return { title: "Ari and Noa", subtitle: "Mixed twins setup", initials: ["A", "N"] };
+    }
+
+    function phoneStyle(system, mode, child) {
+      const p = paletteFor(system, mode, child);
+      return `--bg:${p.bg};--surface:${p.surface};--surface2:${p.surface2};--text:${p.text};--muted:${p.muted};--line:${p.line};--accent:${p.accent};--accent2:${p.accent2};--accent3:${p.accent3};--deep:${p.deep};`;
+    }
+
+    function renderPhone(system, section, mode, child) {
+      const names = childNames(child);
+      const navActive = section.id === "recipes" ? "Recipes" : section.id === "ai" ? "AI" : section.id === "settings" ? "Settings" : "Home";
+      return `
+        <article class="phone ${mode} layout-${system.layout}" style="${phoneStyle(system, mode, child)}">
+          <div class="phone-screen">
+            <div class="status"><span>9:41</span><span>${mode === "dark" ? "Night readable" : "Light readable"}</span></div>
+            ${renderHeader(system, section, names)}
+            ${renderLayout(system, section, names, child, mode)}
+            <nav class="nav" aria-label="Bottom navigation">
+              ${["Recipes", "Home", "AI", "Settings"].map((item) => `<span class="${item === navActive ? "active" : ""}">${item}</span>`).join("")}
+            </nav>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderHeader(system, section, names) {
+      return `
+        <div class="top-row">
+          <div>
+            <h3>${section.title}</h3>
+            <div class="sub">${names.subtitle} / ${system.fit}</div>
+          </div>
+          <span class="chip"><i class="dot"></i>${names.title}</span>
+        </div>
+      `;
+    }
+
+    function renderLayout(system, section, names, child, mode) {
+      const layout = system.layout;
+      if (layout === "command") return commandLayout(section, names);
+      if (layout === "lanes") return lanesLayout(section, names, child);
+      if (layout === "thumb") return thumbLayout(section);
+      if (layout === "pro") return proLayout(section);
+      if (layout === "cards") return cardsLayout(section);
+      if (layout === "timeline") return timelineLayout(section);
+      if (layout === "notebook") return notebookLayout(section);
+      if (layout === "night") return nightLayout(section);
+      if (layout === "setup") return setupLayout(section, names, child);
+      return minimalLayout(section);
+    }
+
+    function commandLayout(section, names) {
+      return `
+        <section class="hero">
+          <span class="mini-pill">${section.kicker}</span>
+          <strong>${section.primary}</strong>
+          <p>${section.secondary}</p>
+          <div class="quick-grid">
+            ${section.actions.map((a) => `<div class="quick">${a}</div>`).join("")}
+            <div class="quick">History</div>
+          </div>
+        </section>
+        <div class="grid-2">
+          ${section.metrics.map((m, i) => `<div class="tile"><b>${["Now", "Recent", "Next"][i] || "More"}</b><span class="big">${m}</span><p>${i === 0 ? "primary status" : "quick detail"}</p></div>`).join("")}
+          <div class="tile"><b>Caregiver handoff</b><p>Last actions stay visible when switching parents.</p><div class="bar"><span style="--w:72%"></span></div></div>
+        </div>
+      `;
+    }
+
+    function lanesLayout(section, names, child) {
+      const lane2 = child === "twins" ? "Noa" : "Shared plan";
+      return `
+        <section class="hero">
+          <span class="mini-pill">${section.kicker}</span>
+          <strong>${section.primary}</strong>
+          <p>${section.secondary}</p>
+        </section>
+        <div class="lane-grid">
+          <div class="lane">
+            <h4>${names.initials[0] || "A"} / Ari</h4>
+            <div class="lane-step"><b>${section.actions[0]}</b><p>${section.metrics[0]}</p></div>
+            <div class="lane-step"><b>Last log</b><p>${section.metrics[1] || "No entry yet"}</p></div>
+            <button class="primary-action">Log Ari</button>
+          </div>
+          <div class="lane">
+            <h4>${child === "twins" ? "N / " : ""}${lane2}</h4>
+            <div class="lane-step"><b>${section.actions[1] || "Review"}</b><p>${section.metrics[1] || "Shared rhythm"}</p></div>
+            <div class="lane-step"><b>Next</b><p>${section.metrics[2] || "Care note"}</p></div>
+            <button class="secondary-action">${child === "twins" ? "Log Noa" : "Open plan"}</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function thumbLayout(section) {
+      return `
+        <section class="hero">
+          <span class="mini-pill">${section.kicker}</span>
+          <p>${section.secondary}</p>
+        </section>
+        <div class="mega">${section.actions[0]}<small style="font-size:12px;font-weight:850;margin-top:8px;">${section.primary}</small></div>
+        <section class="sheet">
+          <b>Thumb zone</b>
+          <p>Everything important sits below the thumb line.</p>
+          <div class="action-row">${section.actions.map((a) => `<button class="secondary-action">${a}</button>`).join("")}</div>
+        </section>
+      `;
+    }
+
+    function proLayout(section) {
+      return `
+        <section class="hero">
+          <span class="mini-pill">${section.kicker}</span>
+          <strong>${section.primary}</strong>
+          <p>${section.secondary}</p>
+        </section>
+        <div class="metric-grid">
+          ${section.metrics.map((m, i) => `<div class="tile"><b>${m}</b><p>${["trend", "prediction", "source"][i] || "detail"}</p><div class="bar"><span style="--w:${52 + i * 17}%"></span></div></div>`).join("")}
+          <div class="tile"><b>AI signal</b><p>Only after enough data; never raw provider text.</p><div class="bar"><span style="--w:64%"></span></div></div>
+        </div>
+        <div class="card chart"><b>Trend surface</b><p>High-tech view without hiding the main action.</p><div class="spark"></div></div>
+      `;
+    }
+
+    function cardsLayout(section) {
+      return `
+        <div class="stack">
+          <section class="card"><span class="mini-pill">${section.kicker}</span><h3>${section.primary}</h3><p>${section.secondary}</p></section>
+          ${section.actions.map((a, i) => `<section class="card"><b>${a}</b><p>${section.steps[i] || "One clear action per card."}</p><div class="bar"><span style="--w:${40 + i * 22}%"></span></div></section>`).join("")}
+        </div>
+      `;
+    }
+
+    function timelineLayout(section) {
+      return `
+        <section class="hero"><span class="mini-pill">${section.kicker}</span><strong>${section.primary}</strong><p>${section.secondary}</p></section>
+        <div class="time-ruler"><span>06:00</span><span>09:00</span><span>12:00</span><span>15:00</span></div>
+        ${section.actions.map((a, i) => `<div class="timeline-row"><time>${["07:40", "08:12", "Next"][i]}</time><div><b>${a}</b><p>${section.metrics[i] || section.short}</p></div></div>`).join("")}
+        <button class="primary-action">Add to timeline</button>
+      `;
+    }
+
+    function notebookLayout(section) {
+      return `
+        <div class="paper">
+          <div class="note-line"><b>${section.title}</b><p>${section.secondary}</p></div>
+          ${section.actions.map((a, i) => `<div class="note-line"><b>${a}</b><p>${section.steps[i]}</p></div>`).join("")}
+          <button class="primary-action">Save note</button>
+        </div>
+      `;
+    }
+
+    function nightLayout(section) {
+      return `
+        <section class="night-panel">
+          <span class="mini-pill">${section.kicker}</span>
+          <div class="night-number">${section.metrics[0] || "Now"}</div>
+          <b>${section.primary}</b>
+          <p>${section.secondary}</p>
+          <div class="action-row">${section.actions.map((a, i) => `<button class="${i === 0 ? "primary-action" : "secondary-action"}">${a}</button>`).join("")}</div>
+        </section>
+        <div class="grid-2">
+          <div class="tile"><b>Dim safe</b><p>Dark text contrast is designed first.</p></div>
+          <div class="tile"><b>Large touch</b><p>Fewer taps when tired.</p></div>
+        </div>
+      `;
+    }
+
+    function setupLayout(section, names, child) {
+      return `
+        <section class="family-map">
+          <span class="mini-pill">Family shape drives UI</span>
+          <strong>${names.title}</strong>
+          <p>${section.secondary}</p>
+          <div class="avatar-row">${names.initials.map((i) => `<div class="avatar">${i}</div>`).join("")}${child !== "twins" ? `<div class="avatar">+</div>` : ""}</div>
+        </section>
+        <div class="grid-2">
+          ${section.actions.map((a, i) => `<div class="tile"><b>${a}</b><p>${section.steps[i]}</p></div>`).join("")}
+          <div class="tile"><b>Family setup</b><p>Boy, girl, or mixed twins changes accents and card logic.</p></div>
+        </div>
+      `;
+    }
+
+    function minimalLayout(section) {
+      return `
+        <section class="hero"><span class="mini-pill">${section.kicker}</span><strong>${section.primary}</strong><p>${section.secondary}</p></section>
+        <div class="minimal-list">
+          ${section.actions.map((a, i) => `<div class="minimal-row"><div class="minimal-icon"></div><div><b>${a}</b><p>${section.metrics[i] || section.short}</p></div><span class="pill">Open</span></div>`).join("")}
+          <div class="minimal-row"><div class="minimal-icon"></div><div><b>History</b><p>Quiet access to detail when needed.</p></div><span class="pill">View</span></div>
+        </div>
+      `;
+    }
+
+    function renderSystems() {
+      const list = document.getElementById("systemList");
+      list.innerHTML = systems.map((system) => `
+        <button class="system-button ${state.system === system.id ? "active" : ""}" data-system="${system.id}" style="--button-accent:${system.accent}">
+          <span class="swatch-dot" style="--a:${system.accent};--b:${system.secondary}"></span>
+          <span><strong>${system.name}</strong><span>${system.tagline}</span></span>
+        </button>
+      `).join("");
+      list.querySelectorAll("button").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.system = button.dataset.system;
+          render();
+        });
+      });
+    }
+
+    function renderSegments() {
+      document.querySelectorAll("#modeSeg button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.mode === state.mode);
+        button.onclick = () => { state.mode = button.dataset.mode; render(); };
+      });
+      document.querySelectorAll("#childSeg button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.child === state.child);
+        button.onclick = () => { state.child = button.dataset.child; render(); };
+      });
+    }
+
+    function renderSectionTabs() {
+      const tabs = document.getElementById("sectionTabs");
+      tabs.innerHTML = sections.map((section) => `<button class="${section.id === state.section ? "active" : ""}" data-section="${section.id}">${section.label}</button>`).join("");
+      tabs.querySelectorAll("button").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.section = button.dataset.section;
+          render();
+        });
+      });
+    }
+
+    function renderDetails(system, section) {
+      document.getElementById("systemTitle").textContent = system.name;
+      document.getElementById("systemIntro").textContent = system.tagline;
+      document.getElementById("systemBehavior").textContent = system.behavior;
+      document.getElementById("sectionDetailTitle").textContent = `${section.label}: how it works here`;
+      document.getElementById("sectionDetailBody").textContent = `${section.short}. ${section.secondary}`;
+      document.getElementById("sectionSteps").innerHTML = section.steps.map((step) => `<li>${step}</li>`).join("");
+      document.getElementById("paletteLogic").textContent = system.paletteLogic;
+      const paletteItems = [
+        ["Light bg", system.colors.lightBg],
+        ["Light card", system.colors.lightSurface],
+        ["Dark bg", system.colors.darkBg],
+        ["Dark card", system.colors.darkSurface],
+        ["Boy", system.colors.boy],
+        ["Girl", system.colors.girl],
+        ["Twin A", system.colors.twin],
+        ["Twin B", system.colors.twin2]
+      ];
+      document.getElementById("paletteGrid").innerHTML = paletteItems.map(([label, color]) => `
+        <div class="color-line"><i class="color-chip" style="background:${color}"></i><span>${label}<br><b>${color}</b></span></div>
+      `).join("");
+      document.getElementById("sectionMap").innerHTML = sections.map((item) => `
+        <button class="section-mini" data-section="${item.id}" style="text-align:left;cursor:pointer">
+          <b>${item.label}</b><span>${item.short}</span>
+        </button>
+      `).join("");
+      document.querySelectorAll(".section-mini").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.section = button.dataset.section;
+          render();
+        });
+      });
+    }
+
+    function renderPhones(system, section) {
+      const wrap = document.getElementById("phoneWrap");
+      wrap.classList.toggle("both", state.mode === "both");
+      const modes = state.mode === "both" ? ["light", "dark"] : [state.mode];
+      wrap.innerHTML = modes.map((mode) => renderPhone(system, section, mode, state.child)).join("");
+    }
+
+    function render() {
+      const system = activeSystem();
+      const section = sectionById(state.section);
+      renderSystems();
+      renderSegments();
+      renderSectionTabs();
+      renderPhones(system, section);
+      renderDetails(system, section);
+    }
+
+    render();
+  </script>
+</body>
+</html>
