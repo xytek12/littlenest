@@ -5,6 +5,7 @@ import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FeedComposerSheet } from '../components/FeedComposerSheet';
 import { GenderedBackground } from '../components/GenderedBackground';
+import { GrowthComposerSheet } from '../components/GrowthComposerSheet';
 import { SectionCard } from '../components/SectionCard';
 import { TwinPickerCards } from '../components/TwinPickerCards';
 import { WatercolorHeader } from '../components/WatercolorHeader';
@@ -60,6 +61,7 @@ export function HomeScreen() {
     endSleep,
     family,
     feedEntries,
+    growthEntries,
     sleepSessions,
     startSleep,
   } = usePrototypeState();
@@ -81,10 +83,13 @@ export function HomeScreen() {
 
   const [showSleepModal, setShowSleepModal] = useState(false);
   const [showFeedSheet, setShowFeedSheet] = useState(false);
+  const [showGrowthSheet, setShowGrowthSheet] = useState(false);
 
   const isNursingActive =
     activeNursingSession.leftStartedAt != null || activeNursingSession.rightStartedAt != null;
   const lastFeed = feedEntries[0];
+  // Newest growth entry first (state stores them prepended on save).
+  const latestGrowth = growthEntries[0];
 
   // Keep ticker active so the active-sleep card and modal update each minute
   useTickEverySecond(activeSleepStartedAt != null);
@@ -129,6 +134,18 @@ export function HomeScreen() {
 
   function openFeedHistory() {
     navigation.navigate('FeedFlow', { screen: 'FeedHistory' });
+  }
+
+  function openGrowthHistory() {
+    navigation.navigate('Growth', { screen: 'GrowthHistory' });
+  }
+
+  function getGrowthKindLabel(kind: 'weight' | 'height' | 'head') {
+    return kind === 'weight'
+      ? dictionary.growth.weight
+      : kind === 'height'
+        ? dictionary.growth.height
+        : dictionary.growth.head;
   }
 
   return (
@@ -302,6 +319,38 @@ export function HomeScreen() {
           </Pressable>
         </SectionCard>
 
+        {/* Growth SectionCard — "+" opens the unified weight/height/head popup.
+            Growth is no longer a bottom-dock tab; it lives here so parents see
+            it alongside sleep and feed at a glance. */}
+        <SectionCard
+          sectionType="learn"
+          title={homeSleep.sectionGrowth}
+          iconEmoji="📊"
+          footerLabel={homeSleep.viewHistory}
+          onFooterPress={openGrowthHistory}
+          onPlusPress={() => setShowGrowthSheet(true)}
+          plusAccessibilityLabel={dictionary.growth.title}
+        >
+          <Pressable
+            testID="home-growth-card-body"
+            onPress={() => setShowGrowthSheet(true)}
+            style={styles.feedBody}
+          >
+            <Text style={[styles.feedActiveLabel, rtlText, { color: theme.mutedText }]}>
+              {homeSleep.growthLatestLabel}
+            </Text>
+            <Text style={[styles.feedActiveValue, rtlText, { color: theme.text }]}>
+              {latestGrowth
+                ? homeSleep.growthLatestValue(
+                    getGrowthKindLabel(latestGrowth.kind),
+                    latestGrowth.value,
+                    latestGrowth.unit,
+                  )
+                : homeSleep.growthNoMeasurementsYet}
+            </Text>
+          </Pressable>
+        </SectionCard>
+
         {/* Food tasting SectionCard */}
         <SectionCard
           sectionType="food"
@@ -320,6 +369,12 @@ export function HomeScreen() {
         visible={showFeedSheet}
         onMinimize={() => setShowFeedSheet(false)}
         onCommitted={() => setShowFeedSheet(false)}
+      />
+
+      {/* Growth composer sheet — unified popup for weight/height/head. */}
+      <GrowthComposerSheet
+        visible={showGrowthSheet}
+        onClose={() => setShowGrowthSheet(false)}
       />
 
       {/* Sleep start / end popup */}

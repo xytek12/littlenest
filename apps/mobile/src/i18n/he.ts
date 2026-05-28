@@ -333,5 +333,10 @@ export const he = {
     feedActiveResume: 'לחצו לחזרה לטיימר',
     feedLastLabel: 'האכלה אחרונה',
     feedNoneYet: 'עדיין לא נרשמה האכלה',
+    sectionGrowth: 'צמיחה',
+    growthLatestLabel: 'אחרון',
+    growthNoMeasurementsYet: 'עדיין אין מדידות',
+    growthLatestValue: (kindLabel: string, value: number, unit: string) =>
+      `${kindLabel} ${value} ${unit}`,
   },
 };

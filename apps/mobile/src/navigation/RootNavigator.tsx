@@ -52,7 +52,7 @@ export type RootTabParamList = {
   Recipes: undefined;
   Home: undefined;
   AI: undefined;
-  Growth: undefined;
+  Growth: NavigatorScreenParams<GrowthStackParamList> | undefined;
   SleepFlow: NavigatorScreenParams<SleepStackParamList> | undefined;
   FeedFlow: NavigatorScreenParams<FeedStackParamList> | undefined;
   FoodTastingFlow: undefined;

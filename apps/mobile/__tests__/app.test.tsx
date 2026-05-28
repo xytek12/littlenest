@@ -21,7 +21,9 @@ describe('app shell', () => {
     expect(getByLabelText('Recipes tab')).toBeTruthy();
     expect(getByLabelText('Home tab')).toBeTruthy();
     expect(getByLabelText('AI tab')).toBeTruthy();
-    expect(getByLabelText('Growth tab')).toBeTruthy();
+    expect(getByLabelText('Settings tab')).toBeTruthy();
+    // Growth was promoted to a Home SectionCard — it's no longer a tab.
+    expect(queryByTestId('screen-growth')).toBeNull();
 
     fireEvent.press(getByRole('button', { name: /Recipes tab/i }));
 
@@ -30,10 +32,6 @@ describe('app shell', () => {
 
     fireEvent.press(getByRole('button', { name: /AI tab/i }));
     expect(getByTestId('screen-ai')).toBeTruthy();
-
-    fireEvent.press(getByRole('button', { name: /Growth tab/i }));
-    expect(getByTestId('screen-growth')).toBeTruthy();
-    expect(getByText('Height')).toBeTruthy();
   });
 
   it('starts sleep from the home popup and stays on home with the active sleep card', () => {
@@ -89,7 +87,7 @@ describe('app shell', () => {
     expect(getByLabelText(`${he.tabs.recipes} tab`)).toBeTruthy();
     expect(getByLabelText(`${he.tabs.home} tab`)).toBeTruthy();
     expect(getByLabelText('AI tab')).toBeTruthy();
-    expect(getByLabelText(`${he.tabs.growth} tab`)).toBeTruthy();
+    expect(getByLabelText(`${he.tabs.settings} tab`)).toBeTruthy();
     expect(getByTestId('screen-settings')).toBeTruthy();
     expect(getByText(he.settings.language)).toBeTruthy();
 
@@ -105,26 +103,25 @@ describe('app shell', () => {
     expect(getByText(he.common.year)).toBeTruthy();
   });
 
-  it('localizes feed and growth screens after switching to Hebrew', () => {
-    const { getAllByText, getByLabelText, getByText } = render(<App />);
+  it('localizes the feed and growth popups after switching to Hebrew', () => {
+    const { getByLabelText, getByText } = render(<App />);
 
     completeFamilySetup(getByText);
     fireEvent.press(getByLabelText('Settings tab'));
     fireEvent.press(getByText('HE'));
     fireEvent.press(getByLabelText(`${he.tabs.home} tab`));
 
-    // Pressing the Feed "+" on Home opens the FeedComposerSheet popup
-    // (no longer navigates to the FeedFlow screen). Popup must be localized.
+    // Pressing the Feed "+" on Home opens the FeedComposerSheet popup.
     fireEvent.press(getByLabelText(he.home.feedTitle));
     expect(getByText(he.feed.sheetTitle)).toBeTruthy();
     expect(getByText(he.feed.bottle)).toBeTruthy();
     expect(getByText(he.feed.nursing)).toBeTruthy();
 
-    // Navigate to growth via the bottom tab.
-    fireEvent.press(getByLabelText(`${he.tabs.growth} tab`));
-
-    expect(getAllByText(he.growth.title).length).toBeGreaterThan(0);
+    // Close the feed sheet, then open the growth popup from its Home card.
+    fireEvent.press(getByLabelText('Minimize feed composer'));
+    fireEvent.press(getByLabelText(he.growth.title));
     expect(getByText(he.growth.metric)).toBeTruthy();
-    expect(getByText(he.growth.weight)).toBeTruthy();
+    expect(getByText(he.growth.imperial)).toBeTruthy();
+    expect(getByText(he.growth.save)).toBeTruthy();
   });
 });

@@ -354,5 +354,12 @@ export const en = {
     feedActiveResume: 'Tap to resume',
     feedLastLabel: 'LAST FEED',
     feedNoneYet: 'No feed recorded yet',
+    /** Growth card on Home — title shown on the banner */
+    sectionGrowth: 'Growth',
+    growthLatestLabel: 'LATEST',
+    growthNoMeasurementsYet: 'No measurements yet',
+    /** "Weight 8.2 kg" — used to summarize the most recent growth entry */
+    growthLatestValue: (kindLabel: string, value: number, unit: string) =>
+      `${kindLabel} ${value} ${unit}`,
   },
 };

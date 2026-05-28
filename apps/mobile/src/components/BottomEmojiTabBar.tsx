@@ -12,7 +12,6 @@ const tabMeta = {
   Recipes: { emoji: '🍽️', labelKey: 'recipes' },
   Home: { emoji: '🏠', labelKey: 'home' },
   AI: { emoji: '✨', labelKey: 'ai' },
-  Growth: { emoji: '📊', labelKey: 'growth' },
   Settings: { emoji: '⚙️', labelKey: 'settings' },
 } satisfies Record<
   (typeof visibleTabs)[number],
