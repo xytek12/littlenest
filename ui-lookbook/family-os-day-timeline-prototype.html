@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="he" dir="rtl">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>LittleNest Family OS + Day Timeline Prototype</title>
+  <title>LittleNest - אב טיפוס בית וציר יום</title>
   <style>
     :root {
       --page: #eef3f1;
@@ -180,6 +180,63 @@
       color: var(--text);
     }
 
+    .phone.rtl .screen {
+      direction: rtl;
+    }
+
+    .phone.rtl .top,
+    .phone.rtl .child-chip,
+    .phone.rtl .action,
+    .phone.rtl .event-card,
+    .phone.rtl .log-item,
+    .phone.rtl .choice,
+    .phone.rtl .breast-card,
+    .phone.rtl .exposure-card,
+    .phone.rtl .setting-card,
+    .phone.rtl .recipe-card,
+    .phone.rtl .ai-card,
+    .phone.rtl .settings-card,
+    .phone.rtl .card,
+    .phone.rtl .mini-stat {
+      text-align: right;
+    }
+
+    .phone.rtl .time-row {
+      direction: rtl;
+      grid-template-columns: 52px 32px minmax(0, 1fr);
+    }
+
+    .phone.rtl .time-row:not(:last-child)::after {
+      left: auto;
+      right: 68px;
+    }
+
+    .phone.rtl .time {
+      grid-column: 1;
+      text-align: left;
+    }
+
+    .phone.rtl .event-dot {
+      grid-column: 2;
+    }
+
+    .phone.rtl .event-card {
+      border-left-width: 1px;
+      border-right: 5px solid var(--event-type-color);
+      grid-column: 3;
+    }
+
+    .phone.rtl .nav {
+      direction: rtl;
+    }
+
+    .phone.rtl input,
+    .phone.rtl textarea,
+    .phone.rtl select {
+      direction: rtl;
+      text-align: right;
+    }
+
     .phone::before {
       background: #111417;
       border-radius: 0 0 18px 18px;
@@ -328,6 +385,14 @@
       margin-bottom: 12px;
     }
 
+    .os-grid.single-os {
+      grid-template-columns: 1fr;
+    }
+
+    .os-grid.single-os .os-card.main {
+      grid-row: auto;
+    }
+
     .os-card, .card, .timeline, .recipe-card, .ai-card, .settings-card {
       background: var(--surface);
       border: 1px solid var(--line-phone);
@@ -425,6 +490,24 @@
       color: #061113;
     }
 
+    .action.sleep-action {
+      background: #4f73dc;
+      border-color: #4f73dc;
+      color: #ffffff;
+    }
+
+    .action.feed-action {
+      background: #2f8f9d;
+      border-color: #2f8f9d;
+      color: #ffffff;
+    }
+
+    .action.tasting-action {
+      background: #4a9a63;
+      border-color: #4a9a63;
+      color: #ffffff;
+    }
+
     .action.shared {
       background: var(--shared);
       border-color: var(--shared);
@@ -444,6 +527,13 @@
       line-height: 1.25;
       margin-top: 6px;
       opacity: .84;
+    }
+
+    .action.sleep-action span,
+    .action.feed-action span,
+    .action.tasting-action span {
+      color: rgba(255,255,255,.9);
+      opacity: 1;
     }
 
     .timeline {
@@ -588,6 +678,45 @@
       font-weight: 760;
       line-height: 1.3;
       margin-top: 4px;
+    }
+
+    .event-detail {
+      color: var(--muted-phone);
+      display: block;
+      font-size: 11px;
+      font-weight: 760;
+      line-height: 1.3;
+      margin-top: 4px;
+    }
+
+    .sleep-range {
+      align-items: center;
+      direction: ltr;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr auto 1fr;
+      margin-top: 5px;
+    }
+
+    .sleep-range b {
+      color: var(--text);
+      font-size: 12px;
+    }
+
+    .sleep-range b:first-child {
+      text-align: left;
+    }
+
+    .sleep-range b:last-child {
+      text-align: right;
+    }
+
+    .sleep-range i {
+      background: var(--line-phone);
+      border-radius: 999px;
+      display: block;
+      height: 2px;
+      width: 28px;
     }
 
     .event-meta {
@@ -931,6 +1060,10 @@
       margin-top: 10px;
     }
 
+    .form-row.single {
+      grid-template-columns: 1fr;
+    }
+
     .field {
       background: var(--surface-2);
       border: 1px solid var(--line-phone);
@@ -938,6 +1071,25 @@
       color: var(--text);
       min-height: 44px;
       padding: 10px 12px;
+      width: 100%;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 10px;
+      font-weight: 950;
+      margin-bottom: 5px;
+      opacity: .7;
+    }
+
+    .field input,
+    .field select {
+      background: transparent;
+      border: 0;
+      color: inherit;
+      font: inherit;
+      outline: 0;
+      padding: 0;
       width: 100%;
     }
 
@@ -978,23 +1130,23 @@
 <body>
   <div class="shell">
     <aside class="panel">
-      <h1>Family OS + Day Timeline</h1>
-      <p class="lede">A single mixed direction: Family OS gives the high-level intelligence, Day Timeline keeps every action understandable for tired parents and caregiver handoff.</p>
+      <h1>בית חכם + ציר יום</h1>
+      <p class="lede">כיוון אחד משולב: הבית נותן תמונת מצב חכמה, וציר היום שומר כל פעולה ברורה להורה עייף ולמטפל שמחליף אותו.</p>
 
       <div class="control-block">
-        <h2>Mode</h2>
+        <h2>מצב תצוגה</h2>
         <div class="seg two" id="modeControls">
-          <button data-mode="light">Light</button>
-          <button data-mode="dark">Dark</button>
+          <button data-mode="light">בהיר</button>
+          <button data-mode="dark">כהה</button>
         </div>
       </div>
 
       <div class="control-block">
-        <h2>What to test</h2>
+        <h2>מה לבדוק</h2>
         <div class="note-list">
-          <div class="note"><strong>Twins are separated for logs</strong><span>Sleep, feed, allergen, and growth ask for the child first. The first letter badge stays on the timeline.</span></div>
-          <div class="note"><strong>Recipes are shared</strong><span>Recipes are for the family pair, with age and allergen awareness shown as shared context.</span></div>
-          <div class="note"><strong>Low-tech and high-tech together</strong><span>Big buttons do the job fast. The OS cards and timeline give detail when parents want it.</span></div>
+          <div class="note"><strong>תאומים מופרדים בלוגים</strong><span>שינה, האכלה ואלרגן מבקשים קודם לבחור ילד. האות הראשונה נשארת על ציר היום.</span></div>
+          <div class="note"><strong>מתכונים נשארים משותפים</strong><span>המתכון הוא למשפחה, אבל גיל ואלרגנים מוצגים בהקשר ברור.</span></div>
+          <div class="note"><strong>פשוט להורה חדש, מפורט להורה מתקדם</strong><span>כפתורים גדולים עושים את הפעולה מהר. הכרטיסים וציר היום נותנים עומק כשצריך.</span></div>
         </div>
       </div>
     </aside>
@@ -1002,7 +1154,7 @@
     <main class="stage">
       <div id="phone" class="phone">
         <div class="screen">
-          <div class="status"><span>9:41</span><span id="statusMode">Family OS</span></div>
+          <div class="status"><span>9:41</span><span id="statusMode">הגדרת תאומים</span></div>
           <div id="appScroll" class="app-scroll"></div>
           <nav class="nav" id="nav"></nav>
         </div>
@@ -1113,23 +1265,25 @@
       activeChild: "ari",
       sheet: null,
       sheetChild: "ari",
+      feedStep: "choice",
       feedType: "Bottle",
       feedAmount: "120",
       nursing: {
         ari: { leftSeconds: 0, rightSeconds: 0, leftStartedAt: null, rightStartedAt: null },
         noa: { leftSeconds: 0, rightSeconds: 0, leftStartedAt: null, rightStartedAt: null }
       },
-      allergen: "Egg",
+      allergenSection: "Fish",
+      allergen: "salmon",
       exposure: "2",
       sleepWakeups: "0",
-      language: "EN",
+      language: "HE",
       unitSystem: "Metric",
       subscription: "Free",
-      timelineFilter: "all",
-      recipeQuery: "iron rich breakfast",
+      timelineFilter: "both",
+      recipeQuery: "ארוחת בוקר עשירה בברזל",
       savedRecipes: [],
       aiTopic: "Sleep",
-      aiQuestion: "What should I watch for before the next nap?",
+      aiQuestion: "מה כדאי לשים לב אליו לפני השינה הבאה?",
       aiAnswer: null,
       editLogId: null,
       pendingSleepChild: null,
@@ -1140,11 +1294,334 @@
         { id: 1, day: "today", time: "07:10", child: "ari", type: "Sleep", start: "05:52", end: "07:10", wakeups: "1", detail: "05:52 - 07:10 with 1 wakeup" },
         { id: 2, day: "today", time: "07:42", child: "noa", type: "Bottle", amount: "110", unit: "mL", detail: "110 mL" },
         { id: 3, day: "today", time: "08:05", child: "both", type: "Recipe", detail: "Oat banana bowl saved for both" },
-        { id: 4, day: "today", time: "08:30", child: "ari", type: "Allergen", allergen: "Egg", exposure: "2", detail: "Egg exposure 2 of 3" }
+        { id: 4, day: "today", time: "08:30", child: "ari", type: "Allergen", allergen: "salmon", exposure: "2", detail: "Salmon exposure 2 of 3" }
       ]
     };
 
-    const navItems = ["Home", "Recipes", "AI", "Settings"];
+    const navItems = ["home", "recipes", "ai", "settings"];
+
+    const allergenSections = [
+      { id: "Eggs", en: "Eggs", he: "ביצים" },
+      { id: "Milk / Dairy", en: "Milk / Dairy", he: "חלב / מוצרי חלב" },
+      { id: "Wheat", en: "Wheat", he: "חיטה" },
+      { id: "Soy", en: "Soy", he: "סויה" },
+      { id: "Sesame", en: "Sesame", he: "שומשום" },
+      { id: "Peanut & Tree Nuts", en: "Peanut & Tree Nuts", he: "בוטנים ואגוזי עץ" },
+      { id: "Fish", en: "Fish", he: "דגים" },
+      { id: "Shellfish", en: "Shellfish", he: "פירות ים" }
+    ];
+
+    const allergenItems = [
+      { id: "egg", section: "Eggs", en: "Egg", he: "ביצה" },
+      { id: "milk", section: "Milk / Dairy", en: "Milk", he: "חלב" },
+      { id: "yogurt", section: "Milk / Dairy", en: "Yogurt", he: "יוגורט" },
+      { id: "cheese", section: "Milk / Dairy", en: "Cheese", he: "גבינה" },
+      { id: "wheat-cereal", section: "Wheat", en: "Wheat cereal", he: "דייסת חיטה" },
+      { id: "pasta", section: "Wheat", en: "Pasta", he: "פסטה" },
+      { id: "bread", section: "Wheat", en: "Bread", he: "לחם" },
+      { id: "tofu", section: "Soy", en: "Tofu", he: "טופו" },
+      { id: "soy-yogurt", section: "Soy", en: "Soy yogurt", he: "יוגורט סויה" },
+      { id: "edamame", section: "Soy", en: "Edamame", he: "אדממה" },
+      { id: "tahini", section: "Sesame", en: "Tahini", he: "טחינה" },
+      { id: "sesame-seed", section: "Sesame", en: "Sesame seed", he: "זרעי שומשום" },
+      { id: "peanut", section: "Peanut & Tree Nuts", en: "Peanut", he: "בוטן" },
+      { id: "almond", section: "Peanut & Tree Nuts", en: "Almond", he: "שקד" },
+      { id: "cashew", section: "Peanut & Tree Nuts", en: "Cashew", he: "קשיו" },
+      { id: "hazelnut", section: "Peanut & Tree Nuts", en: "Hazelnut", he: "אגוז לוז" },
+      { id: "pecan", section: "Peanut & Tree Nuts", en: "Pecan", he: "פקאן" },
+      { id: "pistachio", section: "Peanut & Tree Nuts", en: "Pistachio", he: "פיסטוק" },
+      { id: "walnut", section: "Peanut & Tree Nuts", en: "Walnut", he: "אגוז מלך" },
+      { id: "brazil-nut", section: "Peanut & Tree Nuts", en: "Brazil nut", he: "אגוז ברזיל" },
+      { id: "macadamia", section: "Peanut & Tree Nuts", en: "Macadamia", he: "מקדמיה" },
+      { id: "pine-nut", section: "Peanut & Tree Nuts", en: "Pine nut", he: "צנובר" },
+      { id: "salmon", section: "Fish", en: "Salmon", he: "סלמון" },
+      { id: "cod", section: "Fish", en: "Cod", he: "בקלה" },
+      { id: "tuna", section: "Fish", en: "Tuna", he: "טונה" },
+      { id: "trout", section: "Fish", en: "Trout", he: "פורל" },
+      { id: "sardine", section: "Fish", en: "Sardine", he: "סרדין" },
+      { id: "halibut", section: "Fish", en: "Halibut", he: "הליבוט" },
+      { id: "shrimp", section: "Shellfish", en: "Shrimp", he: "שרימפס" },
+      { id: "crab", section: "Shellfish", en: "Crab", he: "סרטן" },
+      { id: "lobster", section: "Shellfish", en: "Lobster", he: "לובסטר" },
+      { id: "clam", section: "Shellfish", en: "Clam", he: "צדפה" },
+      { id: "scallop", section: "Shellfish", en: "Scallop", he: "סקאלופ" },
+      { id: "mussel", section: "Shellfish", en: "Mussel", he: "מולה" },
+      { id: "oyster", section: "Shellfish", en: "Oyster", he: "אויסטר" }
+    ];
+
+    const copy = {
+      EN: {
+        nav: { home: "Home", recipes: "Recipes", ai: "AI", settings: "Settings" },
+        homeTitle: "Family OS",
+        homeSubtitle: "High-level signals on top. Full day timeline below.",
+        learning: "Learning engine",
+        learningBody: "Learning days collected before AI becomes confident.",
+        startSleep: "Start sleep",
+        addFeed: "Add feed",
+        allergen: "Allergen",
+        pickChild: "Pick child first, then start timer.",
+        singleSleepHint: "Start sleep",
+        twinsSleepHint: "Choose child, then start timer.",
+        feedHint: "Bottle or nursing for selected child.",
+        singleFeedHint: "Bottle or nursing.",
+        twinsFeedHint: "Choose child, then bottle or nursing.",
+        allergenHint: "Track 1 of 3, 2 of 3, 3 of 3.",
+        tasting: "Allergens or tastings",
+        singleTastingHint: "Track tasting 1 of 3.",
+        twinsTastingHint: "Choose child, then tasting.",
+        timeline: "Today timeline",
+        timelineHint: "Tap a log to edit it manually.",
+        sleepLogs: "sleep logs",
+        feeds: "feeds",
+        allergens: "allergens",
+        bottle: "Bottle",
+        nursing: "Nursing",
+        sleep: "Sleep",
+        recipe: "Recipe",
+        aiLabel: "AI",
+        chooseFeed: "Choose feed type",
+        chooseFeedHint: "First choose bottle or nursing. Then fill the details.",
+        child: "Child",
+        tapToEdit: "Tap to edit",
+        noLogs: "No logs for this filter yet.",
+        logCount: "logs",
+        editTitle: "Edit",
+        manualCorrection: "Manual correction. The saved log time is fixed; edit only what actually happened.",
+        chooseTwin: "Choose the twin below if this log belongs to the other child.",
+        currentSetup: "Current family setup",
+        preview: "Preview",
+        done: "Done",
+        cancel: "Cancel",
+        back: "Back",
+        save: "Save",
+        startSleepSheet: "Start sleep",
+        endSleepSheet: "End sleep",
+        sleepSheetHint: "Choose the child first. The timeline will show the first letter badge.",
+        sleepingNow: "Sleeping",
+        noActiveSleep: "No active sleep",
+        tapStartSleep: "Tap start to begin a live sleep state.",
+        wakeupsTitle: "How many wakeups?",
+        wakeupsHint: "This appears only after pressing End sleep.",
+        sleepEnding: "Sleep ending",
+        chooseWakeups: "Choose wakeups before saving the sleep log.",
+        wakeups: "wakeups",
+        saveSleep: "Save sleep",
+        bottleAmount: "Bottle amount",
+        leftBreast: "Breast left",
+        rightBreast: "Breast right",
+        total: "Total",
+        secondsNote: "Left and right are saved as seconds. Preview shows them as timer values.",
+        feedChildSpecific: "Feed is child-specific. Nursing separates breast left and breast right.",
+        running: "running",
+        stopped: "stopped",
+        presets: "mL presets",
+        ozAmount: "oz amount",
+        leftRightTimer: "Left / right timer",
+        saveFeed: "Save feed",
+        bottleSaveHint: "Bottle amount will save as",
+        allergenTitle: "Allergens or tastings",
+        chooseAllergen: "Choose allergen",
+        allergenSheetHint: "Allergen progress is separate for each twin, even when recipes are shared.",
+        exposure: "Exposure",
+        exposureOf: "of 3 exposures",
+        firstTaste: "First taste",
+        repeatSafely: "Repeat safely",
+        completeTest: "Complete test",
+        howItReads: "How it reads",
+        allergenPreview: "The timeline keeps the child badge. Recipes can stay shared, while exposure history stays separate.",
+        saveExposure: "Save exposure",
+        settingsTitle: "Settings",
+        settingsSubtitle: "Working controls for family, units, language, and plan.",
+        familySetup: "Family setup",
+        familySetupText: "Boy, girl, and twins now use clearly different palettes. Twins keep two equal child colors plus one shared recipe color.",
+        language: "Language",
+        languageText: "Preview of the real app language control.",
+        units: "Units",
+        unitsText: "Metric changes feeds to mL/kg/cm. Imperial changes feeds to oz/lb/in.",
+        subscription: "Subscription",
+        subscriptionText: "Free keeps core tracking. Plus unlocks deeper AI comparison, caregiver exports, and long-range trends.",
+        metric: "Metric",
+        imperial: "Imperial",
+        free: "Free",
+        plus: "Plus",
+        trackingBasics: "Tracking basics",
+        aiExports: "AI and exports",
+        recipesTitle: "Recipes",
+        recipesSubtitle: "Shared for the family, not separated by child.",
+        both: "Both",
+        sharedRecipe: "Shared recipe",
+        noRecipes: "No recipes found",
+        recipeTry: "Try iron, egg, dairy, breakfast, lunch, or snack.",
+        whyShared: "Why shared",
+        kitchenPlan: "One kitchen plan, two child histories",
+        kitchenPlanText: "The meal idea is shared, but allergen exposure still gets logged per child from the allergen sheet.",
+        saved: "Saved",
+        aiTitle: "LittleNest AI",
+        aiSubtitle: "One recommendation first, comparison detail second.",
+        askAbout: "Ask about",
+        aiSafeText: "Uses recent timeline logs. Product-safe messages only; no raw provider/quota wording.",
+        ask: "Ask",
+        recommended: "Recommended answer",
+        compareView: "Compare view",
+        compareTitle: "Why this works for two parent types",
+        ready: "Ready",
+        noAnswer: "No answer yet",
+        noAnswerText: "Ask a question to generate a prototype answer from the current timeline.",
+        sleepTopic: "Sleep",
+        feedTopic: "Feed",
+        foodTopic: "Food",
+        boy: "Boy",
+        girl: "Girl",
+        twins: "Twins",
+        boySetup: "Boy setup",
+        girlSetup: "Girl setup",
+        twinsSetup: "Mixed twins setup",
+        shared: "Shared",
+        ariRole: "Boy twin",
+        noaRole: "Girl twin",
+        noLogsToday: "No logs saved today.",
+        midnightDay: "Midnight day"
+      },
+      HE: {
+        nav: { home: "בית", recipes: "מתכונים", ai: "AI", settings: "הגדרות" },
+        homeTitle: "בית",
+        homeSubtitle: "סיכום חכם למעלה וציר יום ברור למטה.",
+        learning: "מנוע למידה",
+        learningBody: "נאספים ימי מעקב לפני שה-AI נותן תחזית בטוחה.",
+        startSleep: "התחלת שינה",
+        addFeed: "הוספת האכלה",
+        allergen: "אלרגן",
+        pickChild: "קודם בוחרים ילד ואז מתחילים טיימר.",
+        singleSleepHint: "התחלת שינה",
+        twinsSleepHint: "בחירת ילד/ה ואז התחלת טיימר.",
+        feedHint: "בקבוק או הנקה לילד שנבחר.",
+        singleFeedHint: "בקבוק או הנקה.",
+        twinsFeedHint: "בחירת ילד/ה ואז בקבוק או הנקה.",
+        allergenHint: "מעקב 1 מתוך 3, 2 מתוך 3, 3 מתוך 3.",
+        tasting: "אלרגנים או טעימות",
+        singleTastingHint: "מעקב טעימה 1 מתוך 3.",
+        twinsTastingHint: "בחירת ילד/ה ואז טעימה.",
+        timeline: "ציר היום",
+        timelineHint: "לחיצה על לוג פותחת עריכה ידנית.",
+        sleepLogs: "שינות",
+        feeds: "האכלות",
+        allergens: "אלרגנים",
+        bottle: "בקבוק",
+        nursing: "הנקה",
+        sleep: "שינה",
+        recipe: "מתכון",
+        aiLabel: "AI",
+        chooseFeed: "בחירת סוג האכלה",
+        chooseFeedHint: "קודם בוחרים בקבוק או הנקה ואז ממלאים פרטים.",
+        child: "ילד",
+        tapToEdit: "לחיצה לעריכה",
+        noLogs: "אין לוגים במסנן הזה עדיין.",
+        logCount: "לוגים",
+        editTitle: "עריכת",
+        manualCorrection: "תיקון ידני. שעת שמירת הלוג קבועה; עורכים רק את מה שקרה בפועל.",
+        chooseTwin: "בחרו את התאום אם הלוג שייך לילד השני.",
+        currentSetup: "מצב המשפחה הנוכחי",
+        preview: "תצוגה מקדימה",
+        done: "סיום",
+        cancel: "ביטול",
+        back: "חזרה",
+        save: "שמירה",
+        startSleepSheet: "התחלת שינה",
+        endSleepSheet: "סיום שינה",
+        sleepSheetHint: "קודם בוחרים ילד. בציר היום תופיע האות הראשונה שלו.",
+        sleepingNow: "ישן עכשיו",
+        noActiveSleep: "אין שינה פעילה",
+        tapStartSleep: "לחצו כדי להתחיל שינה פעילה.",
+        wakeupsTitle: "כמה פעמים התעורר?",
+        wakeupsHint: "זה מופיע רק אחרי שלוחצים סיום שינה.",
+        sleepEnding: "סיום שינה",
+        chooseWakeups: "בחרו מספר יקיצות לפני שמירת לוג השינה.",
+        wakeups: "יקיצות",
+        saveSleep: "שמירת שינה",
+        bottleAmount: "כמות בקבוק",
+        leftBreast: "צד שמאל",
+        rightBreast: "צד ימין",
+        total: "סה״כ",
+        secondsNote: "צד שמאל וצד ימין נשמרים בשניות. בתצוגה המקדימה זה מופיע כטיימר.",
+        feedChildSpecific: "האכלה נשמרת לפי ילד. בהנקה יש הפרדה בין צד שמאל לצד ימין.",
+        running: "פעיל",
+        stopped: "עצור",
+        presets: "כמויות במ״ל",
+        ozAmount: "כמות באונקיות",
+        leftRightTimer: "טיימר שמאל / ימין",
+        saveFeed: "שמירת האכלה",
+        bottleSaveHint: "כמות הבקבוק תישמר כ",
+        allergenTitle: "אלרגנים או טעימות",
+        chooseAllergen: "בחירת אלרגן",
+        allergenSheetHint: "מעקב האלרגנים נפרד לכל תאום, גם כשהמתכון משותף.",
+        exposure: "חשיפה",
+        exposureOf: "מתוך 3 חשיפות",
+        firstTaste: "טעימה ראשונה",
+        repeatSafely: "חזרה בטוחה",
+        completeTest: "השלמת בדיקה",
+        howItReads: "כך זה יופיע",
+        allergenPreview: "ציר היום שומר את תג הילד. מתכונים נשארים משותפים, אבל היסטוריית החשיפות נפרדת.",
+        saveExposure: "שמירת חשיפה",
+        settingsTitle: "הגדרות",
+        settingsSubtitle: "משפחה, יחידות, שפה ומנוי.",
+        familySetup: "מבנה משפחה",
+        familySetupText: "בן, בת ותאומים מקבלים פלטות שונות. בתאומים יש שני צבעי ילד שווים וצבע אחד משותף למתכונים.",
+        language: "שפה",
+        languageText: "תצוגה של בקרת השפה באפליקציה.",
+        units: "יחידות",
+        unitsText: "מטרי משנה ל-מ״ל/ק״ג/ס״מ. אימפריאלי משנה ל-oz/lb/in.",
+        subscription: "מנוי",
+        subscriptionText: "חינם כולל מעקב בסיסי. פלוס מוסיף השוואות AI, ייצוא למטפלים ומגמות ארוכות טווח.",
+        metric: "מטרי",
+        imperial: "אימפריאלי",
+        free: "חינם",
+        plus: "פלוס",
+        trackingBasics: "מעקב בסיסי",
+        aiExports: "AI וייצוא",
+        recipesTitle: "מתכונים",
+        recipesSubtitle: "משותף למשפחה, לא מופרד לפי ילד.",
+        both: "שניהם",
+        sharedRecipe: "מתכון משותף",
+        noRecipes: "לא נמצאו מתכונים",
+        recipeTry: "נסו ברזל, ביצה, חלב, ארוחת בוקר, צהריים או חטיף.",
+        whyShared: "למה זה משותף",
+        kitchenPlan: "תכנון מטבח אחד, שתי היסטוריות ילדים",
+        kitchenPlanText: "רעיון הארוחה משותף, אבל חשיפה לאלרגן עדיין נשמרת לכל ילד בנפרד.",
+        saved: "נשמר",
+        aiTitle: "LittleNest AI",
+        aiSubtitle: "קודם המלצה אחת, אחר כך פירוט והשוואה.",
+        askAbout: "שאלה על",
+        aiSafeText: "מבוסס על הלוגים האחרונים. מוצגים רק ניסוחים מוצריים, בלי שגיאות ספק או מכסות.",
+        ask: "שאל",
+        recommended: "המלצה",
+        compareView: "השוואה",
+        compareTitle: "איך זה מתאים לשני סוגי הורים",
+        ready: "מוכן",
+        noAnswer: "עדיין אין תשובה",
+        noAnswerText: "שאלו שאלה כדי ליצור תשובת דוגמה מתוך ציר היום.",
+        sleepTopic: "שינה",
+        feedTopic: "האכלה",
+        foodTopic: "אוכל",
+        boy: "בן",
+        girl: "בת",
+        twins: "תאומים",
+        boySetup: "הגדרת בן",
+        girlSetup: "הגדרת בת",
+        twinsSetup: "הגדרת תאומים",
+        shared: "משותף",
+        ariRole: "תאום בן",
+        noaRole: "תאומה בת",
+        noLogsToday: "אין לוגים שנשמרו היום.",
+        midnightDay: "יום מחצות עד חצות"
+      },
+      RU: {
+        nav: { home: "Home", recipes: "Recipes", ai: "AI", settings: "Settings" }
+      }
+    };
+
+    function labels() {
+      return { ...copy.EN, ...(copy[state.language] || {}) };
+    }
 
     function children() {
       return baseChildren[state.setup];
@@ -1173,6 +1650,7 @@
       const scheme = schemes[state.setup];
       const mode = state.mode === "dark" ? { ...scheme, ...scheme.dark } : scheme;
       phone.classList.toggle("dark", state.mode === "dark");
+      phone.classList.toggle("rtl", state.language === "HE");
       const vars = {
         "--bg": mode.bg,
         "--surface": mode.surface,
@@ -1192,13 +1670,15 @@
         "--noa-soft": scheme.noaSoft
       };
       Object.entries(vars).forEach(([key, value]) => phone.style.setProperty(key, value));
-      document.getElementById("statusMode").textContent = scheme.label;
+      const l = labels();
+      document.getElementById("statusMode").textContent = state.setup === "boy" ? l.boySetup : state.setup === "girl" ? l.girlSetup : l.twinsSetup;
     }
 
     function setSetup(setup) {
       state.setup = setup;
       state.activeChild = children()[0].id;
       state.sheetChild = children()[0].id;
+      state.timelineFilter = setup === "twins" ? "both" : children()[0].id;
       render();
     }
 
@@ -1212,7 +1692,29 @@
 
     function timeNow() {
       const d = new Date();
-      return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      if (state.language === "HE") return formatHebrewClock(d);
+      return d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function formatHebrewClock(date) {
+      return `${date.getHours()}:${String(date.getMinutes()).padStart(2, "0")}`;
+    }
+
+    function displayClock(value) {
+      if (state.language !== "HE") return value;
+      const raw = String(value || "").trim();
+      const ampm = raw.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+      if (ampm) {
+        let hour = Number(ampm[1]);
+        const minutes = ampm[2];
+        const period = ampm[3].toUpperCase();
+        if (period === "PM" && hour < 12) hour += 12;
+        if (period === "AM" && hour === 12) hour = 0;
+        return `${hour}:${minutes}`;
+      }
+      const plain = raw.match(/^0?(\d{1,2}):(\d{2})$/);
+      if (plain) return `${Number(plain[1])}:${plain[2]}`;
+      return raw.replace(/\s*(AM|PM)$/i, "");
     }
 
     function durationSince(startedAt) {
@@ -1263,6 +1765,17 @@
       return Object.values(state.nursing).some((session) => session.leftStartedAt || session.rightStartedAt);
     }
 
+    function runningNursingChildId() {
+      const allowed = new Set(children().map((child) => child.id));
+      return Object.entries(state.nursing).find(([childId, session]) =>
+        allowed.has(childId) && (session.leftStartedAt || session.rightStartedAt)
+      )?.[0] || null;
+    }
+
+    function nursingTotalSeconds(log) {
+      return Number(log.leftSeconds || 0) + Number(log.rightSeconds || 0);
+    }
+
     function firstActiveSleep() {
       const entry = Object.entries(state.activeSleep)[0];
       if (!entry) return null;
@@ -1281,29 +1794,137 @@
       return colors[type] || schemes[state.setup].primary;
     }
 
+    function typeLabel(type) {
+      const l = labels();
+      const names = {
+        Sleep: l.sleep,
+        Bottle: l.bottle,
+        Nursing: l.nursing,
+        Allergen: l.allergen,
+        Recipe: l.recipe,
+        AI: l.aiLabel
+      };
+      return names[type] || type;
+    }
+
+    function allergenLabel(name) {
+      const item = allergenItems.find((entry) => entry.id === name || entry.en === name || entry.en.toLowerCase() === String(name).toLowerCase());
+      if (!item) return name;
+      return state.language === "HE" ? item.he : item.en;
+    }
+
+    function allergenOptions(selected) {
+      const section = allergenSectionForItem(selected) || state.allergenSection;
+      return allergenItems.filter((item) => item.section === section).map((item) =>
+        `<option value="${item.id}" ${selected === item.id ? "selected" : ""}>${state.language === "HE" ? item.he : item.en}</option>`
+      ).join("");
+    }
+
+    function allergenSectionLabel(sectionId) {
+      const section = allergenSections.find((item) => item.id === sectionId);
+      if (!section) return sectionId;
+      return state.language === "HE" ? section.he : section.en;
+    }
+
+    function allergenSectionOptions(selected) {
+      return allergenSections.map((section) =>
+        `<option value="${section.id}" ${selected === section.id ? "selected" : ""}>${state.language === "HE" ? section.he : section.en}</option>`
+      ).join("");
+    }
+
+    function allergenSectionForItem(itemId) {
+      return allergenItems.find((item) => item.id === itemId || item.en === itemId)?.section || "";
+    }
+
+    function firstAllergenInSection(sectionId) {
+      return allergenItems.find((item) => item.section === sectionId)?.id || "egg";
+    }
+
+    function setAllergenSection(sectionId) {
+      state.allergenSection = sectionId;
+      state.allergen = firstAllergenInSection(sectionId);
+      renderSheet();
+    }
+
+    function topicLabel(topic) {
+      const l = labels();
+      return { Sleep: l.sleepTopic, Feed: l.feedTopic, Food: l.foodTopic }[topic] || topic;
+    }
+
+    function childRole(child) {
+      const l = labels();
+      if (child.id === "ari") return state.setup === "boy" ? l.boy : l.ariRole;
+      if (child.id === "noa") return state.setup === "girl" ? l.girl : l.noaRole;
+      return child.role;
+    }
+
     function todayKey() {
       return new Date().toISOString().slice(0, 10);
     }
 
     function todayLogs() {
       const key = todayKey();
-      return state.logs.filter((log) => (log.day || key) === key || log.day === "today").slice(0, 24);
+      return state.logs
+        .filter((log) => ((log.day || key) === key || log.day === "today") && logFitsFamilySetup(log))
+        .sort((a, b) => minutesFromClock(a.time) - minutesFromClock(b.time))
+        .slice(0, 24);
+    }
+
+    function minutesFromClock(value) {
+      const display = displayClock(value);
+      const match = String(display).match(/^(\d{1,2}):(\d{2})/);
+      if (!match) return 0;
+      return Number(match[1]) * 60 + Number(match[2]);
+    }
+
+    function todayDateLabel() {
+      const locale = state.language === "HE" ? "he-IL" : "en-US";
+      return new Date().toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" });
+    }
+
+    function logFitsFamilySetup(log) {
+      if (state.setup === "twins") return true;
+      if (state.setup === "boy") return log.child === "ari";
+      if (state.setup === "girl") return log.child === "noa";
+      return true;
     }
 
     function detailForLog(log) {
+      const l = labels();
       if (log.type === "Sleep") {
-        const wakeText = Number(log.wakeups || 0) === 1 ? "1 wakeup" : `${log.wakeups || 0} wakeups`;
-        return `${log.start || "?"} - ${log.end || "?"} with ${wakeText}`;
+        const start = displayClock(log.start || "?");
+        const end = displayClock(log.end || "?");
+        const wakeText = state.language === "HE"
+          ? `${log.wakeups || 0} ${l.wakeups}`
+          : Number(log.wakeups || 0) === 1 ? "1 wakeup" : `${log.wakeups || 0} wakeups`;
+        return state.language === "HE"
+          ? `${start} - ${end} עם ${wakeText}`
+          : `${start} - ${end} with ${wakeText}`;
       }
       if (log.type === "Bottle") return `${log.amount || ""} ${log.unit || (state.unitSystem === "Metric" ? "mL" : "oz")}`.trim();
-      if (log.type === "Nursing") return `Breast left ${formatTimer(Number(log.leftSeconds || 0))} / breast right ${formatTimer(Number(log.rightSeconds || 0))}`;
-      if (log.type === "Allergen") return `${log.allergen || "Allergen"} exposure ${log.exposure || 1} of 3`;
+      if (log.type === "Nursing") return state.language === "HE"
+        ? `${l.leftBreast} ${formatTimer(Number(log.leftSeconds || 0))} / ${l.rightBreast} ${formatTimer(Number(log.rightSeconds || 0))} / ${l.total} ${formatTimer(nursingTotalSeconds(log))}`
+        : `Breast left ${formatTimer(Number(log.leftSeconds || 0))} / breast right ${formatTimer(Number(log.rightSeconds || 0))} / total ${formatTimer(nursingTotalSeconds(log))}`;
+      if (log.type === "Allergen") return state.language === "HE"
+        ? `${allergenLabel(log.allergen || "Allergen")} - חשיפה ${log.exposure || 1} מתוך 3`
+        : `${log.allergen || "Allergen"} exposure ${log.exposure || 1} of 3`;
       return log.detail || "";
     }
 
     function addLog(child, type, detail, extra = {}) {
       state.logs.unshift({ id: Date.now(), day: todayKey(), time: timeNow(), child, type, detail, ...extra });
       state.logs = todayLogs().slice(0, 24);
+    }
+
+    function timelineDetailForLog(log) {
+      const l = labels();
+      if (state.language === "HE" && log.type === "Sleep") {
+        return `
+          <span class="sleep-range"><b>${displayClock(log.start || "?")}</b><i></i><b>${displayClock(log.end || "?")}</b></span>
+          <span class="event-detail">${log.wakeups || 0} ${l.wakeups}</span>
+        `;
+      }
+      return `<span>${detailForLog(log)}</span>`;
     }
 
     function updateLog(id, key, value) {
@@ -1321,49 +1942,79 @@
 
     function setSetting(key, value) {
       state[key] = value;
+      if (key === "language" && value === "HE") {
+        document.documentElement.lang = "he";
+        document.documentElement.dir = "rtl";
+      }
+      if (key === "language" && value !== "HE") {
+        document.documentElement.lang = "en";
+        document.documentElement.dir = "ltr";
+      }
+      if (key === "language" && value === "HE" && state.aiQuestion === "What should I watch for before the next nap?") {
+        state.aiQuestion = "מה כדאי לשים לב אליו לפני השינה הבאה?";
+      }
+      if (key === "language" && value === "EN" && state.aiQuestion === "מה כדאי לשים לב אליו לפני השינה הבאה?") {
+        state.aiQuestion = "What should I watch for before the next nap?";
+      }
       render();
-      showToast(`${key === "unitSystem" ? "Units" : key} set to ${value}`);
+      showToast(state.language === "HE" ? "ההגדרה נשמרה" : `${key === "unitSystem" ? "Units" : key} set to ${value}`);
     }
 
     const recipeIdeas = [
-      { title: "Oat banana bowl with tahini swirl", tags: ["iron", "breakfast", "sesame"], summary: "Shared family recipe. Log sesame exposure separately per child if needed." },
-      { title: "Lentil carrot mash", tags: ["iron", "lunch", "fiber"], summary: "Soft texture, good for both twins, easy batch prep." },
-      { title: "Avocado egg toast fingers", tags: ["egg", "breakfast", "protein"], summary: "Great after egg is already being tested. Shows allergen reminder before serving." },
-      { title: "Greek yogurt berry cup", tags: ["dairy", "snack", "protein"], summary: "Dairy-aware idea with separate exposure tracking for each child." }
+      { title: "Oat banana bowl with tahini swirl", heTitle: "קערת שיבולת שועל ובננה עם טחינה", tags: ["iron", "breakfast", "sesame"], heTags: ["ברזל", "בוקר", "שומשום"], summary: "Shared family recipe. Log sesame exposure separately per child if needed.", heSummary: "מתכון משפחתי משותף. חשיפה לשומשום נשמרת בנפרד לכל ילד." },
+      { title: "Lentil carrot mash", heTitle: "מחית עדשים וגזר", tags: ["iron", "lunch", "fiber"], heTags: ["ברזל", "צהריים", "סיבים"], summary: "Soft texture, good for both twins, easy batch prep.", heSummary: "מרקם רך, מתאים לשני התאומים וקל להכנה מראש." },
+      { title: "Avocado egg toast fingers", heTitle: "אצבעות טוסט אבוקדו וביצה", tags: ["egg", "breakfast", "protein"], heTags: ["ביצה", "בוקר", "חלבון"], summary: "Great after egg is already being tested. Shows allergen reminder before serving.", heSummary: "מתאים אחרי שמתחילים בדיקת ביצה. מוצגת תזכורת אלרגן לפני ההגשה." },
+      { title: "Greek yogurt berry cup", heTitle: "גביע יוגורט יווני ופירות יער", tags: ["dairy", "snack", "protein"], heTags: ["חלב", "חטיף", "חלבון"], summary: "Dairy-aware idea with separate exposure tracking for each child.", heSummary: "רעיון עם מודעות לחלב ומעקב חשיפה נפרד לכל ילד." }
     ];
+
+    function recipeTitle(recipe) {
+      return state.language === "HE" ? recipe.heTitle : recipe.title;
+    }
+
+    function recipeSummary(recipe) {
+      return state.language === "HE" ? recipe.heSummary : recipe.summary;
+    }
+
+    function recipeTags(recipe) {
+      return state.language === "HE" ? recipe.heTags : recipe.tags;
+    }
 
     function recipeResults() {
       const query = state.recipeQuery.toLowerCase().trim();
       if (!query) return recipeIdeas;
       return recipeIdeas.filter((recipe) =>
         recipe.title.toLowerCase().includes(query) ||
+        (recipe.heTitle || "").toLowerCase().includes(query) ||
         recipe.summary.toLowerCase().includes(query) ||
-        recipe.tags.some((tag) => tag.includes(query))
+        (recipe.heSummary || "").toLowerCase().includes(query) ||
+        recipe.tags.some((tag) => tag.includes(query)) ||
+        (recipe.heTags || []).some((tag) => tag.includes(query))
       );
     }
 
     function saveRecipe(title) {
       if (!state.savedRecipes.includes(title)) state.savedRecipes.push(title);
-      addLog("both", "Recipe", `${title} saved for both children`);
+      addLog("both", "Recipe", state.language === "HE" ? `${title} נשמר לשני הילדים` : `${title} saved for both children`);
       render();
-      showToast("Recipe saved for both children");
+      showToast(state.language === "HE" ? "המתכון נשמר לשני הילדים" : "Recipe saved for both children");
     }
 
     function askAi() {
       const active = childById(state.activeChild);
       const latest = todayLogs().filter((log) => log.child === active.id || log.child === "both").slice(0, 3);
-      const context = latest.map((log) => `${log.type}: ${detailForLog(log)}`).join(" / ") || "not enough logs yet";
+      const context = latest.map((log) => `${typeLabel(log.type)}: ${detailForLog(log)}`).join(" / ") || (state.language === "HE" ? "אין מספיק לוגים עדיין" : "not enough logs yet");
       state.aiAnswer = {
-        title: `${state.aiTopic} suggestion for ${active.name}`,
-        body: `${active.name}'s recent context is ${context}. Try one calm next step, then log the result so the timeline can learn the pattern.`,
-        compare: [
-          "Low-tech view: one next action, no extra setup.",
-          "High-tech view: compare timing against today timeline and sibling logs."
-        ]
+        title: state.language === "HE" ? `המלצת ${topicLabel(state.aiTopic)} עבור ${active.name}` : `${state.aiTopic} suggestion for ${active.name}`,
+        body: state.language === "HE"
+          ? `ההקשר האחרון של ${active.name}: ${context}. נסו פעולה אחת רגועה ואז שמרו לוג כדי שהציר ילמד את הדפוס.`
+          : `${active.name}'s recent context is ${context}. Try one calm next step, then log the result so the timeline can learn the pattern.`,
+        compare: state.language === "HE"
+          ? ["להורה שרוצה פשטות: פעולה אחת ברורה בלי הגדרות נוספות.", "להורה מתקדם: השוואה מול ציר היום ולוגים של התאום."]
+          : ["Low-tech view: one next action, no extra setup.", "High-tech view: compare timing against today timeline and sibling logs."]
       };
-      addLog(active.id, "AI", `${state.aiTopic} guidance requested`);
+      addLog(active.id, "AI", state.language === "HE" ? `נשלחה שאלת ${topicLabel(state.aiTopic)}` : `${state.aiTopic} guidance requested`);
       render();
-      showToast("AI answer generated");
+      showToast(state.language === "HE" ? "נוצרה תשובת AI" : "AI answer generated");
     }
 
     function render() {
@@ -1387,8 +2038,9 @@
     function renderNav() {
       const nav = document.getElementById("nav");
       const activeSleep = firstActiveSleep();
+      const l = labels();
       nav.innerHTML = navItems.map((item) => `
-        <button class="${state.tab === item.toLowerCase() ? "active" : ""}" data-tab="${item.toLowerCase()}">${item}${item === "Home" && activeSleep ? `<small>${activeSleep.child.initial} sleep</small>` : ""}</button>
+        <button class="${state.tab === item ? "active" : ""}" data-tab="${item}">${l.nav[item]}${item === "home" && activeSleep ? `<small>${activeSleep.child.initial} ${l.sleep}</small>` : ""}</button>
       `).join("");
       nav.querySelectorAll("button").forEach((button) => {
         button.onclick = () => {
@@ -1417,7 +2069,7 @@
           ${kids.map((child) => `
             <button class="child-chip ${state.activeChild === child.id ? "active" : ""}" style="--chip-color:${colorForChild(child.id)}" onclick="state.activeChild='${child.id}';render()">
               <span class="avatar" style="--chip-color:${colorForChild(child.id)}">${child.initial}</span>
-              <span><strong>${child.name}</strong><span>${state.activeSleep[child.id] ? `Sleeping ${durationSince(state.activeSleep[child.id].startedAt)}` : child.role}</span></span>
+              <span><strong>${child.name}</strong><span>${state.activeSleep[child.id] ? `${labels().sleepingNow} ${durationSince(state.activeSleep[child.id].startedAt)}` : childRole(child)}</span></span>
             </button>
           `).join("")}
         </div>
@@ -1425,8 +2077,9 @@
     }
 
     function activeSleepLabel(childId) {
-      if (!state.activeSleep[childId]) return "No active sleep";
-      return "Sleeping now";
+      const l = labels();
+      if (!state.activeSleep[childId]) return l.noActiveSleep;
+      return l.sleepingNow;
     }
 
     function childSummary(child) {
@@ -1434,224 +2087,235 @@
       const lastFeed = logs.find((log) => log.type === "Bottle" || log.type === "Nursing");
       const lastLog = logs[0];
       const activeSleep = state.activeSleep[child.id];
+      const l = labels();
       return `
         <div class="os-card">
           <span class="label" style="color:${colorForChild(child.id)}">${child.initial} / ${child.name}</span>
-          <b>${activeSleep ? `Sleeping ${durationSince(activeSleep.startedAt)}` : lastLog ? `${lastLog.type} at ${lastLog.time}` : "No logs today"}</b>
-          <p class="muted">${activeSleep ? `Started at ${activeSleep.label}` : lastFeed ? `Last feed: ${detailForLog(lastFeed)}` : lastLog ? detailForLog(lastLog) : "Use Sleep, Feed, or Allergen below."}</p>
+          <b>${activeSleep ? `${l.sleepingNow} ${durationSince(activeSleep.startedAt)}` : lastLog ? `${typeLabel(lastLog.type)} ${state.language === "HE" ? "בשעה" : "at"} ${lastLog.time}` : l.noLogsToday}</b>
+          <p class="muted">${activeSleep ? state.language === "HE" ? `התחיל ב-${displayClock(activeSleep.label)}` : `Started at ${activeSleep.label}` : lastFeed ? state.language === "HE" ? `האכלה אחרונה: ${detailForLog(lastFeed)}` : `Last feed: ${detailForLog(lastFeed)}` : lastLog ? detailForLog(lastLog) : state.language === "HE" ? "השתמשו בשינה, האכלה או אלרגן למטה." : "Use Sleep, Feed, or Allergen below."}</p>
           <div class="bar"><span style="--w:${activeSleep ? "82%" : "46%"};background:${colorForChild(child.id)}"></span></div>
         </div>
       `;
     }
 
     function renderHome() {
-      const kids = children();
+      const l = labels();
       const active = childById(state.activeChild);
       const activeSleep = state.activeSleep[active.id];
-      const next = state.setup === "twins"
-        ? "Next: Ari bottle in 28m, Noa nap window in 42m"
-        : `Next: ${active.name} bottle in 28m`;
+      const sleepHint = activeSleep
+        ? state.language === "HE" ? `התחיל ${displayClock(activeSleep.label)}. לחצו לסיום.` : `Started ${activeSleep.label}. Tap to end.`
+        : state.setup === "twins" ? l.twinsSleepHint : l.singleSleepHint;
+      const feedHint = state.setup === "twins" ? l.twinsFeedHint : l.singleFeedHint;
+      const tastingHint = state.setup === "twins" ? l.twinsTastingHint : l.singleTastingHint;
+      const next = state.language === "HE"
+        ? state.setup === "twins"
+          ? "הבא: בקבוק לארי בעוד 28 דקות, חלון שינה לנועה בעוד 42 דקות"
+          : `הבא: בקבוק ל${active.name} בעוד 28 דקות`
+        : state.setup === "twins"
+          ? "Next: Ari bottle in 28m, Noa nap window in 42m"
+          : `Next: ${active.name} bottle in 28m`;
       return `
-        ${renderTop("Family OS", "High-level signals on top. Full day timeline below.")}
+        ${renderTop(l.homeTitle, l.homeSubtitle)}
         ${renderChildSwitch()}
         ${activeSleep ? `
           <button class="live-sleep" style="--sleep-color:${colorForChild(active.id)}" onclick="openSheet('sleep')">
             <span class="avatar" style="--chip-color:${colorForChild(active.id)}">${active.initial}</span>
-            <span><strong>${active.name} is sleeping now</strong><span>Started at ${activeSleep.label}. Tap to end or review.</span></span>
+            <span><strong>${state.language === "HE" ? `${active.name} ישן עכשיו` : `${active.name} is sleeping now`}</strong><span>${state.language === "HE" ? `התחיל ב-${displayClock(activeSleep.label)}. לחצו לסיום או בדיקה.` : `Started at ${activeSleep.label}. Tap to end or review.`}</span></span>
             <span class="timer">${durationSince(activeSleep.startedAt)}</span>
           </button>
         ` : ""}
-        <section class="os-grid">
+        <section class="os-grid single-os">
           <div class="os-card main">
-            <span class="label">Learning engine</span>
+            <span class="label">${l.learning}</span>
             <b>${next}</b>
             <span class="big">6 / 14</span>
-            <p class="muted">Learning days collected before AI becomes confident.</p>
+            <p class="muted">${l.learningBody}</p>
             <div class="bar"><span style="--w:43%"></span></div>
           </div>
-          ${kids.map(childSummary).join("")}
         </section>
         <section class="quick-actions compact">
-          <button class="action primary" onclick="openSheet('sleep')"><strong>${activeSleep ? `${active.initial} sleeping ${durationSince(activeSleep.startedAt)}` : "Start sleep"}</strong><span>${activeSleep ? `Started ${activeSleep.label}. Tap to end.` : "Pick child first, then start timer."}</span></button>
-          <button class="action" onclick="openSheet('feed')"><strong>Add feed</strong><span>Bottle or nursing for selected child.</span></button>
-          <button class="action" onclick="openSheet('allergen')"><strong>Allergen</strong><span>Track 1 of 3, 2 of 3, 3 of 3.</span></button>
-        </section>
-        <section class="timeline-summary">
-          <button class="mini-stat" onclick="state.tab='logs';render()"><strong>Edit logs</strong><span>24 per day</span></button>
-          <button class="mini-stat" onclick="state.tab='ai';render()"><strong>AI signal</strong><span>uses today</span></button>
-          <button class="mini-stat" onclick="state.tab='recipes';render()"><strong>Recipes</strong><span>shared food</span></button>
+          <button class="action sleep-action" onclick="openSheet('sleep')"><strong>${activeSleep ? `${active.initial} ${l.sleepingNow} ${durationSince(activeSleep.startedAt)}` : l.startSleep}</strong><span>${sleepHint}</span></button>
+          <button class="action feed-action" onclick="openSheet('feed')"><strong>${l.addFeed}</strong><span>${feedHint}</span></button>
+          <button class="action tasting-action" onclick="openSheet('allergen')"><strong>${l.tasting}</strong><span>${tastingHint}</span></button>
         </section>
         ${renderTimeline()}
       `;
     }
 
     function renderTimeline() {
-      const sourceLogs = state.timelineFilter === "all"
-        ? todayLogs()
-        : todayLogs().filter((log) => log.child === state.timelineFilter || (state.timelineFilter === "both" && log.child === "both"));
-      const visibleLogs = sourceLogs.slice(0, 8);
+      const l = labels();
+      const normalizedFilter = state.setup === "twins" ? state.timelineFilter : children()[0].id;
+      if (state.timelineFilter !== normalizedFilter) state.timelineFilter = normalizedFilter;
+      const sourceLogs = todayLogs().filter((log) => {
+        if (state.setup !== "twins") return log.child === children()[0].id;
+        if (state.timelineFilter === "both") return log.child === "ari" || log.child === "noa";
+        return log.child === state.timelineFilter;
+      });
+      const visibleLogs = sourceLogs.slice(-8).reverse();
       const sleepCount = todayLogs().filter((log) => log.type === "Sleep").length;
       const feedCount = todayLogs().filter((log) => log.type === "Bottle" || log.type === "Nursing").length;
       const allergenCount = todayLogs().filter((log) => log.type === "Allergen").length;
-      const filters = [
-        { id: "all", label: "All" },
-        ...children().map((child) => ({ id: child.id, label: child.name })),
-        { id: "both", label: "Both" }
-      ];
+      const filters = state.setup === "twins"
+        ? [...children().map((child) => ({ id: child.id, label: child.name })), { id: "both", label: state.language === "HE" ? "שניהם" : "Both" }]
+        : [];
       return `
         <section class="timeline">
           <div class="timeline-head">
-            <div><h3>Today timeline</h3><p class="muted">Refined handoff log with child filter and live sleep.</p></div>
-            <span class="pill">${visibleLogs.length} logs</span>
+            <div><h3>${l.timeline}</h3><p class="muted">${l.timelineHint}</p></div>
+            <span class="pill">${todayDateLabel()}</span>
           </div>
           <div class="timeline-summary">
-            <div class="mini-stat"><strong>${sleepCount}</strong><span>sleep logs</span></div>
-            <div class="mini-stat"><strong>${feedCount}</strong><span>feeds</span></div>
-            <div class="mini-stat"><strong>${allergenCount}</strong><span>allergens</span></div>
+            <div class="mini-stat"><strong>${sleepCount}</strong><span>${l.sleepLogs}</span></div>
+            <div class="mini-stat"><strong>${feedCount}</strong><span>${l.feeds}</span></div>
+            <div class="mini-stat"><strong>${allergenCount}</strong><span>${l.allergens}</span></div>
           </div>
-          <div class="timeline-tools">
+          ${filters.length ? `<div class="timeline-tools">
             ${filters.map((filter) => `<button class="${state.timelineFilter === filter.id ? "active" : ""}" onclick="state.timelineFilter='${filter.id}';render()">${filter.label}</button>`).join("")}
-          </div>
+          </div>` : ""}
           ${visibleLogs.map((log) => {
-            const child = log.child === "both" ? { initial: "B", name: "Both" } : childById(log.child);
+            const child = log.child === "both" ? { initial: "B", name: l.both } : childById(log.child);
             const childColor = colorForChild(log.child);
             const eventTypeColor = typeColor(log.type);
             return `
               <div class="time-row">
-                <div class="time">${log.time}</div>
+                <div class="time">${displayClock(log.time)}</div>
                 <div class="event-dot" style="--event:${childColor}">${child.initial}</div>
                 <button class="event-card" style="--event:${childColor};--event-type-color:${eventTypeColor}" onclick="openEditLog(${log.id})">
-                  <div class="event-meta"><strong class="event-child"><i></i>${child.name}</strong><span class="event-type">${log.type}</span></div>
-                  <span>${detailForLog(log)}</span>
-                  <span>Tap to edit</span>
+                  <div class="event-meta"><strong class="event-child"><i></i>${child.name}</strong><span class="event-type">${typeLabel(log.type)}</span></div>
+                  ${timelineDetailForLog(log)}
+                  <span>${l.tapToEdit}</span>
                 </button>
               </div>
             `;
-          }).join("") || `<p class="muted">No logs for this filter yet.</p>`}
+          }).join("") || `<p class="muted">${l.noLogs}</p>`}
         </section>
       `;
     }
 
     function renderLogs() {
+      const l = labels();
       const logs = todayLogs();
       return `
-        ${renderTop("Today logs", "00:00 to 24:00. Maximum 24 logs for one day.")}
+        ${renderTop(l.timeline, state.language === "HE" ? "00:00 עד 24:00. עד 24 לוגים ביום אחד." : "00:00 to 24:00. Maximum 24 logs for one day.")}
         <section class="timeline">
           <div class="timeline-head">
-            <div><h3>${logs.length} / 24 logs</h3><p class="muted">Tap any saved log to edit it manually.</p></div>
-            <span class="pill">Midnight day</span>
+            <div><h3>${logs.length} / 24 ${l.logCount}</h3><p class="muted">${l.timelineHint}</p></div>
+            <span class="pill">${l.midnightDay}</span>
           </div>
           <div class="log-list">
             ${logs.map((log) => {
-              const child = log.child === "both" ? { initial: "B", name: "Both" } : childById(log.child);
+              const child = log.child === "both" ? { initial: "B", name: l.both } : childById(log.child);
               return `
                 <button class="log-item" style="--log-color:${typeColor(log.type)}" onclick="openEditLog(${log.id})">
-                  <strong>${log.time} / ${log.type} / ${child.name}</strong>
+                  <strong>${displayClock(log.time)} / ${typeLabel(log.type)} / ${child.name}</strong>
                   <span>${detailForLog(log)}</span>
                 </button>
               `;
-            }).join("") || `<p class="muted">No logs saved today.</p>`}
+            }).join("") || `<p class="muted">${l.noLogsToday}</p>`}
           </div>
         </section>
       `;
     }
 
     function renderRecipes() {
+      const l = labels();
       const results = recipeResults();
       return `
-        ${renderTop("Recipes", "Shared for the family, not separated by child.")}
-        <div class="search"><span class="pill">Both</span><input value="${state.recipeQuery}" aria-label="Recipe search" oninput="state.recipeQuery=this.value;renderScreen()" /></div>
+        ${renderTop(l.recipesTitle, l.recipesSubtitle)}
+        <div class="search"><span class="pill">${l.both}</span><input value="${state.recipeQuery}" aria-label="${l.recipesTitle}" oninput="state.recipeQuery=this.value;renderScreen()" /></div>
         ${results.map((recipe, index) => `
           <section class="recipe-card">
-            <span class="label">Shared recipe ${index + 1}</span>
-            <b>${recipe.title}</b>
+            <span class="label">${l.sharedRecipe} ${index + 1}</span>
+            <b>${recipeTitle(recipe)}</b>
             <div class="recipe-visual"></div>
-            <p class="muted">${recipe.summary}</p>
+            <p class="muted">${recipeSummary(recipe)}</p>
             <div class="row">
-              ${recipe.tags.slice(0, 2).map((tag) => `<span class="pill">${tag}</span>`).join("")}
-              <button class="primary-button" onclick="saveRecipe('${recipe.title.replace(/'/g, "\\'")}')">${state.savedRecipes.includes(recipe.title) ? "Saved" : "Save"}</button>
+              ${recipeTags(recipe).slice(0, 2).map((tag) => `<span class="pill">${tag}</span>`).join("")}
+              <button class="primary-button" onclick="saveRecipe('${recipeTitle(recipe).replace(/'/g, "\\'")}')">${state.savedRecipes.includes(recipeTitle(recipe)) ? l.saved : l.save}</button>
             </div>
           </section>
-        `).join("") || `<section class="recipe-card"><b>No recipes found</b><p class="muted">Try iron, egg, dairy, breakfast, lunch, or snack.</p></section>`}
+        `).join("") || `<section class="recipe-card"><b>${l.noRecipes}</b><p class="muted">${l.recipeTry}</p></section>`}
         <section class="recipe-card">
-          <span class="label">Why shared</span>
-          <b>One kitchen plan, two child histories</b>
-          <p class="muted">The meal idea is shared, but allergen exposure still gets logged per child from the allergen sheet.</p>
+          <span class="label">${l.whyShared}</span>
+          <b>${l.kitchenPlan}</b>
+          <p class="muted">${l.kitchenPlanText}</p>
         </section>
       `;
     }
 
     function renderAi() {
+      const l = labels();
       const active = childById(state.activeChild);
       return `
-        ${renderTop("LittleNest AI", "One recommendation first, comparison detail second.")}
+        ${renderTop(l.aiTitle, l.aiSubtitle)}
         ${renderChildSwitch()}
         <section class="ai-card">
-          <span class="label">Ask about ${active.name}</span>
+          <span class="label">${l.askAbout} ${active.name}</span>
           <b>${state.aiQuestion}</b>
-          <p class="muted">Uses recent timeline logs. Product-safe messages only; no raw provider/quota wording.</p>
-          <textarea class="field" onchange="state.aiQuestion=this.value" aria-label="AI question">${state.aiQuestion}</textarea>
+          <p class="muted">${l.aiSafeText}</p>
+          <textarea class="field" onchange="state.aiQuestion=this.value" aria-label="${l.aiTitle}">${state.aiQuestion}</textarea>
           <div class="row">
-            ${["Sleep", "Feed", "Food"].map((topic) => `<button class="${state.aiTopic === topic ? "primary-button" : "secondary-button"}" onclick="state.aiTopic='${topic}';renderScreen()">${topic}</button>`).join("")}
-            <button class="primary-button" onclick="askAi()">Ask</button>
+            ${["Sleep", "Feed", "Food"].map((topic) => `<button class="${state.aiTopic === topic ? "primary-button" : "secondary-button"}" onclick="state.aiTopic='${topic}';renderScreen()">${topicLabel(topic)}</button>`).join("")}
+            <button class="primary-button" onclick="askAi()">${l.ask}</button>
           </div>
         </section>
         ${state.aiAnswer ? `
           <section class="ai-card">
-            <span class="label">Recommended answer</span>
+            <span class="label">${l.recommended}</span>
             <b>${state.aiAnswer.title}</b>
             <p class="muted">${state.aiAnswer.body}</p>
           </section>
           <section class="ai-card">
-            <span class="label">Compare view</span>
-            <b>Why this works for two parent types</b>
+            <span class="label">${l.compareView}</span>
+            <b>${l.compareTitle}</b>
             <p class="muted">${state.aiAnswer.compare.join(" ")}</p>
           </section>
         ` : `
           <section class="ai-card">
-            <span class="label">Ready</span>
-            <b>No answer yet</b>
-            <p class="muted">Ask a question to generate a prototype answer from the current timeline.</p>
+            <span class="label">${l.ready}</span>
+            <b>${l.noAnswer}</b>
+            <p class="muted">${l.noAnswerText}</p>
           </section>
         `}
       `;
     }
 
     function renderSettings() {
+      const l = labels();
       return `
-        ${renderTop("Settings", "Working controls for family, units, language, and plan.")}
+        ${renderTop(l.settingsTitle, l.settingsSubtitle)}
         <section class="settings-card">
-          <span class="label">Family setup</span>
-          <b>${schemes[state.setup].label}</b>
-          <p class="muted">Boy, girl, and twins now use clearly different palettes. Twins keep two equal child colors plus one shared recipe color.</p>
+          <span class="label">${l.familySetup}</span>
+          <b>${state.setup === "boy" ? l.boySetup : state.setup === "girl" ? l.girlSetup : l.twinsSetup}</b>
+          <p class="muted">${l.familySetupText}</p>
           <div class="row">
-            <button class="secondary-button" onclick="setSetup('boy')">Boy</button>
-            <button class="secondary-button" onclick="setSetup('girl')">Girl</button>
-            <button class="primary-button" onclick="setSetup('twins')">Twins</button>
+            <button class="secondary-button" onclick="setSetup('boy')">${l.boy}</button>
+            <button class="secondary-button" onclick="setSetup('girl')">${l.girl}</button>
+            <button class="primary-button" onclick="setSetup('twins')">${l.twins}</button>
           </div>
         </section>
         <section class="settings-card">
-          <span class="label">Language</span>
+          <span class="label">${l.language}</span>
           <b>${state.language}</b>
-          <p class="muted">Preview of the real app language control.</p>
+          <p class="muted">${l.languageText}</p>
           <div class="settings-grid">
-            ${["EN", "HE", "RU"].map((lang) => `<button class="setting-card ${state.language === lang ? "active" : ""}" onclick="setSetting('language','${lang}')"><b>${lang}</b><span>${lang === "EN" ? "English" : lang === "HE" ? "Hebrew" : "Russian"}</span></button>`).join("")}
+            ${["EN", "HE", "RU"].map((lang) => `<button class="setting-card ${state.language === lang ? "active" : ""}" onclick="setSetting('language','${lang}')"><b>${lang}</b><span>${state.language === "HE" ? (lang === "EN" ? "אנגלית" : lang === "HE" ? "עברית" : "רוסית") : (lang === "EN" ? "English" : lang === "HE" ? "Hebrew" : "Russian")}</span></button>`).join("")}
           </div>
         </section>
         <section class="settings-card">
-          <span class="label">Units</span>
-          <b>${state.unitSystem}</b>
-          <p class="muted">Metric changes feeds to mL/kg/cm. Imperial changes feeds to oz/lb/in.</p>
+          <span class="label">${l.units}</span>
+          <b>${state.unitSystem === "Metric" ? l.metric : l.imperial}</b>
+          <p class="muted">${l.unitsText}</p>
           <div class="settings-grid">
-            ${["Metric", "Imperial"].map((unit) => `<button class="setting-card ${state.unitSystem === unit ? "active" : ""}" onclick="setSetting('unitSystem','${unit}')"><b>${unit}</b><span>${unit === "Metric" ? "mL, kg, cm" : "oz, lb, in"}</span></button>`).join("")}
+            ${["Metric", "Imperial"].map((unit) => `<button class="setting-card ${state.unitSystem === unit ? "active" : ""}" onclick="setSetting('unitSystem','${unit}')"><b>${unit === "Metric" ? l.metric : l.imperial}</b><span>${unit === "Metric" ? "mL, kg, cm" : "oz, lb, in"}</span></button>`).join("")}
           </div>
         </section>
         <section class="settings-card">
-          <span class="label">Subscription</span>
-          <b>${state.subscription}</b>
-          <p class="muted">Free keeps core tracking. Plus unlocks deeper AI comparison, caregiver exports, and long-range trends.</p>
+          <span class="label">${l.subscription}</span>
+          <b>${state.subscription === "Free" ? l.free : l.plus}</b>
+          <p class="muted">${l.subscriptionText}</p>
           <div class="settings-grid">
-            ${["Free", "Plus"].map((plan) => `<button class="setting-card ${state.subscription === plan ? "active" : ""}" onclick="setSetting('subscription','${plan}')"><b>${plan}</b><span>${plan === "Free" ? "Tracking basics" : "AI and exports"}</span></button>`).join("")}
+            ${["Free", "Plus"].map((plan) => `<button class="setting-card ${state.subscription === plan ? "active" : ""}" onclick="setSetting('subscription','${plan}')"><b>${plan === "Free" ? l.free : l.plus}</b><span>${plan === "Free" ? l.trackingBasics : l.aiExports}</span></button>`).join("")}
           </div>
         </section>
       `;
@@ -1669,6 +2333,16 @@
     function openSheet(type) {
       state.sheet = type;
       state.sheetChild = state.activeChild;
+      if (type === "feed") {
+        const nursingChild = runningNursingChildId();
+        if (nursingChild) {
+          state.sheetChild = nursingChild;
+          state.feedType = "Nursing";
+          state.feedStep = "details";
+        } else {
+          state.feedStep = "choice";
+        }
+      }
       renderSheet();
     }
 
@@ -1679,13 +2353,14 @@
     }
 
     function renderSheetChildChoices() {
+      if (children().length < 2) return "";
       return `
         <div class="sheet-grid">
           ${children().map((child) => `
             <button class="choice ${state.sheetChild === child.id ? "active" : ""}" style="--choice-color:${colorForChild(child.id)}" onclick="state.sheetChild='${child.id}';renderSheet()">
               <span class="avatar" style="--chip-color:${colorForChild(child.id)}">${child.initial}</span>
               <b>${child.name}</b>
-              <p class="muted">${child.role}</p>
+              <p class="muted">${childRole(child)}</p>
             </button>
           `).join("")}
         </div>
@@ -1708,20 +2383,26 @@
     }
 
     function sheetContent(type, child) {
+      const l = labels();
       if (type === "editLog") {
         const log = state.logs.find((item) => item.id === state.editLogId);
-        if (!log) return `<h3>Log not found</h3><button class="primary-button" onclick="closeSheet()">Close</button>`;
+        if (!log) return `<h3>${state.language === "HE" ? "הלוג לא נמצא" : "Log not found"}</h3><button class="primary-button" onclick="closeSheet()">${l.done}</button>`;
         const unit = log.unit || (state.unitSystem === "Metric" ? "mL" : "oz");
+        const logChild = log.child === "both" ? { initial: "B", name: l.both, role: l.shared } : childById(log.child);
+        const childSpecific = ["Sleep", "Bottle", "Nursing", "Allergen"].includes(log.type);
         return `
-          <h3>Edit ${log.type}</h3>
-          <p class="muted">Manual correction for today's 00:00-24:00 log. Changes save immediately in this prototype.</p>
-          <div class="form-row">
-            <input class="field" value="${log.time}" onchange="updateLog(${log.id},'time',this.value);render()" aria-label="Log time" />
-            <select class="field" onchange="updateLog(${log.id},'child',this.value);renderSheet();renderScreen()">
-              ${children().map((item) => `<option value="${item.id}" ${log.child === item.id ? "selected" : ""}>${item.name}</option>`).join("")}
-              <option value="both" ${log.child === "both" ? "selected" : ""}>Both</option>
-            </select>
+          <h3>${l.editTitle} ${typeLabel(log.type)}</h3>
+          <p class="muted">${l.manualCorrection}</p>
+          <div class="card">
+            <span class="label">${l.child}</span>
+            <b>${logChild.initial} / ${logChild.name}</b>
+            <p class="muted">${childSpecific && children().length > 1 ? l.chooseTwin : logChild.role || l.currentSetup}</p>
           </div>
+          ${childSpecific && children().length > 1 ? `
+            <div class="sheet-grid">
+              ${children().map((item) => `<button class="choice ${log.child === item.id ? "active" : ""}" style="--choice-color:${colorForChild(item.id)}" onclick="updateLog(${log.id},'child','${item.id}');renderSheet();renderScreen()"><span class="avatar" style="--chip-color:${colorForChild(item.id)}">${item.initial}</span><b>${item.name}</b><p class="muted">${childRole(item)}</p></button>`).join("")}
+            </div>
+          ` : ""}
           ${log.type === "Sleep" ? `
             <div class="form-row">
               <input class="field" value="${log.start || ""}" onchange="updateLog(${log.id},'start',this.value);renderScreen()" aria-label="Sleep start" />
@@ -1737,23 +2418,24 @@
           ` : ""}
           ${log.type === "Nursing" ? `
             <div class="form-row">
-              <input class="field" value="${Math.round(Number(log.leftSeconds || 0) / 60)}" inputmode="numeric" onchange="updateLog(${log.id},'leftSeconds',String(Number(this.value) * 60));renderScreen()" aria-label="Left breast minutes" />
-              <input class="field" value="${Math.round(Number(log.rightSeconds || 0) / 60)}" inputmode="numeric" onchange="updateLog(${log.id},'rightSeconds',String(Number(this.value) * 60));renderScreen()" aria-label="Right breast minutes" />
+              <input class="field" value="${Number(log.leftSeconds || 0)}" inputmode="numeric" onchange="updateLog(${log.id},'leftSeconds',this.value);renderScreen()" aria-label="Left breast seconds" />
+              <input class="field" value="${Number(log.rightSeconds || 0)}" inputmode="numeric" onchange="updateLog(${log.id},'rightSeconds',this.value);renderScreen()" aria-label="Right breast seconds" />
             </div>
+            <p class="muted">${l.secondsNote}</p>
           ` : ""}
           ${log.type === "Allergen" ? `
             <div class="form-row">
-              <select class="field" onchange="updateLog(${log.id},'allergen',this.value);renderScreen()"><option ${log.allergen === "Egg" ? "selected" : ""}>Egg</option><option ${log.allergen === "Peanut" ? "selected" : ""}>Peanut</option><option ${log.allergen === "Dairy" ? "selected" : ""}>Dairy</option><option ${log.allergen === "Sesame" ? "selected" : ""}>Sesame</option></select>
+              <select class="field" onchange="updateLog(${log.id},'allergen',this.value);renderScreen()">${allergenOptions(log.allergen)}</select>
               <select class="field" onchange="updateLog(${log.id},'exposure',this.value);renderScreen()"><option ${log.exposure === "1" ? "selected" : ""}>1</option><option ${log.exposure === "2" ? "selected" : ""}>2</option><option ${log.exposure === "3" ? "selected" : ""}>3</option></select>
             </div>
           ` : ""}
           ${["Recipe", "AI"].includes(log.type) ? `<textarea class="field" onchange="updateLog(${log.id},'detail',this.value);renderScreen()">${log.detail || ""}</textarea>` : ""}
           <div class="card">
-            <span class="label">Preview</span>
-            <b>${log.type}</b>
+            <span class="label">${l.preview}</span>
+            <b>${typeLabel(log.type)}</b>
             <p class="muted">${detailForLog(log)}</p>
           </div>
-          <button class="primary-button" onclick="closeSheet();render()">Done</button>
+          <button class="primary-button" onclick="closeSheet();render()">${l.done}</button>
         `;
       }
 
@@ -1761,89 +2443,130 @@
         const sleepChild = childById(state.pendingSleepChild);
         const active = state.activeSleep[sleepChild.id];
         return `
-          <h3>How many wakeups?</h3>
-          <p class="muted">This appears only after pressing End sleep.</p>
+          <h3>${l.wakeupsTitle}</h3>
+          <p class="muted">${l.wakeupsHint}</p>
           <div class="card">
             <span class="label">${sleepChild.initial} / ${sleepChild.name}</span>
-            <b>${active ? `${active.label} - ${timeNow()}` : "Sleep ending"}</b>
-            <p class="muted">Choose wakeups before saving the sleep log.</p>
+            <b>${active ? `${displayClock(active.label)} - ${timeNow()}` : l.sleepEnding}</b>
+            <p class="muted">${l.chooseWakeups}</p>
           </div>
           <div class="exposure-grid">
-            ${[0, 1, 2].map((count) => `<button class="exposure-card ${state.sleepWakeups === String(count) ? "active" : ""}" onclick="state.sleepWakeups='${count}';renderSheet()"><b>${count}</b><span>wakeups</span></button>`).join("")}
+            ${[0, 1, 2].map((count) => `<button class="exposure-card ${state.sleepWakeups === String(count) ? "active" : ""}" onclick="state.sleepWakeups='${count}';renderSheet()"><b>${count}</b><span>${l.wakeups}</span></button>`).join("")}
           </div>
           <input class="field" value="${state.sleepWakeups}" inputmode="numeric" onchange="state.sleepWakeups=this.value" aria-label="Wakeups count" />
           <div class="form-row">
-            <button class="secondary-button" onclick="closeSheet()">Cancel</button>
-            <button class="primary-button" onclick="finishSleep()">Save sleep</button>
+            <button class="secondary-button" onclick="closeSheet()">${l.cancel}</button>
+            <button class="primary-button" onclick="finishSleep()">${l.saveSleep}</button>
           </div>
         `;
       }
 
       if (type === "sleep") {
         const active = state.activeSleep[child.id];
+        const sleepSheetHint = children().length > 1 ? l.twinsSleepHint : l.singleSleepHint;
         return `
-          <h3>${active ? "End sleep" : "Start sleep"}</h3>
-          <p class="muted">Choose the child first. The timeline will show the first letter badge.</p>
+          <h3>${active ? l.endSleepSheet : l.startSleepSheet}</h3>
+          <p class="muted">${sleepSheetHint}</p>
           ${renderSheetChildChoices()}
           <div class="card">
             <span class="label">${child.initial} / ${child.name}</span>
-            <b>${active ? `Sleeping ${durationSince(active.startedAt)}` : "No active sleep"}</b>
-            <p class="muted">${active ? `Started at ${active.label}` : "Tap start to begin a live sleep state."}</p>
+            <b>${active ? `${l.sleepingNow} ${durationSince(active.startedAt)}` : l.noActiveSleep}</b>
+            <p class="muted">${active ? state.language === "HE" ? `התחיל ב-${displayClock(active.label)}` : `Started at ${active.label}` : l.tapStartSleep}</p>
           </div>
           <div class="form-row">
-            <button class="secondary-button" onclick="closeSheet()">Cancel</button>
-            <button class="primary-button" onclick="commitSleep()">${active ? "End sleep" : "Start sleep"}</button>
+            <button class="secondary-button" onclick="closeSheet()">${l.cancel}</button>
+            <button class="primary-button" onclick="commitSleep()">${active ? l.endSleepSheet : l.startSleepSheet}</button>
           </div>
         `;
       }
       if (type === "feed") {
+        const l = labels();
+        const runningChild = runningNursingChildId();
+        if (runningChild) {
+          state.sheetChild = runningChild;
+          child = childById(runningChild);
+          state.feedType = "Nursing";
+          state.feedStep = "details";
+        }
         const unit = state.unitSystem === "Metric" ? "mL" : "oz";
         const session = nursingState(child.id);
         const leftRunning = Boolean(session.leftStartedAt);
         const rightRunning = Boolean(session.rightStartedAt);
         const leftTime = formatTimer(nursingSeconds(child.id, "left"));
         const rightTime = formatTimer(nursingSeconds(child.id, "right"));
+        const totalTime = formatTimer(nursingSeconds(child.id, "left") + nursingSeconds(child.id, "right"));
+        const nursingRunning = leftRunning || rightRunning;
+        if (state.feedStep === "choice") {
+          return `
+            <h3>${l.chooseFeed}</h3>
+            <p class="muted">${l.chooseFeedHint}</p>
+            ${renderSheetChildChoices()}
+            <div class="sheet-grid">
+              <button class="choice active" style="--choice-color:${colorForChild(child.id)}" onclick="state.feedType='Bottle';state.feedStep='details';renderSheet()">
+                <span class="avatar" style="--chip-color:${typeColor("Bottle")}">${state.language === "HE" ? "ב" : "B"}</span>
+                <b>${l.bottle}</b>
+                <p class="muted">${state.unitSystem === "Metric" ? l.presets : l.ozAmount}</p>
+              </button>
+              <button class="choice active" style="--choice-color:${colorForChild(child.id)}" onclick="state.feedType='Nursing';state.feedStep='details';renderSheet()">
+                <span class="avatar" style="--chip-color:${typeColor("Nursing")}">${state.language === "HE" ? "ה" : "N"}</span>
+                <b>${l.nursing}</b>
+                <p class="muted">${l.leftRightTimer}</p>
+              </button>
+            </div>
+          `;
+        }
         return `
-          <h3>Add feed</h3>
-          <p class="muted">Feed is child-specific. Nursing separates breast left and breast right.</p>
+          <h3>${state.feedType === "Bottle" ? l.bottle : l.nursing}</h3>
+          <p class="muted">${l.feedChildSpecific}</p>
           ${renderSheetChildChoices()}
-          <div class="form-row">
-            <select class="field" onchange="state.feedType=this.value;renderSheet()"><option ${state.feedType === "Bottle" ? "selected" : ""}>Bottle</option><option ${state.feedType === "Nursing" ? "selected" : ""}>Nursing</option></select>
-            ${state.feedType === "Bottle" ? `<input class="field" value="${state.feedAmount}" inputmode="numeric" onchange="state.feedAmount=this.value" aria-label="Feed amount" />` : `<span class="field">${leftTime} left / ${rightTime} right</span>`}
+          ${nursingRunning ? "" : `<button class="secondary-button" onclick="state.feedStep='choice';renderSheet()">${l.back}</button>`}
+          <div class="form-row single">
+            ${state.feedType === "Bottle"
+              ? `<label class="field"><span class="field-label">${l.bottleAmount}</span><input value="${state.feedAmount}" inputmode="numeric" onchange="state.feedAmount=this.value" aria-label="${l.bottleAmount}" /></label>`
+              : `<span class="field"><span class="field-label">${l.total}</span>${totalTime} · ${l.leftBreast} ${leftTime} / ${l.rightBreast} ${rightTime}</span>`}
           </div>
           ${state.feedType === "Nursing" ? `
             <div class="breast-grid">
-              <button class="breast-card ${leftRunning ? "active" : ""}" onclick="toggleNursingSide('${child.id}','left')"><b>Breast left</b><span>${leftTime} / ${leftRunning ? "running" : "stopped"}</span></button>
-              <button class="breast-card ${rightRunning ? "active" : ""}" onclick="toggleNursingSide('${child.id}','right')"><b>Breast right</b><span>${rightTime} / ${rightRunning ? "running" : "stopped"}</span></button>
+              <button class="breast-card ${leftRunning ? "active" : ""}" onclick="toggleNursingSide('${child.id}','left')"><b>${l.leftBreast}</b><span>${leftTime} / ${leftRunning ? l.running : l.stopped}</span></button>
+              <button class="breast-card ${rightRunning ? "active" : ""}" onclick="toggleNursingSide('${child.id}','right')"><b>${l.rightBreast}</b><span>${rightTime} / ${rightRunning ? l.running : l.stopped}</span></button>
             </div>
-          ` : `<p class="muted">Bottle amount will save as ${state.feedAmount} ${unit}.</p>`}
+          ` : `<p class="muted">${l.bottleSaveHint} ${state.feedAmount} ${unit}.</p>`}
           <div class="form-row">
-            <button class="secondary-button" onclick="closeSheet()">Cancel</button>
-            <button class="primary-button" onclick="commitFeed()">Save feed</button>
+            <button class="secondary-button" onclick="closeSheet()">${l.cancel}</button>
+            <button class="primary-button" onclick="commitFeed()">${l.saveFeed}</button>
           </div>
         `;
       }
       if (type === "allergen") {
         const currentExposure = Number(state.exposure);
         return `
-          <h3>Allergen exposure</h3>
-          <p class="muted">Allergen progress is separate for each twin, even when recipes are shared.</p>
+          <h3>${l.allergenTitle}</h3>
+          <p class="muted">${l.allergenSheetHint}</p>
           ${renderSheetChildChoices()}
           <div class="form-row">
-            <select class="field" onchange="state.allergen=this.value;renderSheet()"><option ${state.allergen === "Egg" ? "selected" : ""}>Egg</option><option ${state.allergen === "Peanut" ? "selected" : ""}>Peanut</option><option ${state.allergen === "Dairy" ? "selected" : ""}>Dairy</option><option ${state.allergen === "Sesame" ? "selected" : ""}>Sesame</option></select>
-            <span class="field">${currentExposure} of 3 exposures</span>
+            <label class="field">
+              <span class="field-label">${state.language === "HE" ? "קטגוריה" : "Category"}</span>
+              <select onchange="setAllergenSection(this.value)">${allergenSectionOptions(state.allergenSection)}</select>
+            </label>
+            <label class="field">
+              <span class="field-label">${l.chooseAllergen}</span>
+              <select onchange="state.allergen=this.value;renderSheet()">${allergenOptions(state.allergen)}</select>
+            </label>
+          </div>
+          <div class="form-row single">
+            <span class="field">${currentExposure} ${l.exposureOf}</span>
           </div>
           <div class="exposure-grid">
-            ${[1, 2, 3].map((count) => `<button class="exposure-card ${currentExposure === count ? "active" : ""}" onclick="state.exposure='${count}';renderSheet()"><b>Exposure ${count}</b><span>${count === 1 ? "First taste" : count === 2 ? "Repeat safely" : "Complete test"}</span><span class="progress-dots">${[1, 2, 3].map((dot) => `<i class="${dot <= count ? "done" : ""}"></i>`).join("")}</span></button>`).join("")}
+            ${[1, 2, 3].map((count) => `<button class="exposure-card ${currentExposure === count ? "active" : ""}" onclick="state.exposure='${count}';renderSheet()"><b>${l.exposure} ${count}</b><span>${count === 1 ? l.firstTaste : count === 2 ? l.repeatSafely : l.completeTest}</span><span class="progress-dots">${[1, 2, 3].map((dot) => `<i class="${dot <= count ? "done" : ""}"></i>`).join("")}</span></button>`).join("")}
           </div>
           <div class="card">
-            <span class="label">How it reads</span>
-            <b>${state.allergen} for ${child.name}: ${currentExposure}/3</b>
-            <p class="muted">The timeline keeps the child badge. Recipes can stay shared, while exposure history stays separate.</p>
+            <span class="label">${l.howItReads}</span>
+            <b>${allergenLabel(state.allergen)} / ${child.name}: ${currentExposure}/3</b>
+            <p class="muted">${l.allergenPreview}</p>
           </div>
           <div class="form-row">
-            <button class="secondary-button" onclick="closeSheet()">Cancel</button>
-            <button class="primary-button" onclick="commitAllergen()">Save exposure</button>
+            <button class="secondary-button" onclick="closeSheet()">${l.cancel}</button>
+            <button class="primary-button" onclick="commitAllergen()">${l.saveExposure}</button>
           </div>
         `;
       }
@@ -1858,7 +2581,7 @@
         renderSheet();
       } else {
         state.activeSleep[child.id] = { startedAt: Date.now(), label: timeNow() };
-        showToast(`${child.name} sleep started`);
+        showToast(state.language === "HE" ? `השינה של ${child.name} התחילה` : `${child.name} sleep started`);
         closeSheet();
         render();
       }
@@ -1873,7 +2596,7 @@
         return;
       }
       const endedAt = timeNow();
-      addLog(child.id, "Sleep", `${active.label} - ${endedAt} with ${state.sleepWakeups || 0} wakeups`, {
+      addLog(child.id, "Sleep", detailForLog({ type: "Sleep", start: active.label, end: endedAt, wakeups: state.sleepWakeups || "0" }), {
         start: active.label,
         end: endedAt,
         wakeups: state.sleepWakeups || "0"
@@ -1881,7 +2604,7 @@
       delete state.activeSleep[child.id];
       state.sleepWakeups = "0";
       state.pendingSleepChild = null;
-      showToast(`${child.name} sleep saved`);
+      showToast(state.language === "HE" ? `השינה של ${child.name} נשמרה` : `${child.name} sleep saved`);
       closeSheet();
       render();
     }
@@ -1891,23 +2614,25 @@
       const unit = state.unitSystem === "Metric" ? "mL" : "oz";
       const left = nursingSeconds(child.id, "left");
       const right = nursingSeconds(child.id, "right");
-      const detail = state.feedType === "Bottle" ? `${state.feedAmount} ${unit}` : `Breast left ${formatTimer(left)} / breast right ${formatTimer(right)}`;
+      const detail = state.feedType === "Bottle"
+        ? `${state.feedAmount} ${unit}`
+        : detailForLog({ type: "Nursing", leftSeconds: left, rightSeconds: right });
       addLog(child.id, state.feedType, detail, state.feedType === "Bottle"
         ? { amount: state.feedAmount, unit }
         : { leftSeconds: left, rightSeconds: right });
       if (state.feedType === "Nursing") resetNursing(child.id);
-      showToast(`${child.name} feed saved`);
+      showToast(state.language === "HE" ? `האכלה של ${child.name} נשמרה` : `${child.name} feed saved`);
       closeSheet();
       render();
     }
 
     function commitAllergen() {
       const child = childById(state.sheetChild);
-      addLog(child.id, "Allergen", `${state.allergen} exposure ${state.exposure} of 3`, {
+      addLog(child.id, "Allergen", detailForLog({ type: "Allergen", allergen: state.allergen, exposure: state.exposure }), {
         allergen: state.allergen,
         exposure: state.exposure
       });
-      showToast(`${child.name} allergen saved`);
+      showToast(state.language === "HE" ? `האלרגן של ${child.name} נשמר` : `${child.name} allergen saved`);
       closeSheet();
       render();
     }
